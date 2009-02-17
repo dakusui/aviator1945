@@ -1,0 +1,104 @@
+package siovanus;
+
+import siovanus.motion.AvengerMMachineSpec;
+import siovanus.motion.B17MMachineSpec;
+import siovanus.motion.B29MMachineSpec;
+import siovanus.motion.BigshotMMachineSpec;
+import siovanus.motion.BombMMachineSpec;
+import siovanus.motion.DummyMMachineSpec;
+import siovanus.motion.EnemyShotMMachineSpec;
+import siovanus.motion.ExplosionMMachineSpec;
+import siovanus.motion.F4UMMachineSpec;
+import siovanus.motion.Ki84MMachineSpec;
+import siovanus.motion.MinorExplosionMMachineSpec;
+import siovanus.motion.P51DMMachineSpec;
+import siovanus.motion.ShotMMachineSpec;
+import siovanus.motion.USSNewJerseyGunMMachineSpec;
+import siovanus.motion.USSNewJerseyMMachineSpec;
+import siovanus.motion.ZeroMMachineSpec;
+import siovanus.spec.SBlurEffectSpriteSpec;
+import siovanus.spec.SCreditMessageSpriteSpec;
+import siovanus.spec.SShotSpriteSpec;
+import siovanus.spec.STitleSpriteSpec;
+import avis.base.AException;
+import avis.motion.MMachineBuilder;
+import avis.motion.MotionController;
+import avis.spec.AImageSpriteSpec;
+import avis.spec.AMessageSpriteSpec;
+import avis.spec.ASpriteSpecManager;
+
+public class Siovanus {
+	public static final String SPRITESPEC_SHOT = "siovanus.spec.sprite.SHOT";
+	public static final String SPRITESPEC_BIGSHOT = "siovanus.spec.sprite.BIGSHOT";
+	public static final String SPRITESPEC_KI84 = "siovanus.spec.sprite.KI84";
+	public static final String SPRITESPEC_ZERO = "siovanus.spec.sprite.ZERO";
+	public static final String SPRITESPEC_AVG  = "siovanus.spec.sprite.AVG";
+	public static final String SPRITESPEC_B17  = "siovanus.spec.sprite.B17";
+	public static final String SPRITESPEC_B29  = "siovanus.spec.sprite.B29";
+	public static final String SPRITESPEC_P51D = "siovanus.spec.sprite.P51D";
+	public static final String SPRITESPEC_F4U = "siovanus.spec.sprite.F4U";
+	public static final String SPRITESPEC_EXPLOSION = "siovanus.spec.sprite.EXP2";
+	public static final String SPRITESPEC_USSNEWJERSEY = "siovanus.spec.sprite.USSNEWJERSEY";
+	public static final String SPRITESPEC_DEFAULT_BLUR = "DefaultBlur";
+	public static final String SPRITESPEC_USSNEWJERSEY_MAINGUN = "siovanus.spec.sprite.USSNEWJERSEY_MAINGUN";
+	public static final String SPRITESPEC_BOMB = "siovanus.spec.sprite.BOMB";
+	public static final String SPRITESPEC_EXP_MINOR = "siovanus.spec.sprite.EXP_MINOR";
+	public static final String SPRITESPEC_PLAIN_MESSAGE = "PlainMessage";
+	public static final String SPRITESPEC_EFFECT_MESSAGE = "EffectMessage";
+	public static final String SPRITESPEC_CREDIT_MESSAGE = "CreditMessage";
+	public static final String SPRITESPEC_DEFAULT_MESSAGE = SPRITESPEC_PLAIN_MESSAGE;
+	public static AvengerMMachineSpec avengerSpec;
+	public static ShotMMachineSpec shotSpec;
+	public static EnemyShotMMachineSpec enemyShotSpec;
+	public static ShotMMachineSpec bigShotSpec;
+	public static ZeroMMachineSpec zeroSpec;
+	public static Ki84MMachineSpec ki84Spec;
+	public static B17MMachineSpec b17Spec;
+	public static B29MMachineSpec b29Spec;
+	public static P51DMMachineSpec p51dSpec;
+	public static ExplosionMMachineSpec explosionSpec;
+	public static USSNewJerseyMMachineSpec ussNewJerseySpec;
+	public static DummyMMachineSpec dummySpec;
+	public static USSNewJerseyGunMMachineSpec ussNewJerseyGunSpec;
+	public static BombMMachineSpec bombSpec;
+	public static ExplosionMMachineSpec minorExplosionSpec;
+	public static F4UMMachineSpec f4uSpec;
+	
+	public static void load(MMachineBuilder builder, MotionController controller) {
+		dummySpec =      new DummyMMachineSpec();  dummySpec.builder(builder);    dummySpec.controller(controller);
+		shotSpec =      new ShotMMachineSpec();  shotSpec.builder(builder);    shotSpec.controller(controller);
+		enemyShotSpec =      new EnemyShotMMachineSpec();  shotSpec.builder(builder);    shotSpec.controller(controller);
+		bigShotSpec =      new BigshotMMachineSpec();  bigShotSpec.builder(builder);    bigShotSpec.controller(controller);
+		bombSpec =      new BombMMachineSpec();  bombSpec.builder(builder);    bombSpec.controller(controller);
+		zeroSpec =      new ZeroMMachineSpec();  zeroSpec.builder(builder);    zeroSpec.controller(controller);
+		avengerSpec = new AvengerMMachineSpec(); avengerSpec.builder(builder); avengerSpec.controller(controller);
+		ki84Spec =      new Ki84MMachineSpec();  ki84Spec.builder(builder);    ki84Spec.controller(controller);
+		b17Spec =       new B17MMachineSpec();   b17Spec.builder(builder);     b17Spec.controller(controller);
+		b29Spec =       new B29MMachineSpec();   b29Spec.builder(builder);     b29Spec.controller(controller);
+		p51dSpec =      new P51DMMachineSpec();  p51dSpec.builder(builder);    p51dSpec.controller(controller);
+		f4uSpec =      new F4UMMachineSpec();  f4uSpec.builder(builder);    f4uSpec.controller(controller);
+		ussNewJerseySpec =  new USSNewJerseyMMachineSpec(); ussNewJerseySpec.builder(builder); ussNewJerseySpec.controller(controller);
+		ussNewJerseyGunSpec =  new USSNewJerseyGunMMachineSpec(); ussNewJerseyGunSpec.builder(builder); ussNewJerseyGunSpec.controller(controller);
+		minorExplosionSpec = new MinorExplosionMMachineSpec(); minorExplosionSpec.builder(builder); minorExplosionSpec.controller(controller);
+		explosionSpec = new ExplosionMMachineSpec(); explosionSpec.builder(builder); explosionSpec.controller(controller);
+	}
+	public static void loadSpriteSpecs(ASpriteSpecManager spriteSpecManager) throws AException {
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_SHOT, SShotSpriteSpec.class, "sprite/spec/SHOT.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_BOMB, AImageSpriteSpec.class, "sprite/spec/BOMB.spec.properties");
+    	spriteSpecManager.loadSpriteSpec(SPRITESPEC_KI84, AImageSpriteSpec.class, "sprite/spec/KI84.spec.properties");
+    	spriteSpecManager.loadSpriteSpec(SPRITESPEC_ZERO, AImageSpriteSpec.class, "sprite/spec/ZERO.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_AVG,  AImageSpriteSpec.class, "sprite/spec/AVG.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_B17,  AImageSpriteSpec.class, "sprite/spec/B17.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_B29,  AImageSpriteSpec.class, "sprite/spec/B29.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_P51D, AImageSpriteSpec.class, "sprite/spec/P51D.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_F4U, AImageSpriteSpec.class, "sprite/spec/F4U.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_EXPLOSION, AImageSpriteSpec.class, "sprite/spec/EXPLOSION02b.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_EXP_MINOR, AImageSpriteSpec.class, "sprite/spec/EXPLOSION01.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_USSNEWJERSEY, AImageSpriteSpec.class, "sprite/spec/NEWJERSEY_MAIN.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_USSNEWJERSEY_MAINGUN, AImageSpriteSpec.class, "sprite/spec/NEWJERSEY_GUNS.spec.properties");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_PLAIN_MESSAGE, AMessageSpriteSpec.class, "<<DUMMY>>");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_EFFECT_MESSAGE, STitleSpriteSpec.class, "<<DUMMY>>");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_CREDIT_MESSAGE, SCreditMessageSpriteSpec.class, "<<DUMMY>>");
+		spriteSpecManager.loadSpriteSpec(SPRITESPEC_DEFAULT_BLUR,    SBlurEffectSpriteSpec.class, new int[]{1024, 768});
+	}
+}

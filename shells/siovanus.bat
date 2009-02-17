@@ -1,0 +1,1 @@
+java -cp ./siovanus.jar;./Joystick.jar -client -Dsun.java2d.d3dtexbpp=16 -Dsun.java2d.accthreshold=0 -Dsun.java2d.ddscale=true -Dsun.java2d.ddforcevram=true -Dsun.java2d.d3d=true -Xms256m -Xmx256m avis.session.ASession -video=FULL -rendering=VOLATILE -bgquality=HIGH -session=siovanus.SSession > siovanus.log 
