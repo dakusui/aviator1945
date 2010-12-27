@@ -5,6 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
+/**
+ * A graphics plane.
+ * @author hiroshi
+ *
+ */
 public class GraphicsPlane extends Plane {
 	BufferedImage image;
 	Graphics2D g;
