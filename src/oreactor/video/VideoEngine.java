@@ -15,4 +15,8 @@ public class VideoEngine extends BaseEngine {
 	public void run() {
 		screen.render();
 	}
+	
+	public Screen screen() {
+		return this.screen;
+	}
 }
