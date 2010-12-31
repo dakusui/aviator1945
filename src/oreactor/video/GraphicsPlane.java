@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 public class GraphicsPlane extends Plane {
 	BufferedImage image;
 	Graphics2D g;
+	private Color fgColor;
+	private Color bgColor;
 
 	protected GraphicsPlane(String name, Region physical, Region logical) {
 		super(name, physical, logical);
@@ -75,17 +77,21 @@ public class GraphicsPlane extends Plane {
 
 	public void paint(double x1, double y1, Color c, Color b) {
 		this.assertProgrammableState();
-		// TODO
 	}
 
 	public void color(Color foreground, Color background) {
 		this.assertProgrammableState();
-		// TODO
+		this.fgColor = foreground;
+		this.bgColor = background;
 	}
 
 	@Override
 	protected void renderEngine(Graphics2D g) {
-		// TODO Auto-generated method stub
-
+		g.drawImage(
+				this.image, 
+				0, 0, (int)this.physicalRegion.getWidth(), (int)this.physicalRegion.getHeight(), 
+				0, 0, (int)this.physicalRegion.getWidth(), (int)this.physicalRegion.getHeight(), 
+				this.bgColor, null
+				);
 	}
 }

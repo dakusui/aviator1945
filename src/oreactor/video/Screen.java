@@ -42,6 +42,7 @@ public class Screen extends JFrame {
 		};
 		public abstract Plane createPlane(Screen screen, String name);
 	}
+	
 	public static class PlaneInfo {
 		private String name;
 		private PlaneType type;
