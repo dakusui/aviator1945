@@ -1,17 +1,28 @@
 package oreactor.core;
 
+import java.awt.Font;
 import java.util.List;
 
 public class Settings {
+	public static enum RunningMode {
+		DEBUG, NORMAL
+	}
+	public static enum LoggingMode {
+		TRACE, INFO, STATISTICS, ERROR
+	}
+	
+	public static enum BgmMode {
+		ENABLED, DISABLED
+	}
+
 	public static enum SoundMode {
-		SILENT, NORMAL, MULTITHREADED, BGMONLY
+		ENABLED, DISABLED
 	}
-	public static enum DebugMode {
-		SCENARIOSKIP, GRID, NORMAL
-	}
+	
 	public static enum VideoMode {
 		FULL, NORMAL
 	}
+	
 	public static enum ScreenSize {
 		sQCIF     { protected int[] size() {return new int[]{ 128,   96};} },
 		QCIF      { protected int[] size() {return new int[]{ 176,  144};} },
@@ -69,21 +80,14 @@ public class Settings {
 	public static enum FrameMode {
 		DROP, NONDROP
 	}	
+	
 	public static enum RenderingMode {
 		VOLATILE, BUFFERED
 	};
-	public static enum PrerenderingMode {
-		ENABLED, DISABLED
-	}
-	public static enum BgQualityMode {
-		HIGH, LOW
-	};
+	
 	public static enum JoystickMode {
-		JOYPAD, DISABLED, PS3;
-	}
-	public static enum RotationMode {
 		ENABLED, DISABLED
-	}	
+	}
 
 	public static enum PlaneType {
 		GRAPHICS, SPRITE, PATTTERN;
@@ -91,12 +95,15 @@ public class Settings {
 
 	private FrameMode frameMode = FrameMode.DROP;
 	private List<PlaneType> planes;
-	
+	private Font font;
+	private JoystickMode joystickMode;
+	private LoggingMode loggingMode;
+	private RenderingMode renderingMode;
+	private RunningMode runningMode;
+	private ScreenSize screenSize;
+	private SoundMode soundMode;
+	private VideoMode videoMode;
 
-	public FrameMode frameMode() {
-		return this.frameMode;
-	}
-	
 	public List<PlaneType> planeTypes() {
 		return this.planes;
 	}
@@ -105,17 +112,75 @@ public class Settings {
 		return new Settings();
 	}
 	
-	public static Settings parseArgs(String[] args) {
-		return new Settings();
+	public void font(Font font) {
+		this.font = font;
 	}
 
-	public Class<? extends Reactor> gearClass() {
-		// TODO Auto-generated method stub
-		return null;
+	public void frameMode(FrameMode frameMode) {
+		this.frameMode = frameMode;
+	}
+
+	public FrameMode frameMode() {
+		return this.frameMode;
+	}
+	
+
+	public void joystickMode(JoystickMode joyStickMode) {
+		this.joystickMode = joyStickMode;
+		
+	}
+
+	public JoystickMode joystickMode() {
+		return this.joystickMode;
+	}
+	
+	public void loggingMode(LoggingMode loggingMode) {
+		this.loggingMode = loggingMode;
+	}
+
+	public LoggingMode loggingMode() {
+		return this.loggingMode;
+	}
+	
+	public void renderingMode(RenderingMode renderingMode) {
+		this.renderingMode = renderingMode;
 	}
 
 	public RenderingMode renderingMode() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.renderingMode;
+	}
+
+	public void runningMode(RunningMode runningMode) {
+		this.runningMode = runningMode;
+		
+	}
+
+	public RunningMode runningMode() {
+		return this.runningMode;
+	}
+	
+	public void screenSize(ScreenSize screenSize) {
+		this.screenSize = screenSize;
+	}
+
+	public ScreenSize screenSize() {
+		return this.screenSize;
+	}
+	
+	public void soundMode(SoundMode soundMode) {
+		this.soundMode = soundMode;
+		
+	}
+
+	public SoundMode soundMode() {
+		return this.soundMode;
+	}
+	
+	public void videoMode(VideoMode videoMode) {
+		this.videoMode = videoMode;
+	}
+	
+	public VideoMode videoMode() {
+		return this.videoMode;
 	}
 }

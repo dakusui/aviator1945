@@ -3,7 +3,7 @@ package oreactor.core;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
 
-public abstract class Reactor {
+public class Reactor {
 	enum Action {
 		Running {
 			@Override
@@ -105,7 +105,10 @@ public abstract class Reactor {
 		c.getIOEngine().finish();
 	}
 
-	protected abstract void action(Context c) throws OpenReactorException;
+	protected void action(Context c) throws OpenReactorException {
+		////
+		// This method does nothing by default.
+	}
 	
 	protected void exit(String msg) throws OpenReactorExitException {
 		throw new OpenReactorExitException(msg);
@@ -113,13 +116,6 @@ public abstract class Reactor {
 	
 	protected void exit() throws OpenReactorExitException {
 		throw new OpenReactorExitException(null);
-	}
-	
-	public static void main(String[] args) throws OpenReactorException, InstantiationException, IllegalAccessException {
-		Settings settings = Settings.parseArgs(args);
-		Class<? extends Reactor> reactorClass = settings.gearClass();
-		Reactor reactor = reactorClass.newInstance();
-		reactor.perform(settings);
 	}
 }
 
