@@ -1,5 +1,6 @@
 package oreactor.core;
 
+import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
 
@@ -7,25 +8,27 @@ public class Reactor {
 	enum Action {
 		Running {
 			@Override
-			public void run(Reactor gear, Context c) throws OpenReactorException {
-				gear.action(c);
+			public void run(Reactor reactor, Context c) throws OpenReactorException {
+				reactor.action(c);
 			}
 		},
 		Exitted {
 			@Override
-			public void run(Reactor gear, Context c) {
+			public void run(Reactor reactor, Context c) {
 			}
 		};
-		protected abstract void run(Reactor gear, Context c) throws OpenReactorException;
+		protected abstract void run(Reactor reactor, Context c) throws OpenReactorException;
 	}
+	
 	private long interval;
 	
-	public Context initialize(Settings settings) {
-		return new Context(settings);
+	protected Context initialize(Settings settings) {
+		Settings s = this.customize(settings); 
+		return new Context(s);
 	}
 	
-	public void terminate(Context c) {
-		
+	@ExtensionPoint
+	protected void terminate(Context c) {
 	}
 
 	public void perform(Settings settings) throws OpenReactorException {
@@ -84,7 +87,7 @@ public class Reactor {
 		c.getVideoEngine().prepare();
 	}
 
-	private void runEngines(Context c) {
+	private void runEngines(Context c) throws OpenReactorException {
 		c.getIOEngine().run();
 		c.getJoystickEngine().run();
 		c.getKeyboardEngine().run();
@@ -105,6 +108,7 @@ public class Reactor {
 		c.getIOEngine().finish();
 	}
 
+	@ExtensionPoint
 	protected void action(Context c) throws OpenReactorException {
 		////
 		// This method does nothing by default.
@@ -116,6 +120,11 @@ public class Reactor {
 	
 	protected void exit() throws OpenReactorExitException {
 		throw new OpenReactorExitException(null);
+	}
+
+	@ExtensionPoint
+	protected Settings customize(Settings settings) {
+		return settings;
 	}
 }
 

@@ -5,6 +5,7 @@ import java.awt.Font;
 import oreactor.exceptions.ArgumentException;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
+import oreactor.exceptions.OpenReactorWindowClosedException;
 
 public class ReactorRunner {
 	private ArgParser argParser;
@@ -103,14 +104,28 @@ public class ReactorRunner {
 		return ret;
 	}
 	
-	void runReactor(Settings settings) throws OpenReactorException {
-		this.reactor.perform(settings);
+	int runReactor(Settings settings) throws OpenReactorException {
+		int ret = 255;
+		try {
+			this.reactor.perform(settings);
+		} catch (OpenReactorWindowClosedException e) {
+			System.out.println(e.getMessage());
+			ret = 0;
+		} catch (OpenReactorException e) {
+			e.printStackTrace(System.out);
+			ret = 1;
+		}
+		return ret;
 	}
 	
 	public static void main(String[] args) throws OpenReactorException {
 		ReactorRunner reactorRunner = new ReactorRunner(args);
 		Settings settings = reactorRunner.parseArgs();
-		reactorRunner.runReactor(settings);
+		int ret = 255;
+		try {
+			ret = reactorRunner.runReactor(settings);
+		} finally {
+			System.exit(ret);
+		}
 	}
-
 }

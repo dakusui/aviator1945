@@ -1,5 +1,7 @@
 package oreactor.core;
 
+import oreactor.exceptions.OpenReactorException;
+
 public abstract class BaseEngine extends BaseGear {
 	final protected Settings settings;
 
@@ -7,5 +9,5 @@ public abstract class BaseEngine extends BaseGear {
 		this.settings = settings;
 	}
 	
-	public abstract void run();
+	public abstract void run() throws OpenReactorException;
 }

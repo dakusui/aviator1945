@@ -11,8 +11,8 @@ public class PatternPlane extends Plane {
 	int[][] map;
 	Pattern[] patterns;
 	
-	protected PatternPlane(Region physical, Region logical) {
-		super(physical, logical);
+	protected PatternPlane(String name, Region physical, Region logical) {
+		super(name, physical, logical);
 	}
 
 	public void put(int x, int y, int patternno) {

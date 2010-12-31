@@ -14,8 +14,8 @@ public class GraphicsPlane extends Plane {
 	BufferedImage image;
 	Graphics2D g;
 
-	protected GraphicsPlane(Region physical, Region logical) {
-		super(physical, logical);
+	protected GraphicsPlane(String name, Region physical, Region logical) {
+		super(name, physical, logical);
 	}
 
 	public void line(double x1, double y1, double x2, double y2, Color c) {

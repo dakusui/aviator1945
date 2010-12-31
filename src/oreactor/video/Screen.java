@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.VolatileImage;
 import java.util.Collections;
@@ -14,11 +16,56 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import oreactor.core.Settings;
-import oreactor.core.Util;
 import oreactor.core.Settings.RenderingMode;
+import oreactor.core.Util;
 import oreactor.exceptions.OpenReactorRuntimeException;
 
 public class Screen extends JFrame {
+	public static enum PlaneType {
+		GRAPHICS {
+			@Override
+			public Plane createPlane(Screen screen, String name) {
+				return screen.createGraphicsPlane(name);
+			}
+		}, 
+		PATTTERN {
+			@Override
+			public Plane createPlane(Screen screen, String name) {
+				return screen.createPatternPlane(name);
+			}
+		}, 
+		SPRITE {
+			@Override
+			public Plane createPlane(Screen screen, String name) {
+				return screen.createSpritePlane(name);
+			}
+		};
+		public abstract Plane createPlane(Screen screen, String name);
+	}
+	public static class PlaneInfo {
+		private String name;
+		private PlaneType type;
+		private Region region;
+		
+		public PlaneInfo(String name, PlaneType type, Region region) {
+			this.name = name;
+			this.type = type;
+			this.region = region;
+		}
+		
+		public String name() {
+			return this.name;
+		}
+		
+		public PlaneType type() {
+			return this.type;
+		}
+		
+		public Region region() {
+			return this.region;
+		}
+	}
+	
 	static enum Strategy {
 		VOLATILE {
 			@Override
@@ -94,7 +141,7 @@ public class Screen extends JFrame {
 			@Override
 			public void render(Screen s) {
 	            ////
-	    			// 1. オフスクリーンへの画面の描画
+				// 1. オフスクリーンへの画面の描画
 	        	this.renderOffScreen(s, s.graphics2d);
 	        	////
 	        	// 2. 画面への更新
@@ -144,12 +191,20 @@ public class Screen extends JFrame {
 	private Region logical;
 	private Region physical;
 	private List<Plane> planes;
-	
+
+	private boolean closed;
 	
     public Screen(Settings settings) {
     	this.settings = settings;
     	this.strategy = Strategy.figureOut(this.settings.renderingMode());
 		this.planes = new LinkedList<Plane>();
+		this.closed = false;
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				closed = true;
+			}
+		});
     }
     
     private void renderPlanes(Graphics2D g) {
@@ -166,22 +221,24 @@ public class Screen extends JFrame {
     	this.strategy.render(this);
     }
 
-	public GraphicsPlane createGraphicsPlane(String name) {
-		GraphicsPlane ret = new GraphicsPlane(physical, logical);
+	GraphicsPlane createGraphicsPlane(String name) {
+		GraphicsPlane ret = new GraphicsPlane(name, physical, logical);
 		return ret;
 	}
 	
-	public SpritePlane createSpritePlane(String name) {
-		SpritePlane ret = new SpritePlane(physical, logical);
+	SpritePlane createSpritePlane(String name) {
+		SpritePlane ret = new SpritePlane(name, physical, logical);
 		return ret;
 	}
 	
-	public PatternPlane createPatternPlane(String name) {
-		PatternPlane ret = new PatternPlane(physical, logical);
+	PatternPlane createPatternPlane(String name) {
+		PatternPlane ret = new PatternPlane(name, physical, logical);
 		return ret;
 	}
 
-	
+	public void createPlane(PlaneInfo info) {
+		this.planes.add(info.type().createPlane(this, info.name()));
+	}
 	public void prepare() {
 		for (Plane p: this.planes) {
 			p.prepare();
@@ -201,4 +258,7 @@ public class Screen extends JFrame {
 		return this.planes.iterator();
 	}
 
+	public boolean isClosed() {
+		return this.closed;
+	}
 }

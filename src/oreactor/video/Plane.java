@@ -14,9 +14,11 @@ public abstract class Plane  extends BaseGear implements Renderable {
 	
 	final protected Region logicalRegion;
 	final protected Region physicalRegion;
+	final protected String name;
 
-	protected Plane(Region physical, Region logical) {
+	protected Plane(String name, Region physical, Region logical) {
 		super();
+		this.name = name;
 		this.physicalRegion = physical;
 		this.logicalRegion = logical;
 	}

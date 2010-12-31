@@ -11,8 +11,8 @@ import oreactor.video.sprite.SpriteSpec;
 public class SpritePlane extends Plane {
 	protected List<Sprite> sprites;
 
-	protected SpritePlane(Region physical, Region logical) {
-		super(physical, logical);
+	protected SpritePlane(String name, Region physical, Region logical) {
+		super(name, physical, logical);
 		this.sprites = new LinkedList<Sprite>();
 	}
 

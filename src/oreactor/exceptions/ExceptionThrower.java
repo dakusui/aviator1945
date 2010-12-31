@@ -6,12 +6,11 @@ import oreactor.core.Reactor;
 
 public class ExceptionThrower {
 
-	@SuppressWarnings("unchecked")
 	public static void throwArgumentException(String keyword, String key,
-			Class<? extends Enum> k) throws ArgumentException {
+			@SuppressWarnings("rawtypes") Class<? extends Enum> k) throws ArgumentException {
 		String availableValues = "";
 		boolean firstOne = true;
-		for (Enum i : k.getEnumConstants()) {
+		for (Enum<?> i : k.getEnumConstants()) {
 			if (!firstOne) {
 				availableValues += ","; 
 			}
@@ -39,6 +38,10 @@ public class ExceptionThrower {
 			Class<? extends Object> reactorClass) throws ArgumentException {
 		throw new ArgumentException("Given class:<" + reactorClass.getCanonicalName() + "> is not a sub-class of <" + Reactor.class.getCanonicalName() + ">.");
 		
+	}
+
+	public static void throwWindowClosedException() throws OpenReactorWindowClosedException {
+		throw new OpenReactorWindowClosedException("Main window is closed.");
 	}
 
 }
