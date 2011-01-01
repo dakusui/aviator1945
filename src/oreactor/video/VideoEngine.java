@@ -11,7 +11,6 @@ public class VideoEngine extends BaseEngine {
 	public VideoEngine(Settings settings) {
 		super(settings);
 		this.screen = new Screen(settings);
-		this.screen.setSize(settings.screenSize().width(), settings.screenSize().height());
 		this.screen.setVisible(true);
 	}
 

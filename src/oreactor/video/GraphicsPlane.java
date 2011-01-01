@@ -22,7 +22,7 @@ public class GraphicsPlane extends Plane {
 
 	public void line(double x1, double y1, double x2, double y2, Color c) {
 		this.assertProgrammableState();
-		g.setColor(c);
+		g.setColor(figureOutColor(c));
 		g.drawLine((int)x1, (int)y1, (int)x2, (int)y2);
 	}
 
@@ -34,22 +34,25 @@ public class GraphicsPlane extends Plane {
 
 	public void boxfill(double x, double y, double w, double h, Color c) {
 		this.assertProgrammableState();
-		g.setColor(c);
+		g.setColor(figureOutColor(c));
 		g.fillRect((int)x, (int)y, (int)w, (int)h);
 	}
 
 	public void oval(double x, double y, double w, double h, Color c) {
 		this.assertProgrammableState();
+		g.setColor(figureOutColor(c));
 		g.drawOval((int)x, (int)y, (int)w, (int)h);
 	}
 
 	public void filloval(double x, double y, double w, double h, Color c) {
 		this.assertProgrammableState();
+		g.setColor(figureOutColor(c));
 		g.drawOval((int)x, (int)y, (int)w, (int)h);
 	}
 
 	public void pset(double x, double y, Color c) {
 		this.assertProgrammableState();
+		g.setColor(figureOutColor(c));
 		this.image.setRGB((int)x, (int)y, c.getRGB());
 	}
 
@@ -77,6 +80,7 @@ public class GraphicsPlane extends Plane {
 
 	public void paint(double x1, double y1, Color c, Color b) {
 		this.assertProgrammableState();
+		// TODO
 	}
 
 	public void color(Color foreground, Color background) {
@@ -85,6 +89,14 @@ public class GraphicsPlane extends Plane {
 		this.bgColor = background;
 	}
 
+	private Color figureOutColor(Color c) {
+		Color ret = c;
+		if (ret == null) {
+			ret = this.fgColor;
+		}
+		return ret;
+	}
+	
 	@Override
 	protected void renderEngine(Graphics2D g) {
 		g.drawImage(

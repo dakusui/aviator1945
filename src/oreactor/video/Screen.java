@@ -199,6 +199,7 @@ public class Screen extends JFrame {
     	this.settings = settings;
     	this.strategy = Strategy.figureOut(this.settings.renderingMode());
 		this.planes = new LinkedList<Plane>();
+		this.physical = new Region(settings.screenSize().width(), settings.screenSize().height());
 		this.closed = false;
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -206,6 +207,7 @@ public class Screen extends JFrame {
 				closed = true;
 			}
 		});
+		this.setSize(settings.screenSize().width(), settings.screenSize().height());
     }
     
     private void renderPlanes(Graphics2D g) {
