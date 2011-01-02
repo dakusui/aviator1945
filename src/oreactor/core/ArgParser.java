@@ -37,7 +37,7 @@ public class ArgParser {
 		return rest;
 	}
 	
-	public Enum<?> parseEnum(String keyword, @SuppressWarnings("rawtypes") Class<? extends Enum> k, Enum<?> defaultValue) throws ArgumentException {
+	public Enum<?> parseEnum(String keyword, @SuppressWarnings("unchecked") Class<? extends Enum> k, Enum<?> defaultValue) throws ArgumentException {
 		Enum<?> ret = null;
 		if (ret == null) {
 			ret = defaultValue;
@@ -46,12 +46,12 @@ public class ArgParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Enum<?> pickupEnumValue(String keyword, @SuppressWarnings("rawtypes") Class<? extends Enum> k) throws ArgumentException {
+	private Enum<?> pickupEnumValue(String keyword, Class<? extends Enum> k) throws ArgumentException {
 		Enum<?> ret = null;
 		for (Tuple t : this.tuples) {
 			if (t.key.equals(keyword)) {
 				try {
-					ret = Enum.valueOf(k, t.value);
+					ret =  Enum.valueOf(k, t.value);
 					this.tuples.remove(t);
 					break;
 				} catch (IllegalArgumentException e) {
