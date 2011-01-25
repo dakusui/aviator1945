@@ -1,10 +1,17 @@
 package oreactor.video;
 
 public class Viewport {
-	static class Vector {
+	public static class Vector {
 		double x;
 		double y;
 	}
-	Vector horizontal;
-	Vector vertical;
+	Vector offset;
+	/**
+	 * First base vector for the view port.
+	 */
+	Vector i;
+	/**
+	 * Second base vector for the view port.
+	 */
+	Vector j;
 }
