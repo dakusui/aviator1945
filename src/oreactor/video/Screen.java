@@ -243,8 +243,8 @@ public class Screen extends JFrame {
 		this.planes.add(info.type().createPlane(this, info.name()));
 	}
 	public void prepare() {
-		for (Plane p: this.planes) {
-			p.prepare();
+		for (@SuppressWarnings("unused") Plane p: this.planes) {
+			//p.prepare();
 		}		
 	}
 
@@ -252,8 +252,8 @@ public class Screen extends JFrame {
 		List<Plane> rev = new LinkedList<Plane>();
 		rev.addAll(this.planes);
 		Collections.reverse(rev);
-		for (Plane p: rev) {
-			p.finish();
+		for (@SuppressWarnings("unused") Plane p: rev) {
+			//p.finish();
 		}	
 	}
 

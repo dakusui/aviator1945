@@ -15,11 +15,6 @@ public class VideoEngine extends BaseEngine {
 	}
 
 	@Override
-	public void prepare() {
-		super.prepare();
-	}
-	
-	@Override
 	public void run() throws OpenReactorWindowClosedException {
 		screen.render();
 		if (this.screen.isClosed()) {

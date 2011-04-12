@@ -25,7 +25,6 @@ public abstract class Plane  extends BaseGear implements Renderable {
 
 	@Override
 	public void render(Graphics2D g) {
-		this.assertRenderingState();
 		this.renderEngine(g);
 	}
 

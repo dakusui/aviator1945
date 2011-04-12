@@ -7,7 +7,7 @@ import oreactor.core.Reactor;
 public class ExceptionThrower {
 
 	public static void throwArgumentException(String keyword, String key,
-			@SuppressWarnings("unchecked") Class<? extends Enum> k) throws ArgumentException {
+			@SuppressWarnings("rawtypes") Class<? extends Enum> k) throws ArgumentException {
 		String availableValues = "";
 		boolean firstOne = true;
 		for (Enum<?> i : k.getEnumConstants()) {

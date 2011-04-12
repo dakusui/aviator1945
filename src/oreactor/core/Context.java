@@ -1,11 +1,14 @@
 package oreactor.core;
 
+import java.util.List;
+
 import oreactor.io.IOEngine;
 import oreactor.joystick.JoystickEngine;
 import oreactor.keyboard.KeyboardEngine;
 import oreactor.music.MusicEngine;
 import oreactor.network.NetworkEngine;
 import oreactor.sound.SoundEngine;
+import oreactor.video.Screen.PlaneType;
 import oreactor.video.VideoEngine;
 
 public class Context {
@@ -19,6 +22,8 @@ public class Context {
 	
 	public Context(Settings settings) {
 		this.videoEngine = new VideoEngine(settings);
+		@SuppressWarnings("unused")
+		List<PlaneType> planeInfoItems = settings.planeInfoItems();
 		this.soundEngine = new SoundEngine(settings);
 		this.musicEngine = new MusicEngine(settings);
 		this.keyboardEngine = new KeyboardEngine(settings);

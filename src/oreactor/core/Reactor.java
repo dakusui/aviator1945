@@ -20,11 +20,20 @@ public class Reactor {
 		protected abstract void run(Reactor reactor, Context c) throws OpenReactorException;
 	}
 	
-	private long interval;
+	protected long interval;
+
+	protected ArgParser argParser;
 	
+	public Reactor() {
+	}
+
+	public void argParser(ArgParser argParser) {
+		this.argParser = argParser;
+	}
+	
+
 	protected Context initialize(Settings settings) {
-		Settings s = this.customize(settings); 
-		return new Context(s);
+		return new Context(settings);
 	}
 	
 	@ExtensionPoint
@@ -78,6 +87,7 @@ public class Reactor {
 	}
 
 	private void prepareEngines(Context c) {
+		/*
 		c.getIOEngine().prepare();
 		c.getJoystickEngine().prepare();
 		c.getKeyboardEngine().prepare();
@@ -85,6 +95,7 @@ public class Reactor {
 		c.getNetworkEngine().prepare();
 		c.getSoundEngine().prepare();
 		c.getVideoEngine().prepare();
+		*/
 	}
 
 	private void runEngines(Context c) throws OpenReactorException {
@@ -99,6 +110,7 @@ public class Reactor {
 
 
 	private void finishEngines(Context c) {
+		/*
 		c.getVideoEngine().finish();		
 		c.getSoundEngine().finish();
 		c.getNetworkEngine().finish();
@@ -106,6 +118,7 @@ public class Reactor {
 		c.getKeyboardEngine().finish();
 		c.getJoystickEngine().finish();
 		c.getIOEngine().finish();
+		*/
 	}
 
 	@ExtensionPoint
@@ -123,8 +136,21 @@ public class Reactor {
 	}
 
 	@ExtensionPoint
-	protected Settings customize(Settings settings) {
-		return settings;
+	protected
+	Settings loadSettings() throws OpenReactorException {
+		Settings ret = null;
+		ret = new Settings();
+		ret.font(argParser.chooseFont());
+		ret.frameMode(argParser.chooseFrameMode());
+		ret.joystickMode(argParser.chooseJoyStickMode());
+		ret.loggingMode(argParser.chooseLoggingMode());
+		ret.renderingMode(argParser.chooseRenderingMode());
+		ret.runningMode(argParser.chooseRunningMode());
+		ret.screenSize(argParser.chooseScreenSize());
+		ret.soundMode(argParser.chooseSoundMode());
+		ret.videoMode(argParser.chooseVideoMode());
+		return ret;
 	}
+
 }
 

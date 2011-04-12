@@ -9,5 +9,10 @@ public abstract class BaseEngine extends BaseGear {
 		this.settings = settings;
 	}
 	
+	public void prepare() throws OpenReactorException {
+	}
 	public abstract void run() throws OpenReactorException;
+
+	public void finish() throws OpenReactorException {
+	}
 }
