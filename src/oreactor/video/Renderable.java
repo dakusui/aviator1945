@@ -1,4 +1,4 @@
-package oreactor.video.sprite;
+package oreactor.video;
 
 import java.awt.Graphics2D;
 

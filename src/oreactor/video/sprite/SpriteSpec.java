@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 import oreactor.io.BaseResource;
 
-public class SpriteSpec extends BaseResource {
+public final class SpriteSpec extends BaseResource {
 	protected BufferedImage[] images;
 
 	protected SpriteSpec(String name) {

@@ -9,7 +9,6 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.VolatileImage;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,34 +23,35 @@ public class Screen extends JFrame {
 	public static enum PlaneType {
 		GRAPHICS {
 			@Override
-			public Plane createPlane(Screen screen, String name) {
-				return screen.createGraphicsPlane(name);
+			public Plane createPlane(Screen screen, String name, double width, double height) {
+				return screen.createGraphicsPlane(name, width, height);
 			}
 		}, 
 		PATTTERN {
 			@Override
-			public Plane createPlane(Screen screen, String name) {
-				return screen.createPatternPlane(name);
+			public Plane createPlane(Screen screen, String name, double width, double height) {
+				return screen.createPatternPlane(name, width, height);
 			}
 		}, 
 		SPRITE {
 			@Override
-			public Plane createPlane(Screen screen, String name) {
-				return screen.createSpritePlane(name);
+			public Plane createPlane(Screen screen, String name, double width, double height) {
+				return screen.createSpritePlane(name, width, height);
 			}
 		};
-		public abstract Plane createPlane(Screen screen, String name);
+		public abstract Plane createPlane(Screen screen, String name, double width, double height);
 	}
 	
 	public static class PlaneInfo {
 		private String name;
 		private PlaneType type;
-		private Region region;
+		double width, height;
 		
-		public PlaneInfo(String name, PlaneType type, Region region) {
+		public PlaneInfo(String name, PlaneType type, double width, double height) {
 			this.name = name;
 			this.type = type;
-			this.region = region;
+			this.width = width;
+			this.height = height;
 		}
 		
 		public String name() {
@@ -62,8 +62,8 @@ public class Screen extends JFrame {
 			return this.type;
 		}
 		
-		public Region region() {
-			return this.region;
+		public String toString() {
+			return "Plane:" + this.name + "(" + this.type() + ")";
 		}
 	}
 	
@@ -143,7 +143,7 @@ public class Screen extends JFrame {
 			public void render(Screen s) {
 	            ////
 				// 1. オフスクリーンへの画面の描画
-	        	this.renderOffScreen(s, s.graphics2d);
+	        	this.renderOffScreen(s, (Graphics2D)s.getGraphics());
 	        	////
 	        	// 2. 画面への更新
 	    		Graphics g = s.getGraphics();
@@ -189,17 +189,20 @@ public class Screen extends JFrame {
 
 	private Strategy strategy;
 	
-	private Region logical;
-	private Region physical;
 	private List<Plane> planes;
 
 	private boolean closed;
 	
-    public Screen(Settings settings) {
+	double width;
+	
+	double height;
+	
+	public Screen(Settings settings) {
     	this.settings = settings;
     	this.strategy = Strategy.figureOut(this.settings.renderingMode());
 		this.planes = new LinkedList<Plane>();
-		this.physical = new Region(settings.screenSize().width(), settings.screenSize().height());
+		this.width = settings.screenSize().width();
+		this.height = settings.screenSize().height();
 		this.closed = false;
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -224,24 +227,29 @@ public class Screen extends JFrame {
     	this.strategy.render(this);
     }
 
-	GraphicsPlane createGraphicsPlane(String name) {
-		GraphicsPlane ret = new GraphicsPlane(name, physical, logical);
+	GraphicsPlane createGraphicsPlane(String name, double width, double height) {
+		GraphicsPlane ret = new GraphicsPlane(name, width, height);
 		return ret;
 	}
 	
-	SpritePlane createSpritePlane(String name) {
-		SpritePlane ret = new SpritePlane(name, physical, logical);
+	SpritePlane createSpritePlane(String name, double width, double height) {
+		SpritePlane ret = new SpritePlane(name, width, height);
 		return ret;
 	}
 	
-	PatternPlane createPatternPlane(String name) {
-		PatternPlane ret = new PatternPlane(name, physical, logical);
+	PatternPlane createPatternPlane(String name, double width, double height) {
+		PatternPlane ret = new PatternPlane(name, width, height, 32, 32);
 		return ret;
 	}
 
 	public void createPlane(PlaneInfo info) {
-		this.planes.add(info.type().createPlane(this, info.name()));
+		System.out.println("Creating a plane:" + info);
+		Plane p = info.type().createPlane(this, info.name(), info.width, info.height);
+		System.out.println("Created plane is:" + p);
+		this.planes.add(p);
+		System.out.println("Registered planes:" + this.planes);
 	}
+	
 	public void prepare() {
 		for (@SuppressWarnings("unused") Plane p: this.planes) {
 			//p.prepare();
@@ -257,8 +265,8 @@ public class Screen extends JFrame {
 		}	
 	}
 
-	public Iterator<Plane> planes() {
-		return this.planes.iterator();
+	public List<Plane> planes() {
+		return this.planes;
 	}
 
 	public boolean isClosed() {

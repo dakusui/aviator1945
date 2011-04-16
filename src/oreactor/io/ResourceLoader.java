@@ -7,6 +7,7 @@ import java.util.List;
 
 import oreactor.music.MusicClip;
 import oreactor.sound.SoundClip;
+import oreactor.video.pattern.PatternSpec;
 import oreactor.video.sprite.SpriteSpec;
 
 import org.json.JSONObject;
@@ -28,6 +29,10 @@ public class ResourceLoader<T extends Resource> {
 	}
 	
 	public SpriteSpec loadSpriteSpec(String resourceName) {
+		return null;
+	}
+	
+	public PatternSpec loadPatternSpec(String resourceName) {
 		return null;
 	}
 	

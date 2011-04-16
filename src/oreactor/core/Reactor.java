@@ -32,7 +32,7 @@ public class Reactor {
 	}
 	
 
-	protected Context initialize(Settings settings) {
+	protected final Context initialize(Settings settings) {
 		return new Context(settings);
 	}
 	
@@ -41,7 +41,10 @@ public class Reactor {
 	}
 
 	public void perform(Settings settings) throws OpenReactorException {
+		System.out.println("START:perform");
+		System.out.println("START:initialization");
 		Context c = initialize(settings);
+		System.out.println("END:initialization");
 		Action action = Action.Running;
 		try {
 			long frameDebt = 0;

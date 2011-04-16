@@ -2,6 +2,8 @@ package oreactor.video.sprite;
 
 import java.awt.Graphics2D;
 
+import oreactor.video.Renderable;
+
 public class Sprite implements Renderable {
 	private SpriteSpec spec;
 	private double x;

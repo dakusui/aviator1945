@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.util.LinkedList;
 import java.util.List;
 
+import oreactor.video.Plane;
+import oreactor.video.Screen.PlaneInfo;
 import oreactor.video.Screen.PlaneType;
 
 public class Settings {
@@ -100,16 +102,16 @@ public class Settings {
 	private FrameMode frameMode = FrameMode.DROP;
 	private JoystickMode joystickMode;
 	private LoggingMode loggingMode;
-	private List<PlaneType> planeTypes = new LinkedList<PlaneType>();
 	private RenderingMode renderingMode;
 	private RunningMode runningMode;
 	private ScreenSize screenSize;
 	private SoundMode soundMode;
 
 	private VideoMode videoMode;
+	private List<PlaneInfo> planeInfoItems = new LinkedList<PlaneInfo>();
 
-	public void addPlaneType(PlaneType planeType) {
-		this.planeTypes.add(planeType);
+	public void addPlaneInfo(String name, PlaneType planeType) {
+		this.planeInfoItems.add(new PlaneInfo(name, planeType, this.screenSize.width(), this.screenSize.height()));
 	}
 
 	public Font font() {
@@ -146,8 +148,8 @@ public class Settings {
 		this.loggingMode = loggingMode;
 	}
 
-	public List<PlaneType> planeInfoItems() {
-		return this.planeTypes;
+	public List<PlaneInfo> planeInfoItems() {
+		return this.planeInfoItems ;
 	}
 	
 	public RenderingMode renderingMode() {

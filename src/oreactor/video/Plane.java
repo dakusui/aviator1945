@@ -3,7 +3,6 @@ package oreactor.video;
 import java.awt.Graphics2D;
 
 import oreactor.core.BaseGear;
-import oreactor.video.sprite.Renderable;
 
 public abstract class Plane  extends BaseGear implements Renderable {
 	static enum Type {
@@ -11,16 +10,17 @@ public abstract class Plane  extends BaseGear implements Renderable {
 		Sprite,
 		Pattern;
 	}
-	
-	final protected Region logicalRegion;
-	final protected Region physicalRegion;
-	final protected String name;
+	protected Viewport viewport;
+	protected String name;
+	protected double width;
+	protected double height;
 
-	protected Plane(String name, Region physical, Region logical) {
+	protected Plane(String name, double width, double height) {
 		super();
 		this.name = name;
-		this.physicalRegion = physical;
-		this.logicalRegion = logical;
+		this.width = width;
+		this.height = height;
+		this.viewport = new Viewport(this.width, this.height);
 	}
 
 	@Override
@@ -28,6 +28,13 @@ public abstract class Plane  extends BaseGear implements Renderable {
 		this.renderEngine(g);
 	}
 
+	public Viewport viewport() {
+		return this.viewport;
+	}
+
+	public String name() {
+		return this.name;
+	}
 	protected abstract void renderEngine(Graphics2D g);
 }
 

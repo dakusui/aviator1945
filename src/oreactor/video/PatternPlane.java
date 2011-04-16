@@ -2,25 +2,32 @@ package oreactor.video;
 
 import java.awt.Graphics2D;
 
+import oreactor.video.pattern.Pattern;
+
 public class PatternPlane extends Plane {
-	static class Pattern {
-		public void render() {
-			// TODO
-		}
-	}
+	double patternwidth = 32;
+	double patternheight = 32;
 	int[][] map;
 	Pattern[] patterns;
+	int columns;
+	int rows;
 	
-	protected PatternPlane(String name, Region physical, Region logical) {
-		super(name, physical, logical);
+	protected PatternPlane(String name, double width, double height, double patternwidth, double patternheight) {
+		super(name, width, height);
+		this.columns = (int)(width / patternwidth) + 1;
+		this.rows = (int)(height / patternheight) + 1;
 	}
 
 	public void put(int x, int y, int patternno) {
 		this.map[x][y] = patternno;
 	}
 	
-	public int get(int x, int y) {
-		return this.map[x][y];
+	public Pattern get(int x, int y) {
+		Pattern ret = null;
+		if (0 <= x && x < columns && 0 <= y && y < rows) {
+			ret = patterns[this.map[x][y]];
+		}
+		return ret;
 	}
 
 	public void setPatterns(Pattern[] patterns) {
@@ -29,7 +36,21 @@ public class PatternPlane extends Plane {
 
 	@Override
 	protected void renderEngine(Graphics2D g) {
-		// TODO Auto-generated method stub
-		
+		for (int x = 0; x < this.columns; x++) {
+			for (int y = 0; y < this.rows; y++) {
+				Pattern p = get(x, y);
+				if (p != null) {
+					p.render(g, x, y, patternwidth, patternheight);
+				}
+			}
+		}
+	}
+	
+	public final double patternWidth() {
+		return this.patternwidth;
+	}
+	
+	public final double patternHeight() {
+		return this.patternheight;
 	}
 }
