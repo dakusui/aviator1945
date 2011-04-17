@@ -12,10 +12,12 @@ public class PatternPlane extends Plane {
 	int columns;
 	int rows;
 	
-	protected PatternPlane(String name, double width, double height, double patternwidth, double patternheight) {
+	protected PatternPlane(String name, double width, double height, double patternwidth, double patternheight, int numpatterns) {
 		super(name, width, height);
 		this.columns = (int)(width / patternwidth) + 1;
 		this.rows = (int)(height / patternheight) + 1;
+		this.map = new int[columns][rows];
+		this.patterns = new Pattern[numpatterns];
 	}
 
 	public void put(int x, int y, int patternno) {

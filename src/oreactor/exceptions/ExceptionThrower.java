@@ -7,7 +7,7 @@ import oreactor.core.Reactor;
 public class ExceptionThrower {
 
 	public static void throwArgumentException(String keyword, String key,
-			@SuppressWarnings("rawtypes") Class<? extends Enum> k) throws ArgumentException {
+			@SuppressWarnings("unchecked") Class<? extends Enum> k) throws ArgumentException {
 		String availableValues = "";
 		boolean firstOne = true;
 		for (Enum<?> i : k.getEnumConstants()) {
@@ -43,5 +43,21 @@ public class ExceptionThrower {
 	public static void throwWindowClosedException() throws OpenReactorWindowClosedException {
 		throw new OpenReactorWindowClosedException("Main window is closed.");
 	}
+	
+	public static void throwMalformatJsonException(String msg, Throwable t) throws OpenReactorException {
+		throw new OpenReactorException(msg, t);
+	}
 
+	public static void throwIOException(String msg, Throwable t) throws OpenReactorException {
+		throw new OpenReactorException(msg, t);
+	}
+
+	public static void throwResourceLoaderInstanciationException(String msg, Throwable t) throws OpenReactorException {
+		throw new OpenReactorException("Failed to instanciate a resource loader:<" + msg + ">", t);
+	}
+
+	public static void throwMalformedConfigurationException(String string, Object o) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -4,7 +4,6 @@ import java.awt.Font;
 import java.util.LinkedList;
 import java.util.List;
 
-import oreactor.video.Plane;
 import oreactor.video.Screen.PlaneInfo;
 import oreactor.video.Screen.PlaneType;
 

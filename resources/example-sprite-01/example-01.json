@@ -1,6 +1,6 @@
 {
 	'class':'example.ExampleSpriteSpec',
-	'width':'64',
-	'height':'64',
+	'width':64,
+	'height':64,
 	'images':['sprites/image/ki84-01.gif'],
 }

@@ -238,7 +238,7 @@ public class Screen extends JFrame {
 	}
 	
 	PatternPlane createPatternPlane(String name, double width, double height) {
-		PatternPlane ret = new PatternPlane(name, width, height, 32, 32);
+		PatternPlane ret = new PatternPlane(name, width, height, 32, 32, 256);
 		return ret;
 	}
 

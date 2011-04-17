@@ -17,7 +17,7 @@ public class SpritePlane extends Plane {
 	}
 
 	public Sprite createSprite(SpriteSpec spec) {
-		Sprite ret = new Sprite(spec);
+		Sprite ret = spec.createSprite();
 		this.sprites.add(ret);
 		return ret;
 	}
@@ -28,9 +28,10 @@ public class SpritePlane extends Plane {
 
 	@Override
 	protected void renderEngine(Graphics2D g) {
-		// TODO Auto-generated method stub
-		
-	}
+		for (Sprite s : sprites) {
+			s.render(g);
+		}
+	}	
 	
 	public Iterator<Sprite> iterator() {
 		return this.sprites.iterator();
