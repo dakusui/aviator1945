@@ -17,7 +17,7 @@ public class MusicClip extends BaseResource {
 	}
 
 	@Override
-	public void load(JSONObject params) throws OpenReactorException {
+	public void init(JSONObject params) throws OpenReactorException {
 		// TODO Auto-generated method stub
 		
 	}

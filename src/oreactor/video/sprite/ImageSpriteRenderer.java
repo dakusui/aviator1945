@@ -26,7 +26,24 @@ public class ImageSpriteRenderer extends SpriteRenderer {
 	}
 
 	protected Image images[] = null;
-	
+	@Override
+	public void init(JSONObject params) throws OpenReactorException {
+		ResourceLoader loader = ResourceLoader.getResourceLoader();
+		try {
+			JSONArray resources = params.getJSONArray("images");
+			int len = resources.length();
+			List<Image> imageList = new LinkedList<Image>();
+			for (int i = 0; i < len; i ++) {
+				String cur;
+				cur = resources.getString(i);
+				Image im = loader.loadImage(params.getString(cur));
+				imageList.add(im);
+			}
+			images = (Image[]) imageList.toArray();
+		} catch (JSONException e) {
+			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
+		}
+	}	
 	@Override
 	public void render(Graphics2D gg, Sprite sprite) {
 		AffineTransform backup = gg.getTransform();
@@ -65,22 +82,4 @@ public class ImageSpriteRenderer extends SpriteRenderer {
 		return new RenderingParametersForImageSprite();
 	}
 
-	@Override
-	public void load(JSONObject params) throws OpenReactorException {
-		ResourceLoader loader = ResourceLoader.getResourceLoader();
-		try {
-			JSONArray resources = params.getJSONArray("resources");
-			int len = resources.length();
-			List<Image> imageList = new LinkedList<Image>();
-			for (int i = 0; i < len; i ++) {
-				String cur;
-				cur = resources.getString(i);
-				Image im = loader.loadImage(params.getString(cur));
-				imageList.add(im);
-			}
-			images = (Image[]) imageList.toArray();
-		} catch (JSONException e) {
-			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
-		}
-	}
 }

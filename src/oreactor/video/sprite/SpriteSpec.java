@@ -27,8 +27,8 @@ public final class SpriteSpec extends BaseResource {
 	}
 
 	@Override
-	public void load(JSONObject params) throws OpenReactorException {
-		this.renderer.load(params);
+	public void init(JSONObject params) throws OpenReactorException {
+		this.renderer.init(params);
 	}
 
 	public void width(double w) {

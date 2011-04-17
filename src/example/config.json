@@ -1,122 +1,127 @@
 {
-    'sprites':{
-        'specs':{
-            'spr00':{
-                'renderer':'example.ImageSpriteRenderer',
-                'params':{
-                    'resources':['example/spr00.png'],
-                },
-                'hresolution':64,
-                'vresolution':64,
-            }
+    'spritespecs':{
+        'spr00':{
+            'renderer':'example.ImageSpriteRenderer',
+            'params':{
+                'images':['example/spr00.png'],
+            },
+            'hresolution':64,
+            'vresolution':64,
         }
     },
-    'patternplane':{
-        'settings':{
-            'patternwidth':32,
-            'patternheight':32,
+    'patterns':{
+        '00':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/00.png',
+            },
         },
-        'patterns':{
-            '00':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/00.png',
-                },
+        '01':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/01.png',
             },
-            '01':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/01.png',
-                },
+        },
+        '02':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/02.png',
             },
-            '02':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/02.png',
-                },
+        },
+        '03':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/03.png',
             },
-            '03':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/03.png',
-                },
+        },
+        '04':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/04.png',
             },
-            '04':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/04.png',
-                },
+        },
+        '05':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/05.png',
             },
-            '05':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/05.png',
-                },
+        },
+        '06':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/06.png',
             },
-            '06':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/06.png',
-                },
+        },
+        '07':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/07.png',
             },
-            '07':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/07.png',
-                },
+        },
+        '08':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/08.png',
             },
-            '08':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/08.png',
-                },
+        },
+        '09':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/09.png',
             },
-            '09':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/09.png',
-                },
+        },
+        '10':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/10.png',
             },
-            '10':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/10.png',
-                },
+        },
+        '11':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/11.png',
             },
-            '11':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/11.png',
-                },
+        },
+        '12':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/12.png',
             },
-            '12':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/12.png',
-                },
+        },
+        '13':{
+            'class':'example.ImagePattern',
+            'params':{
+               'image':'example/13.png',
             },
-            '13':{
-                'class':'example.ImagePattern',
-                'params':{
-                   'resource':'example/13.png',
-                },
+        },
+        '14':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/14.png',
             },
-            '14':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/14.png',
-                },
+        },
+        '15':{
+            'class':'example.ImagePattern',
+            'params':{
+                'image':'example/15.png',
             },
-            '15':{
-                'class':'example.ImagePattern',
-                'params':{
-                    'resource':'example/15.png',
-                },
+        },
+    },
+ 
+    'planes':{
+        'sprite':{
+            'type':'sprite',
+        },
+        'pattern':{
+            'type':'pattern',
+            'settings':{
+                'patternwidth':32,
+                'patternheight':32,
             },
         },
     },
     'musicclips':{
     },
     'soundclips':{
-    }
+    },
 }

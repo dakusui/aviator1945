@@ -15,7 +15,7 @@ import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.music.MusicClip;
 import oreactor.sound.SoundClip;
-import oreactor.video.pattern.PatternSpec;
+import oreactor.video.pattern.Pattern;
 import oreactor.video.sprite.SpriteSpec;
 
 import org.json.JSONException;
@@ -97,11 +97,7 @@ public class ResourceLoader {
 		return ret;
 	}
 	
-	public SpriteSpec loadSpriteSpec(String resourceName) {
-		return null;
-	}
-	
-	public PatternSpec loadPatternSpec(String resourceName) {
+	public Pattern loadPattern(String resourceName) {
 		return null;
 	}
 	
@@ -126,16 +122,33 @@ public class ResourceLoader {
 	public void loadConfig(String resourceName) throws OpenReactorException {
 		JSONObject config = this.loadJsonObject(resourceName);
 		try {
-			JSONObject spriteConfig = config.getJSONObject("sprites");
-			Iterator<JSONObject> keys = spriteConfig.keys();
-			while (keys.hasNext()) {
-				String name = keys.next().toString();
-				JSONObject v = spriteConfig.getJSONObject(name);
-				SpriteSpec spec = new SpriteSpec(name);
-				spec.loadRenderer(v.getString("renderer"));
-				spec.width(v.getInt("hresolution"));
-				spec.height(v.getInt("vresolution"));
-				spec.load(v.getJSONObject("params"));
+			{
+				////
+				// Loading sprite specs
+				JSONObject spriteConfig = config.getJSONObject("spritespecs");
+				Iterator<JSONObject> keys = spriteConfig.keys();
+				while (keys.hasNext()) {
+					String name = keys.next().toString();
+					JSONObject v = spriteConfig.getJSONObject(name);
+					SpriteSpec spec = new SpriteSpec(name);
+					spec.loadRenderer(v.getString("renderer"));
+					spec.width(v.getInt("hresolution"));
+					spec.height(v.getInt("vresolution"));
+					spec.init(v.getJSONObject("params"));
+				}
+			}
+			{
+				////
+				// Loading patterns
+				JSONObject patternConfig = config.getJSONObject("patterns");
+				Iterator<JSONObject> keys = patternConfig.keys();
+				while (keys.hasNext()) {
+					String name = keys.next().toString();
+					JSONObject v = patternConfig.getJSONObject(name);
+					Pattern p = new Pattern(name);
+					p.loadRenderer(v.getString("renderer"));
+					p.init(v.getJSONObject("params"));
+				}
 			}
 		} catch (JSONException e) {
 			ExceptionThrower.throwMalformedConfigurationException("", null);
