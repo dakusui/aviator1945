@@ -2,10 +2,9 @@ package oreactor.video.sprite;
 
 import java.awt.Graphics2D;
 
-import oreactor.video.Renderable;
 import oreactor.video.sprite.SpriteRenderer.RenderingParameters;
 
-public final class Sprite implements Renderable {
+public final class Sprite {
 	private SpriteSpec spec;
 	private double x;
 	private double y;
@@ -26,7 +25,6 @@ public final class Sprite implements Renderable {
 		return this.spec;
 	}
 
-	@Override
 	public void render(Graphics2D g) {
 		this.spec.render(g, this);
 	}

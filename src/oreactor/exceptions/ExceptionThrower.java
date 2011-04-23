@@ -7,7 +7,7 @@ import oreactor.core.Reactor;
 public class ExceptionThrower {
 
 	public static void throwArgumentException(String keyword, String key,
-			@SuppressWarnings("unchecked") Class<? extends Enum> k) throws ArgumentException {
+			@SuppressWarnings({"rawtypes" }) Class<? extends Enum> k) throws ArgumentException {
 		String availableValues = "";
 		boolean firstOne = true;
 		for (Enum<?> i : k.getEnumConstants()) {
@@ -56,8 +56,16 @@ public class ExceptionThrower {
 		throw new OpenReactorException("Failed to instanciate a resource loader:<" + msg + ">", t);
 	}
 
-	public static void throwMalformedConfigurationException(String string, Object o) {
-		// TODO Auto-generated method stub
-		
+	public static void throwMalformedConfigurationException(String msg, Throwable t) throws OpenReactorException {
+		throw new OpenReactorException(msg, t);
+	}
+
+	public static void throwPatternLoadFailure(String msg, Throwable t) throws OpenReactorException {
+		throw new OpenReactorException(msg, t);
+	}
+
+	public static void throwResourceNotFoundException(String resourceName,
+			Throwable t) throws OpenReactorException {
+		throw new OpenReactorException("Resource:<" + resourceName + "> is not found", t);
 	}
 }

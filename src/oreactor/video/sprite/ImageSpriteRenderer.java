@@ -36,10 +36,11 @@ public class ImageSpriteRenderer extends SpriteRenderer {
 			for (int i = 0; i < len; i ++) {
 				String cur;
 				cur = resources.getString(i);
-				Image im = loader.loadImage(params.getString(cur));
+				Image im = loader.loadImage(cur);
 				imageList.add(im);
 			}
-			images = (Image[]) imageList.toArray();
+			images = new Image[0];
+			images = imageList.toArray(images);
 		} catch (JSONException e) {
 			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
 		}

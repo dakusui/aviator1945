@@ -15,8 +15,12 @@ public class ReactorRunner {
 			reactor.argParser(argParser);
 			System.out.println("reactor=<" + reactor + ">");
 			Settings settings = reactor.loadSettings(); 
-			System.out.println("settings are loaded.");
-			reactor.perform(settings);
+			try {
+				System.out.println("settings are loaded.");
+				reactor.perform(settings);
+			} finally {
+				reactor.postMortem(settings);
+			}
 		} catch (OpenReactorWindowClosedException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace(System.out);

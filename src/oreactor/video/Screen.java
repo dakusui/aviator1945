@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -19,7 +20,7 @@ import oreactor.core.Settings.RenderingMode;
 import oreactor.core.Util;
 import oreactor.exceptions.OpenReactorRuntimeException;
 
-public class Screen extends JFrame {
+public class Screen extends JFrame implements Drawable {
 	public static enum PlaneType {
 		GRAPHICS {
 			@Override
@@ -271,5 +272,23 @@ public class Screen extends JFrame {
 
 	public boolean isClosed() {
 		return this.closed;
+	}
+
+	@Override
+	public BufferedImage offscreenBuffer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void flipped() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Graphics2D onscreenBuffer() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -18,6 +18,7 @@ import oreactor.sound.SoundClip;
 import oreactor.video.pattern.Pattern;
 import oreactor.video.sprite.SpriteSpec;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,9 +53,12 @@ public class ResourceLoader {
 		this.monitors.add(monitor);
 	}
 	
-	protected InputStream openUrl(String resourceName) {
+	protected InputStream openUrl(String resourceName) throws OpenReactorException {
 		// see Avis.openUrl
 		InputStream ret = ClassLoader.getSystemClassLoader().getResourceAsStream(resourceName);
+		if (ret == null) {
+			ExceptionThrower.throwResourceNotFoundException(resourceName, null);
+		}
 		return ret;
 	}
 	
@@ -84,8 +88,8 @@ public class ResourceLoader {
 	
 	public Image loadImage(String resourceName) throws OpenReactorException {
 		Image ret = null;
-		InputStream is = openUrl(resourceName);
 		try {
+			InputStream is = openUrl(resourceName);
 			try {
 				ret =  ImageIO.read(is);
 			} finally {
@@ -95,10 +99,6 @@ public class ResourceLoader {
 			ExceptionThrower.throwIOException("Failed to load resource:<" + resourceName + ">", e);
 		}
 		return ret;
-	}
-	
-	public Pattern loadPattern(String resourceName) {
-		return null;
 	}
 	
 	public SoundClip loadSound(String resourceName) {
@@ -122,36 +122,53 @@ public class ResourceLoader {
 	public void loadConfig(String resourceName) throws OpenReactorException {
 		JSONObject config = this.loadJsonObject(resourceName);
 		try {
+			JSONObject spriteConfig = config.getJSONObject("spritespecs");
+			int numSpriteSpecs = spriteConfig.length();
+			for (ResourceMonitor m: monitors) {
+				m.numSpriteSpecs(numSpriteSpecs);
+			}
+			JSONArray patternConfig = config.getJSONArray("patterns");
+			int numPatterns = patternConfig.length();
+			for (ResourceMonitor m: monitors) {
+				m.numPatterns(numPatterns);
+			}
 			{
 				////
 				// Loading sprite specs
-				JSONObject spriteConfig = config.getJSONObject("spritespecs");
-				Iterator<JSONObject> keys = spriteConfig.keys();
+				Iterator<String> keys = spriteConfig.keys();
 				while (keys.hasNext()) {
-					String name = keys.next().toString();
+					String cur = keys.next();
+					String name = cur.toString();
 					JSONObject v = spriteConfig.getJSONObject(name);
 					SpriteSpec spec = new SpriteSpec(name);
 					spec.loadRenderer(v.getString("renderer"));
 					spec.width(v.getInt("hresolution"));
 					spec.height(v.getInt("vresolution"));
 					spec.init(v.getJSONObject("params"));
+					for (ResourceMonitor m: monitors) {
+						m.spriteSpecLoaded(spec);
+					}
 				}
 			}
 			{
 				////
 				// Loading patterns
-				JSONObject patternConfig = config.getJSONObject("patterns");
-				Iterator<JSONObject> keys = patternConfig.keys();
-				while (keys.hasNext()) {
-					String name = keys.next().toString();
-					JSONObject v = patternConfig.getJSONObject(name);
+				System.err.println("***");
+				for (int i = 0; i < numPatterns; i ++) {
+					System.err.println("---");
+					String name = Integer.toString(i);
+					JSONObject v = patternConfig.getJSONObject(i);
 					Pattern p = new Pattern(name);
 					p.loadRenderer(v.getString("renderer"));
 					p.init(v.getJSONObject("params"));
+					for (ResourceMonitor m: monitors) {
+						m.patternLoaded(p);
+					}
 				}
+				System.err.println("+++");
 			}
 		} catch (JSONException e) {
-			ExceptionThrower.throwMalformedConfigurationException("", null);
+			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
 		}
 	}
 	

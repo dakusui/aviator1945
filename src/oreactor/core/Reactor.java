@@ -27,20 +27,48 @@ public class Reactor {
 	public Reactor() {
 	}
 
-	public void argParser(ArgParser argParser) {
-		this.argParser = argParser;
+	@ExtensionPoint
+	protected
+	Settings loadSettings() throws OpenReactorException {
+		Settings ret = null;
+		ret = new Settings();
+		ret.font(argParser.chooseFont());
+		ret.frameMode(argParser.chooseFrameMode());
+		ret.joystickMode(argParser.chooseJoyStickMode());
+		ret.loggingMode(argParser.chooseLoggingMode());
+		ret.renderingMode(argParser.chooseRenderingMode());
+		ret.runningMode(argParser.chooseRunningMode());
+		ret.screenSize(argParser.chooseScreenSize());
+		ret.soundMode(argParser.chooseSoundMode());
+		ret.videoMode(argParser.chooseVideoMode());
+		return ret;
+	}
+
+	@ExtensionPoint
+	protected Context initialize(Settings settings) {
+		return new Context(settings);
 	}
 	
-
-	protected final Context initialize(Settings settings) {
-		return new Context(settings);
+	@ExtensionPoint
+	protected void action(Context c) throws OpenReactorException {
+		////
+		// This method does nothing by default.
 	}
 	
 	@ExtensionPoint
 	protected void terminate(Context c) {
 	}
 
-	public void perform(Settings settings) throws OpenReactorException {
+	@ExtensionPoint
+	protected void postMortem(Settings settings) {
+		// does nothing by default.
+	}
+
+	public void argParser(ArgParser argParser) {
+		this.argParser = argParser;
+	}
+
+	public final void perform(Settings settings) throws OpenReactorException {
 		System.out.println("START:perform");
 		System.out.println("START:initialization");
 		Context c = initialize(settings);
@@ -124,12 +152,6 @@ public class Reactor {
 		*/
 	}
 
-	@ExtensionPoint
-	protected void action(Context c) throws OpenReactorException {
-		////
-		// This method does nothing by default.
-	}
-	
 	protected void exit(String msg) throws OpenReactorExitException {
 		throw new OpenReactorExitException(msg);
 	}
@@ -137,23 +159,5 @@ public class Reactor {
 	protected void exit() throws OpenReactorExitException {
 		throw new OpenReactorExitException(null);
 	}
-
-	@ExtensionPoint
-	protected
-	Settings loadSettings() throws OpenReactorException {
-		Settings ret = null;
-		ret = new Settings();
-		ret.font(argParser.chooseFont());
-		ret.frameMode(argParser.chooseFrameMode());
-		ret.joystickMode(argParser.chooseJoyStickMode());
-		ret.loggingMode(argParser.chooseLoggingMode());
-		ret.renderingMode(argParser.chooseRenderingMode());
-		ret.runningMode(argParser.chooseRunningMode());
-		ret.screenSize(argParser.chooseScreenSize());
-		ret.soundMode(argParser.chooseSoundMode());
-		ret.videoMode(argParser.chooseVideoMode());
-		return ret;
-	}
-
 }
 

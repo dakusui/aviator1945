@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 
 import oreactor.core.BaseGear;
 
-public abstract class Plane  extends BaseGear implements Renderable {
+public abstract class Plane  extends BaseGear {
 	static enum Type {
 		Graphics,
 		Sprite,
@@ -23,7 +23,6 @@ public abstract class Plane  extends BaseGear implements Renderable {
 		this.viewport = new Viewport(this.width, this.height);
 	}
 
-	@Override
 	public void render(Graphics2D g) {
 		this.renderEngine(g);
 	}

@@ -1,112 +1,112 @@
 {
     'spritespecs':{
         'spr00':{
-            'renderer':'example.ImageSpriteRenderer',
+            'renderer':'oreactor.video.sprite.ImageSpriteRenderer',
             'params':{
-                'images':['example/spr00.png'],
+                'images':['example/images/spr00.jpg'],
             },
             'hresolution':64,
             'vresolution':64,
         }
     },
-    'patterns':{
-        '00':{
-            'class':'example.ImagePattern',
+    'patterns':[
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/00.png',
+                'image':'example/images/00.jpg',
             },
         },
-        '01':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/01.png',
+                'image':'example/images/01.jpg',
             },
         },
-        '02':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/02.png',
+                'image':'example/images/02.jpg',
             },
         },
-        '03':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/03.png',
+                'image':'example/images/03.jpg',
             },
         },
-        '04':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/04.png',
+                'image':'example/images/04.jpg',
             },
         },
-        '05':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/05.png',
+                'image':'example/images/05.png',
             },
         },
-        '06':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/06.png',
+                'image':'example/images/06.png',
             },
         },
-        '07':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/07.png',
+                'image':'example/images/07.png',
             },
         },
-        '08':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/08.png',
+                'image':'example/images/08.png',
             },
         },
-        '09':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/09.png',
+                'image':'example/images/09.jpg',
             },
         },
-        '10':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/10.png',
+                'image':'example/images/10.jpg',
             },
         },
-        '11':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/11.png',
+                'image':'example/images/11.jpg',
             },
         },
-        '12':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/12.png',
+                'image':'example/images/12.jpg',
             },
         },
-        '13':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-               'image':'example/13.png',
+               'image':'example/images/13.jpg',
             },
         },
-        '14':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/14.png',
+                'image':'example/images/14.jpg',
             },
         },
-        '15':{
-            'class':'example.ImagePattern',
+        {
+            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
             'params':{
-                'image':'example/15.png',
+                'image':'example/images/15.jpg',
             },
         },
-    },
+    ],
  
     'planes':{
         'sprite':{

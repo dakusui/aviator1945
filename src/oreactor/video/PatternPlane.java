@@ -55,4 +55,12 @@ public class PatternPlane extends Plane {
 	public final double patternHeight() {
 		return this.patternheight;
 	}
+	
+	public int columns() {
+		return this.columns;
+	}
+	
+	public int rows() {
+		return this.rows;
+	}
 }

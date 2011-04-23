@@ -5,6 +5,7 @@ import java.awt.Image;
 
 import org.json.JSONObject;
 
+import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.BaseResource;
 import oreactor.video.PatternPlane;
@@ -37,20 +38,17 @@ public final class Pattern  extends BaseResource {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void loadRenderer(String className) {
+	public void loadRenderer(String className) throws OpenReactorException {
 		try {
 			Class<? extends PatternRenderer> rendererClass;
 			rendererClass = (Class<? extends PatternRenderer>) Class.forName(className);
 			this.renderer = rendererClass.newInstance();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ExceptionThrower.throwPatternLoadFailure("Failed to load pattern:<" + this.name() + ">", e);
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ExceptionThrower.throwPatternLoadFailure("Failed to load pattern:<" + this.name() + ">", e);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ExceptionThrower.throwPatternLoadFailure("Failed to load pattern:<" + this.name() + ">", e);
 		}
 	}
 }
