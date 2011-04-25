@@ -2,6 +2,7 @@ package oreactor.video;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,9 +23,12 @@ public enum DrawingStrategy {
 
 		@Override
 		protected void flipEngine(Drawable d) {
-			//Graphics2D gg = d.onscreenBuffer();
-			//gg.drawImage(img, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, observer);
-			
+			BufferedImage onscreenBuffer = d.onscreenBuffer();
+			BufferedImage offscreenBuffer = d.offscreenBuffer();
+			Graphics2D gg  = (Graphics2D) onscreenBuffer.getGraphics();
+			int x = d.width() - 1;
+			int y = d.height() - 1;
+			gg.drawImage(offscreenBuffer, 0, 0, x, y, 0, 0, x, y, null);
 		}
 		
 	},

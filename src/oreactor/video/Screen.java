@@ -287,8 +287,20 @@ public class Screen extends JFrame implements Drawable {
 	}
 
 	@Override
-	public Graphics2D onscreenBuffer() {
+	public BufferedImage onscreenBuffer() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int width() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int height() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }
