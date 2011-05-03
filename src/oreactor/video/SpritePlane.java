@@ -27,7 +27,7 @@ public class SpritePlane extends Plane {
 	}
 
 	@Override
-	protected void renderEngine(Graphics2D g) {
+	protected void render_Protected(Graphics2D g) {
 		for (Sprite s : sprites) {
 			s.render(g);
 		}

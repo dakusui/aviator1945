@@ -107,7 +107,7 @@ public class BackupReactorRunner {
 	int runReactor(Settings settings) throws OpenReactorException {
 		int ret = 255;
 		try {
-			this.reactor.perform(settings);
+			this.reactor.execute(settings);
 		} catch (OpenReactorWindowClosedException e) {
 			System.out.println(e.getMessage());
 			ret = 0;

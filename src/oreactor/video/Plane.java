@@ -2,9 +2,7 @@ package oreactor.video;
 
 import java.awt.Graphics2D;
 
-import oreactor.core.BaseGear;
-
-public abstract class Plane  extends BaseGear {
+public abstract class Plane {
 	static enum Type {
 		Graphics,
 		Sprite,
@@ -23,10 +21,18 @@ public abstract class Plane  extends BaseGear {
 		this.viewport = new Viewport(this.width, this.height);
 	}
 
+	public void prepare() {
+		
+	}
+	
 	public void render(Graphics2D g) {
-		this.renderEngine(g);
+		this.render_Protected(g);
 	}
 
+	public void finish() {
+		
+	}
+	
 	public Viewport viewport() {
 		return this.viewport;
 	}
@@ -34,6 +40,7 @@ public abstract class Plane  extends BaseGear {
 	public String name() {
 		return this.name;
 	}
-	protected abstract void renderEngine(Graphics2D g);
+	
+	protected abstract void render_Protected(Graphics2D g);
 }
 

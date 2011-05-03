@@ -37,7 +37,7 @@ public class PatternPlane extends Plane {
 	}
 
 	@Override
-	protected void renderEngine(Graphics2D g) {
+	protected void render_Protected(Graphics2D g) {
 		for (int x = 0; x < this.columns; x++) {
 			for (int y = 0; y < this.rows; y++) {
 				Pattern p = get(x, y);

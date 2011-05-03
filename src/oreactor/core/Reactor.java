@@ -14,7 +14,7 @@ public class Reactor {
 		},
 		Exitted {
 			@Override
-			public void run(Reactor reactor, Context c) {
+			public void run(Reactor reactor, Context c) throws OpenReactorException {
 			}
 		};
 		protected abstract void run(Reactor reactor, Context c) throws OpenReactorException;
@@ -59,28 +59,24 @@ public class Reactor {
 	protected void terminate(Context c) {
 	}
 
-	@ExtensionPoint
-	protected void postMortem(Settings settings) {
-		// does nothing by default.
-	}
-
 	public void argParser(ArgParser argParser) {
 		this.argParser = argParser;
 	}
 
-	public final void perform(Settings settings) throws OpenReactorException {
+	public final void execute(Settings settings) throws OpenReactorException {
 		System.out.println("START:perform");
 		System.out.println("START:initialization");
 		Context c = initialize(settings);
 		System.out.println("END:initialization");
 		Action action = Action.Running;
+		Action nextAction = null;
 		try {
 			long frameDebt = 0;
 			while (true) {
+				
 				long before = System.nanoTime();
 				////
-				// 1. Action
-				this.prepareEngines(c);
+				// 1. Perform action
 				try {
 					action.run(this, c);
 				} catch (OpenReactorExitException e) {
@@ -91,16 +87,20 @@ public class Reactor {
 					} else {
 						System.err.println("Message is not given.");
 					}
-					action = Action.Exitted;
+					nextAction = Action.Exitted;
+				}
+				
+				////
+				// 2. Run engines
+				this.prepareEngines(c);
+				try {
+					this.runEngines(c);
 				} finally {
 					this.finishEngines(c);
 				}
-				////
-				// 2. Render
-				this.runEngines(c);
 
 				////
-				// 3. calibrate the interval
+				// 3. Calibrate the interval
 				long after = System.nanoTime();
 				long timeSpent = after - before + frameDebt;
 				long durationToWait = this.interval - timeSpent;
@@ -109,6 +109,12 @@ public class Reactor {
 				}
 				frameDebt = (settings.frameMode() == Settings.FrameMode.NONDROP) ? 0
 						: Math.max(0, -(durationToWait));
+				
+				////
+				// 4. Determine the next action to be performed.
+				if (nextAction != null) {
+					action = nextAction;
+				}
 			}
 		} catch (InterruptedException e) {
 			throw new OpenReactorException(e.getMessage(), e);
@@ -117,8 +123,7 @@ public class Reactor {
 		}
 	}
 
-	private void prepareEngines(Context c) {
-		/*
+	private void prepareEngines(Context c) throws OpenReactorException {
 		c.getIOEngine().prepare();
 		c.getJoystickEngine().prepare();
 		c.getKeyboardEngine().prepare();
@@ -126,7 +131,6 @@ public class Reactor {
 		c.getNetworkEngine().prepare();
 		c.getSoundEngine().prepare();
 		c.getVideoEngine().prepare();
-		*/
 	}
 
 	private void runEngines(Context c) throws OpenReactorException {
@@ -140,8 +144,7 @@ public class Reactor {
 	}
 
 
-	private void finishEngines(Context c) {
-		/*
+	private void finishEngines(Context c) throws OpenReactorException {
 		c.getVideoEngine().finish();		
 		c.getSoundEngine().finish();
 		c.getNetworkEngine().finish();
@@ -149,7 +152,6 @@ public class Reactor {
 		c.getKeyboardEngine().finish();
 		c.getJoystickEngine().finish();
 		c.getIOEngine().finish();
-		*/
 	}
 
 	protected void exit(String msg) throws OpenReactorExitException {

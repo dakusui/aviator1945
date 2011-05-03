@@ -9,6 +9,7 @@ import oreactor.core.Context;
 import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
+import oreactor.exceptions.OpenReactorExitException;
 import oreactor.io.ResourceLoader;
 import oreactor.io.ResourceMonitor;
 import oreactor.video.GraphicsPlane;
@@ -26,6 +27,8 @@ public class ExampleReactor extends Reactor implements ResourceMonitor {
 	Map<String, SpriteSpec> spriteSpecs = new HashMap<String, SpriteSpec>();
 	Map<String, Pattern> patterns = new HashMap<String, Pattern>();
 	private Sprite ss;
+	
+	double x = 0;
 	
 	@Override
 	protected Settings loadSettings() throws OpenReactorException {
@@ -45,7 +48,7 @@ public class ExampleReactor extends Reactor implements ResourceMonitor {
 		return ret;
 	}
 	@Override
-	protected void action(Context c) {
+	protected void action(Context c) throws OpenReactorExitException {
 		GraphicsPlane g = graphicsplane(c);
 		g.box(100, 100, 80, 100, Color.blue);
 		g.line(10, 600, 1000, 50, Color.red);
@@ -62,7 +65,13 @@ public class ExampleReactor extends Reactor implements ResourceMonitor {
 		if (ss == null) {
 			ss = s.createSprite(spriteSpecs.get("spr00"));
 		}
-		ss.put(800, 200, 0);
+		ss.put(x, 200, 0);
+		
+		x = x + 1;
+		
+		if (x > 1024) {
+			exit("bye");
+		}
 	}
 	
 	protected GraphicsPlane graphicsplane(Context c) {
