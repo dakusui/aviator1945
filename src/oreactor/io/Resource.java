@@ -10,5 +10,5 @@ public interface Resource {
 	}
 	public String name();
 	public Type type();
-	public void init(JSONObject json) throws OpenReactorException;
+	public void init(JSONObject json, ResourceLoader loader) throws OpenReactorException;
 }

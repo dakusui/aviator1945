@@ -3,52 +3,47 @@ package oreactor.video.pattern;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-import org.json.JSONObject;
-
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.BaseResource;
-import oreactor.video.PatternPlane;
+import oreactor.io.ResourceLoader;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public final class Pattern  extends BaseResource {
 	Image image;
-	PatternPlane parent;
-	private PatternRenderer renderer;
+	private int id;
 	
-	public Pattern(String name) {
-		super(name);
+	public Pattern(int i) {
+		super(Integer.toString(i));
+		this.id = i;
 	}
 
+	public int id() {
+		return this.id;
+	}
+	
 	public void render(Graphics2D g, double x, double y, double w, double h) {
 		g.drawImage(
 				this.image, 
-				(int)x, (int)y, (int)(x + w) -1, (int)(y + h) - 1, 
-				0, 0, (int)this.parent.patternWidth(), (int)this.parent.patternHeight(), 
+				(int)x, (int)y, (int)w, (int)h, 
 				null
 				);
 	}
+	
 	@Override
-	public void init(JSONObject json) throws OpenReactorException {
-		renderer.init(json);
+	public void init(JSONObject json, ResourceLoader loader) throws OpenReactorException {
+		try {
+			String imgresource = json.getString("image");
+			this.image = ResourceLoader.getResourceLoader().loadImage(imgresource);
+		} catch (JSONException e) {
+			ExceptionThrower.throwMalformatJsonException(e.getMessage(), e);
+		}
 	}
 	
 	@Override
 	public Type type() {
 		return Type.Pattern;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void loadRenderer(String className) throws OpenReactorException {
-		try {
-			Class<? extends PatternRenderer> rendererClass;
-			rendererClass = (Class<? extends PatternRenderer>) Class.forName(className);
-			this.renderer = rendererClass.newInstance();
-		} catch (ClassNotFoundException e) {
-			ExceptionThrower.throwPatternLoadFailure("Failed to load pattern:<" + this.name() + ">", e);
-		} catch (InstantiationException e) {
-			ExceptionThrower.throwPatternLoadFailure("Failed to load pattern:<" + this.name() + ">", e);
-		} catch (IllegalAccessException e) {
-			ExceptionThrower.throwPatternLoadFailure("Failed to load pattern:<" + this.name() + ">", e);
-		}
 	}
 }

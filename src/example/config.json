@@ -10,116 +10,22 @@
         }
     },
     'patterns':[
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/00.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/01.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/02.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/03.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/04.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/05.png',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/06.png',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/07.png',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/08.png',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/09.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/10.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/11.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/12.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-               'image':'example/images/13.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/14.jpg',
-            },
-        },
-        {
-            'renderer':'oreactor.video.pattern.ImagePatternRenderer',
-            'params':{
-                'image':'example/images/15.jpg',
-            },
-        },
+        { 'image':'example/images/00.jpg',  },
+        { 'image':'example/images/01.jpg',  },
+        { 'image':'example/images/02.jpg',  },
+        { 'image':'example/images/03.jpg',  },
+        { 'image':'example/images/04.jpg',  },
+        { 'image':'example/images/06.png',  },
+        { 'image':'example/images/07.png',  },
+        { 'image':'example/images/08.png',  },
+        { 'image':'example/images/09.jpg',  },
+        { 'image':'example/images/10.jpg',  },
+        { 'image':'example/images/11.jpg',  },
+        { 'image':'example/images/12.jpg',  },
+        { 'image':'example/images/13.jpg',  },
+        { 'image':'example/images/14.jpg',  },
+        { 'image':'example/images/15.jpg',  },
     ],
- 
-    'planes':{
-        'sprite':{
-            'type':'sprite',
-        },
-        'pattern':{
-            'type':'pattern',
-            'settings':{
-                'patternwidth':32,
-                'patternheight':32,
-            },
-        },
-    },
     'musicclips':{
     },
     'soundclips':{

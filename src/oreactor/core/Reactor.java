@@ -5,11 +5,11 @@ import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
 
 public class Reactor {
-	enum Action {
+	enum State {
 		Running {
 			@Override
 			public void run(Reactor reactor, Context c) throws OpenReactorException {
-				reactor.action(c);
+				reactor.run(c);
 			}
 		},
 		Exitted {
@@ -23,8 +23,11 @@ public class Reactor {
 	protected long interval;
 
 	protected ArgParser argParser;
+
+	private Statistics statistcs;
 	
 	public Reactor() {
+		this.statistcs = new Statistics();
 	}
 
 	@ExtensionPoint
@@ -36,7 +39,6 @@ public class Reactor {
 		ret.frameMode(argParser.chooseFrameMode());
 		ret.joystickMode(argParser.chooseJoyStickMode());
 		ret.loggingMode(argParser.chooseLoggingMode());
-		ret.renderingMode(argParser.chooseRenderingMode());
 		ret.runningMode(argParser.chooseRunningMode());
 		ret.screenSize(argParser.chooseScreenSize());
 		ret.soundMode(argParser.chooseSoundMode());
@@ -50,13 +52,16 @@ public class Reactor {
 	}
 	
 	@ExtensionPoint
-	protected void action(Context c) throws OpenReactorException {
+	protected void run(Context c) throws OpenReactorException {
 		////
 		// This method does nothing by default.
 	}
 	
 	@ExtensionPoint
 	protected void terminate(Context c) {
+		System.err.println("----");
+		System.err.println(this.statistcs);
+		System.err.println("----");
 	}
 
 	public void argParser(ArgParser argParser) {
@@ -64,12 +69,12 @@ public class Reactor {
 	}
 
 	public final void execute(Settings settings) throws OpenReactorException {
-		System.out.println("START:perform");
-		System.out.println("START:initialization");
+		System.err.println("START:perform");
+		System.err.println("START:initialization");
 		Context c = initialize(settings);
-		System.out.println("END:initialization");
-		Action action = Action.Running;
-		Action nextAction = null;
+		System.err.println("END:initialization");
+		State state = State.Running;
+		State nextState = null;
 		try {
 			long frameDebt = 0;
 			while (true) {
@@ -78,7 +83,7 @@ public class Reactor {
 				////
 				// 1. Perform action
 				try {
-					action.run(this, c);
+					state.run(this, c);
 				} catch (OpenReactorExitException e) {
 					System.err.println("User gear:<" + this.getClass().getSimpleName() + "> has been exitted.");
 					String msg;
@@ -87,7 +92,7 @@ public class Reactor {
 					} else {
 						System.err.println("Message is not given.");
 					}
-					nextAction = Action.Exitted;
+					nextState = State.Exitted;
 				}
 				
 				////
@@ -109,11 +114,15 @@ public class Reactor {
 				}
 				frameDebt = (settings.frameMode() == Settings.FrameMode.NONDROP) ? 0
 						: Math.max(0, -(durationToWait));
-				
+				if (frameDebt > 0) {
+					this.statistcs.frameProcessedNotInTime(timeSpent);
+				} else {
+					this.statistcs.frameProcessedInTime(timeSpent);
+				}
 				////
 				// 4. Determine the next action to be performed.
-				if (nextAction != null) {
-					action = nextAction;
+				if (nextState != null) {
+					state = nextState;
 				}
 			}
 		} catch (InterruptedException e) {

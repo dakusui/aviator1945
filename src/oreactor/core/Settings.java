@@ -4,8 +4,7 @@ import java.awt.Font;
 import java.util.LinkedList;
 import java.util.List;
 
-import oreactor.video.Screen.PlaneInfo;
-import oreactor.video.Screen.PlaneType;
+import oreactor.video.PlaneDesc;
 
 public class Settings {
 	public static enum BgmMode {
@@ -23,10 +22,6 @@ public class Settings {
 		ERROR, INFO, STATISTICS, TRACE
 	}
 
-	public static enum RenderingMode {
-		BUFFERED, VOLATILE
-	}
-	
 	public static enum RunningMode {
 		DEBUG, NORMAL
 	}	
@@ -101,16 +96,15 @@ public class Settings {
 	private FrameMode frameMode = FrameMode.DROP;
 	private JoystickMode joystickMode;
 	private LoggingMode loggingMode;
-	private RenderingMode renderingMode;
 	private RunningMode runningMode;
 	private ScreenSize screenSize;
 	private SoundMode soundMode;
 
 	private VideoMode videoMode;
-	private List<PlaneInfo> planeInfoItems = new LinkedList<PlaneInfo>();
+	private List<PlaneDesc> planeDescs = new LinkedList<PlaneDesc>();
 
-	public void addPlaneInfo(String name, PlaneType planeType) {
-		this.planeInfoItems.add(new PlaneInfo(name, planeType, this.screenSize.width(), this.screenSize.height()));
+	public void addPlaneDesc(PlaneDesc desc) {
+		this.planeDescs.add(desc);
 	}
 
 	public Font font() {
@@ -147,16 +141,8 @@ public class Settings {
 		this.loggingMode = loggingMode;
 	}
 
-	public List<PlaneInfo> planeInfoItems() {
-		return this.planeInfoItems ;
-	}
-	
-	public RenderingMode renderingMode() {
-		return this.renderingMode;
-	}
-
-	public void renderingMode(RenderingMode renderingMode) {
-		this.renderingMode = renderingMode;
+	public List<PlaneDesc> planeInfoItems() {
+		return this.planeDescs ;
 	}
 
 	public RunningMode runningMode() {

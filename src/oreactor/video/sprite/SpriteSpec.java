@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.BaseResource;
+import oreactor.io.ResourceLoader;
 import oreactor.video.sprite.SpriteRenderer.RenderingParameters;
 
 import org.json.JSONObject;
@@ -27,8 +28,8 @@ public final class SpriteSpec extends BaseResource {
 	}
 
 	@Override
-	public void init(JSONObject params) throws OpenReactorException {
-		this.renderer.init(params);
+	public void init(JSONObject params, ResourceLoader loader) throws OpenReactorException {
+		this.renderer.init(params, loader);
 	}
 
 	public void width(double w) {

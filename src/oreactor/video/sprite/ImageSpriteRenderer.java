@@ -27,8 +27,7 @@ public class ImageSpriteRenderer extends SpriteRenderer {
 
 	protected Image images[] = null;
 	@Override
-	public void init(JSONObject params) throws OpenReactorException {
-		ResourceLoader loader = ResourceLoader.getResourceLoader();
+	public void init(JSONObject params, ResourceLoader loader) throws OpenReactorException {
 		try {
 			JSONArray resources = params.getJSONArray("images");
 			int len = resources.length();

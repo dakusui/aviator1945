@@ -109,11 +109,6 @@ public class ArgParser {
 		return ret;
 	}
 	
-	Settings.RenderingMode chooseRenderingMode() throws ArgumentException {
-		Settings.RenderingMode ret = (Settings.RenderingMode) this.parseEnum("rendering", Settings.RenderingMode.class, Settings.RenderingMode.BUFFERED);
-		return ret;
-	}
-	
 	Settings.SoundMode chooseSoundMode() throws ArgumentException {
 		Settings.SoundMode ret = (Settings.SoundMode) this.parseEnum("sound", Settings.SoundMode.class, Settings.SoundMode.ENABLED);
 		return ret;

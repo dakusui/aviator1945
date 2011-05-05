@@ -2,6 +2,8 @@ package oreactor.video;
 
 import java.awt.Graphics2D;
 
+import oreactor.exceptions.OpenReactorException;
+
 public abstract class Plane {
 	static enum Type {
 		Graphics,
@@ -25,7 +27,7 @@ public abstract class Plane {
 		
 	}
 	
-	public void render(Graphics2D g) {
+	public void render(Graphics2D g) throws OpenReactorException {
 		this.render_Protected(g);
 	}
 
@@ -41,6 +43,11 @@ public abstract class Plane {
 		return this.name;
 	}
 	
-	protected abstract void render_Protected(Graphics2D g);
+	protected abstract void render_Protected(Graphics2D g) throws OpenReactorException;
+	
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "(" +  System.identityHashCode(this) + ")";
+	}
 }
 

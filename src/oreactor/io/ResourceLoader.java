@@ -23,46 +23,86 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ResourceLoader {
-	private List<ResourceMonitor> monitors = new LinkedList<ResourceMonitor>();
-
 	protected static Class<? extends ResourceLoader> loaderClass = ResourceLoader.class;
+
+	public static ResourceLoader getResourceLoader() throws OpenReactorException {
+		ResourceLoader ret = null;
+		synchronized (ResourceLoader.class) {
+			try {
+				ret = loaderClass.newInstance();
+			} catch (InstantiationException e) {
+				ExceptionThrower.throwResourceLoaderInstanciationException(e.getMessage(), e);
+			} catch (IllegalAccessException e) {
+				ExceptionThrower.throwResourceLoaderInstanciationException(e.getMessage(), e);
+			}
+		}
+		return ret;
+	}
 	
-	protected static ResourceLoader instance = null;
+	public static void main(String[] args) throws Exception {
+		ResourceLoader loader = new ResourceLoader();
+		JSONObject obj = loader.loadJsonObjectFromUrl("example-sprite-01/example-01.json");
+		System.out.println(obj.get("class"));
+		System.out.println(obj.get("width"));
+		System.out.println(obj.get("height"));
+		System.out.println(obj.get("images"));
+	}
+	
+	public static void main01(String[] args) throws Exception {
+		ResourceLoader loader = new ResourceLoader();
+		BufferedReader r = new BufferedReader(new InputStreamReader(loader.openUrl("example-sprite-01/example-01.json")));
+		String l = null;
+		while ((l = r.readLine()) != null) {
+			System.out.println(l);
+		}
+	}
+	
+
+	private List<ResourceMonitor> monitors = new LinkedList<ResourceMonitor>();
 	
 	protected ResourceLoader() {
 	}
 	
-	public static ResourceLoader getResourceLoader() throws OpenReactorException {
-		synchronized (ResourceLoader.class) {
-			if (instance == null) {
-				try {
-					instance = loaderClass.newInstance();
-				} catch (InstantiationException e) {
-					ExceptionThrower.throwResourceLoaderInstanciationException(e.getMessage(), e);
-				} catch (IllegalAccessException e) {
-					ExceptionThrower.throwResourceLoaderInstanciationException(e.getMessage(), e);
-				}
-			}
-		}
-		ResourceLoader ret = instance;
-		return ret;
-	}
-	
-
 	public void addMonitor(ResourceMonitor monitor) {
 		this.monitors.add(monitor);
 	}
 	
-	protected InputStream openUrl(String resourceName) throws OpenReactorException {
-		// see Avis.openUrl
-		InputStream ret = ClassLoader.getSystemClassLoader().getResourceAsStream(resourceName);
-		if (ret == null) {
-			ExceptionThrower.throwResourceNotFoundException(resourceName, null);
+	public void loadConfigFromString(String s) throws OpenReactorException {
+		JSONObject config = this.loadJsonObjectFromString(s);
+		parseJsonObject(config);
+	}
+	
+	public void loadConfigFromUrl(String resourceName) throws OpenReactorException {
+		JSONObject config = this.loadJsonObjectFromUrl(resourceName);
+		parseJsonObject(config);
+	}
+	
+	public Image loadImage(String resourceName) throws OpenReactorException {
+		Image ret = null;
+		try {
+			InputStream is = openUrl(resourceName);
+			try {
+				ret =  ImageIO.read(is);
+			} finally {
+				is.close();
+			}
+		} catch (IOException e) {
+			ExceptionThrower.throwIOException("Failed to load resource:<" + resourceName + ">", e);
 		}
 		return ret;
 	}
 	
-	protected JSONObject loadJsonObject(String resourceName) throws OpenReactorException {
+	protected JSONObject loadJsonObjectFromString(String s) throws OpenReactorException {
+		JSONObject ret = null;
+		try {
+			ret = new JSONObject(s);
+		} catch (JSONException e) {
+			ExceptionThrower.throwMalformatJsonException("Malformat JSON:<" + "> is given:<" + s + "> (" + e.getMessage() + ")", e);
+		}
+		return ret;
+	}
+	
+	protected JSONObject loadJsonObjectFromUrl(String resourceName) throws OpenReactorException {
 		JSONObject ret = null;
 		try {
 			BufferedReader r = new BufferedReader(new InputStreamReader(openUrl(resourceName)));
@@ -85,42 +125,27 @@ public class ResourceLoader {
 		}
 		return ret;
 	}
-	
-	public Image loadImage(String resourceName) throws OpenReactorException {
-		Image ret = null;
-		try {
-			InputStream is = openUrl(resourceName);
-			try {
-				ret =  ImageIO.read(is);
-			} finally {
-				is.close();
-			}
-		} catch (IOException e) {
-			ExceptionThrower.throwIOException("Failed to load resource:<" + resourceName + ">", e);
-		}
-		return ret;
+
+	public MusicClip loadMusicClip(String resourceName) {
+		// TODO
+		return null;
 	}
-	
+
 	public SoundClip loadSound(String resourceName) {
 		return null;
 	}
 	
-	public MusicClip loadMusicClip(String resourceName) {
-		return null;
-	}
-
-	
-	protected void reset() {
-		
-	}
-	
-	protected void unload(Resource r) {
-		
+	protected InputStream openUrl(String resourceName) throws OpenReactorException {
+		// see Avis.openUrl
+		InputStream ret = ClassLoader.getSystemClassLoader().getResourceAsStream(resourceName);
+		if (ret == null) {
+			ExceptionThrower.throwResourceNotFoundException(resourceName, null);
+		}
+		return ret;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void loadConfig(String resourceName) throws OpenReactorException {
-		JSONObject config = this.loadJsonObject(resourceName);
+	private void parseJsonObject(JSONObject config) throws OpenReactorException {
 		try {
 			JSONObject spriteConfig = config.getJSONObject("spritespecs");
 			int numSpriteSpecs = spriteConfig.length();
@@ -144,7 +169,7 @@ public class ResourceLoader {
 					spec.loadRenderer(v.getString("renderer"));
 					spec.width(v.getInt("hresolution"));
 					spec.height(v.getInt("vresolution"));
-					spec.init(v.getJSONObject("params"));
+					spec.init(v.getJSONObject("params"), this);
 					for (ResourceMonitor m: monitors) {
 						m.spriteSpecLoaded(spec);
 					}
@@ -153,40 +178,17 @@ public class ResourceLoader {
 			{
 				////
 				// Loading patterns
-				System.err.println("***");
 				for (int i = 0; i < numPatterns; i ++) {
-					System.err.println("---");
-					String name = Integer.toString(i);
 					JSONObject v = patternConfig.getJSONObject(i);
-					Pattern p = new Pattern(name);
-					p.loadRenderer(v.getString("renderer"));
-					p.init(v.getJSONObject("params"));
+					Pattern p = new Pattern(i);
+					p.init(v, this);
 					for (ResourceMonitor m: monitors) {
 						m.patternLoaded(p);
 					}
 				}
-				System.err.println("+++");
 			}
 		} catch (JSONException e) {
 			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
 		}
-	}
-	
-	public static void main01(String[] args) throws Exception {
-		ResourceLoader loader = new ResourceLoader();
-		BufferedReader r = new BufferedReader(new InputStreamReader(loader.openUrl("example-sprite-01/example-01.json")));
-		String l = null;
-		while ((l = r.readLine()) != null) {
-			System.out.println(l);
-		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		ResourceLoader loader = new ResourceLoader();
-		JSONObject obj = loader.loadJsonObject("example-sprite-01/example-01.json");
-		System.out.println(obj.get("class"));
-		System.out.println(obj.get("width"));
-		System.out.println(obj.get("height"));
-		System.out.println(obj.get("images"));
 	}
 }

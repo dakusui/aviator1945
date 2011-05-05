@@ -13,56 +13,12 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import oreactor.core.Settings;
+import oreactor.exceptions.OpenReactorException;
+import oreactor.video.graphics.GraphicsPlane;
+import oreactor.video.pattern.PatternPlane;
+import oreactor.video.sprite.SpritePlane;
 
 public class Screen extends JFrame {
-	public static enum PlaneType {
-		GRAPHICS {
-			@Override
-			public Plane createPlane(Screen screen, String name, double width, double height) {
-				return screen.createGraphicsPlane(name, width, height);
-			}
-		}, 
-		PATTTERN {
-			@Override
-			public Plane createPlane(Screen screen, String name, double width, double height) {
-				return screen.createPatternPlane(name, width, height);
-			}
-		}, 
-		SPRITE {
-			@Override
-			public Plane createPlane(Screen screen, String name, double width, double height) {
-				return screen.createSpritePlane(name, width, height);
-			}
-		};
-		public abstract Plane createPlane(Screen screen, String name, double width, double height);
-	}
-	
-	public static class PlaneInfo {
-		private String name;
-		private PlaneType type;
-		double width, height;
-		
-		public PlaneInfo(String name, PlaneType type, double width, double height) {
-			this.name = name;
-			this.type = type;
-			this.width = width;
-			this.height = height;
-		}
-		
-		public String name() {
-			return this.name;
-		}
-		
-		public PlaneType type() {
-			return this.type;
-		}
-		
-		public String toString() {
-			return "Plane:" + this.name + "(" + this.type() + ")";
-		}
-	}
-	
-	
 	/**
 	 * A serial version UID.
 	 */
@@ -104,7 +60,12 @@ public class Screen extends JFrame {
     
 	@Override
 	public void paint(Graphics g) {
-		this.renderPlanes((Graphics2D) g);
+		try {
+			this.renderPlanes((Graphics2D) g);
+		} catch (OpenReactorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 	GraphicsPlane createGraphicsPlane(String name, double width, double height) {
@@ -117,17 +78,15 @@ public class Screen extends JFrame {
 		return ret;
 	}
 	
-	PatternPlane createPatternPlane(String name, double width, double height) {
-		PatternPlane ret = new PatternPlane(name, width, height, 32, 32, 256);
+	PatternPlane createPatternPlane(String name, double width, double height, double patternwidth, double patternheight) {
+		PatternPlane ret = new PatternPlane(name, width, height, patternwidth, patternheight, 256);
 		return ret;
 	}
 
-	public void createPlane(PlaneInfo info) {
-		System.out.println("Creating a plane:" + info);
-		Plane p = info.type().createPlane(this, info.name(), info.width, info.height);
-		System.out.println("Created plane is:" + p);
+	public void createPlane(PlaneDesc desc) {
+		Plane p = desc.createPlane(this);
+		System.err.println("Created plane is:" + p);
 		this.planes.add(p);
-		System.out.println("Registered planes:" + this.planes);
 	}
 	
 	public void prepare() {
@@ -136,13 +95,13 @@ public class Screen extends JFrame {
 		}		
 	}
 	
-	protected void renderPlanes(Graphics2D graphics) {
+	protected void renderPlanes(Graphics2D graphics) throws OpenReactorException {
         for (Plane p: this.planes()) {
         	p.render(graphics);
         }
 	}
 
-    public void render() {
+    public void render() throws OpenReactorException {
 		/////
 	    // Render single frame
 	    do {

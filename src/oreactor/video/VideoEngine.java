@@ -4,7 +4,6 @@ import oreactor.core.BaseEngine;
 import oreactor.core.Settings;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
-import oreactor.exceptions.OpenReactorWindowClosedException;
 
 public class VideoEngine extends BaseEngine {
 	private Screen screen;
@@ -21,7 +20,7 @@ public class VideoEngine extends BaseEngine {
 	}
 	
 	@Override
-	public void run() throws OpenReactorWindowClosedException {
+	public void run() throws OpenReactorException {
 		screen.render();
 		if (this.screen.isClosed()) {
 			ExceptionThrower.throwWindowClosedException();

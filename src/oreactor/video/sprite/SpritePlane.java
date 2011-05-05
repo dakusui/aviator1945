@@ -1,17 +1,16 @@
-package oreactor.video;
+package oreactor.video.sprite;
 
 import java.awt.Graphics2D;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import oreactor.video.sprite.Sprite;
-import oreactor.video.sprite.SpriteSpec;
+import oreactor.video.Plane;
 
 public class SpritePlane extends Plane {
 	protected List<Sprite> sprites;
 
-	protected SpritePlane(String name, double width, double height) {
+	public SpritePlane(String name, double width, double height) {
 		super(name, width, height);
 		this.sprites = new LinkedList<Sprite>();
 	}

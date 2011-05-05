@@ -1,4 +1,4 @@
-package oreactor.video;
+package oreactor.video.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+
+import oreactor.video.Plane;
 
 /**
  * A graphics plane.
@@ -17,7 +19,7 @@ public class GraphicsPlane extends Plane {
 	private Color fgColor;
 	private Color bgColor;
 
-	protected GraphicsPlane(String name, double width, double height) {
+	public GraphicsPlane(String name, double width, double height) {
 		super(name, width, height);
 		this.image = new BufferedImage((int)width, (int)height, ColorSpace.TYPE_RGB); 
 	}

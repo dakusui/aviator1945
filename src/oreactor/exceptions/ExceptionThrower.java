@@ -68,4 +68,8 @@ public class ExceptionThrower {
 			Throwable t) throws OpenReactorException {
 		throw new OpenReactorException("Resource:<" + resourceName + "> is not found", t);
 	}
+
+	public static void throwParameterException(String message) throws OpenReactorException {
+		throw new OpenReactorException(message);
+	}
 }

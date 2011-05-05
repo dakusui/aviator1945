@@ -8,8 +8,8 @@ import oreactor.keyboard.KeyboardEngine;
 import oreactor.music.MusicEngine;
 import oreactor.network.NetworkEngine;
 import oreactor.sound.SoundEngine;
+import oreactor.video.PlaneDesc;
 import oreactor.video.Screen;
-import oreactor.video.Screen.PlaneInfo;
 import oreactor.video.VideoEngine;
 
 public class Context {
@@ -23,11 +23,11 @@ public class Context {
 	
 	public Context(Settings settings) {
 		this.videoEngine = new VideoEngine(settings);
-		List<PlaneInfo> planeInfoItems = settings.planeInfoItems();
+		List<PlaneDesc> planeDescs = settings.planeInfoItems();
 		Screen s = this.videoEngine.screen();
-		System.out.println("List of plane info items:<" + planeInfoItems + ">");
-		for (PlaneInfo info : planeInfoItems) {
-			s.createPlane(info);
+		System.err.println("List of plane info items:<" + planeDescs + ">");
+		for (PlaneDesc desc : planeDescs) {
+			s.createPlane(desc);
 		}
 		this.soundEngine = new SoundEngine(settings);
 		this.musicEngine = new MusicEngine(settings);

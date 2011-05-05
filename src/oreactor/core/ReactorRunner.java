@@ -13,9 +13,9 @@ public class ReactorRunner {
 			ArgParser argParser = ArgParser.createArgParser(args);
 			Reactor reactor = argParser.chooseReactor();
 			reactor.argParser(argParser);
-			System.out.println("reactor=<" + reactor + ">");
+			System.err.println("reactor=<" + reactor + ">");
 			Settings settings = reactor.loadSettings(); 
-			System.out.println("settings are loaded.");
+			System.err.println("settings are loaded.");
 			reactor.execute(settings);
 		} catch (OpenReactorWindowClosedException e) {
 			System.out.println(e.getMessage());

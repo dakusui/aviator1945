@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.BaseResource;
+import oreactor.io.ResourceLoader;
 
 public class SoundClip extends BaseResource {
 
@@ -17,7 +18,7 @@ public class SoundClip extends BaseResource {
 	}
 
 	@Override
-	public void init(JSONObject params) throws OpenReactorException {
+	public void init(JSONObject params, ResourceLoader loader) throws OpenReactorException {
 		// TODO Auto-generated method stub
 		
 	}

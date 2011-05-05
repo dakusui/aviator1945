@@ -3,6 +3,7 @@ package oreactor.video.sprite;
 import java.awt.Graphics2D;
 
 import oreactor.exceptions.OpenReactorException;
+import oreactor.io.ResourceLoader;
 
 import org.json.JSONObject;
 
@@ -16,5 +17,5 @@ public abstract class SpriteRenderer {
 	
 	public abstract RenderingParameters createRenderingParameters();
 
-	public abstract void init(JSONObject params) throws OpenReactorException;
+	public abstract void init(JSONObject params, ResourceLoader loader) throws OpenReactorException;
 }
