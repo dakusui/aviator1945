@@ -1,4 +1,4 @@
-package hobbystation;
+package openreactor.hobbystation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +9,6 @@ import oreactor.core.Context;
 import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
-import oreactor.io.ResourceLoader;
 import oreactor.io.ResourceMonitor;
 import oreactor.joystick.InputDevice;
 import oreactor.joystick.JoystickEngine.Stick;
@@ -70,28 +69,22 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 			desc.height(h);
 			settings.addPlaneDesc(desc);
 		}
-		ResourceLoader loader = ResourceLoader.getResourceLoader();
-		loader.addMonitor(this);
-		loadConfig(loader);
 		return settings;
 	}
 
-	@ExtensionPoint
-	protected void loadConfig(ResourceLoader loader) throws OpenReactorException {
-	}
-	
 	@Override 
 	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context ret = super.initialize(settings);
 		this.action = action();
 		this.joystick = ret.getJoystickEngine().devices().get(0);
+		ret.getResourceLoader().addMonitor(this);
 		return ret;
 	}
 
 	protected GraphicsPlane graphicsplane(Context c) {
 		return graphicsplane(c, "graphics");
 	}
-	
+	   
 	protected GraphicsPlane graphicsplane(Context c, String name) {
 		GraphicsPlane ret = null; 
 		VideoEngine ve = c.getVideoEngine();
@@ -169,6 +162,7 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 	}
 
 	@Override
+	@ExtensionPoint
 	protected void run(Context c) throws OpenReactorException {
 		this.action.perform(c);
 		this.action = this.action.next();
@@ -177,12 +171,12 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 		}
 	}
 	
-	protected Stick stick() {
+	protected final Stick stick() {
 		Stick ret = joystick.stick();
 		return ret;
 	}
 	
-	protected boolean trigger(Trigger t) {
+	protected final boolean trigger(Trigger t) {
 		boolean ret = joystick.trigger(t);
 		return ret;
 	}

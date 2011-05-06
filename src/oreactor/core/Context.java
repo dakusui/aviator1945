@@ -2,7 +2,9 @@ package oreactor.core;
 
 import java.util.List;
 
+import oreactor.exceptions.OpenReactorException;
 import oreactor.io.IOEngine;
+import oreactor.io.ResourceLoader;
 import oreactor.joystick.JoystickEngine;
 import oreactor.keyboard.KeyboardEngine;
 import oreactor.music.MusicEngine;
@@ -20,8 +22,9 @@ public class Context {
 	private JoystickEngine joystickEngine;
 	private IOEngine ioEngine;
 	private NetworkEngine networkEngine;
+	private ResourceLoader resourceLoader;
 	
-	public Context(Settings settings) {
+	public Context(Settings settings) throws OpenReactorException {
 		this.videoEngine = new VideoEngine(settings);
 		List<PlaneDesc> planeDescs = settings.planeInfoItems();
 		Screen s = this.videoEngine.screen();
@@ -35,6 +38,7 @@ public class Context {
 		this.joystickEngine = new JoystickEngine(settings);
 		this.ioEngine = new IOEngine(settings);
 		this.networkEngine = new NetworkEngine(settings);
+		this.resourceLoader = ResourceLoader.getResourceLoader();
 	}
 	
 	public VideoEngine getVideoEngine() {
@@ -62,5 +66,9 @@ public class Context {
 	}
 	public NetworkEngine getNetworkEngine() {
 		return this.networkEngine;
+	}
+	
+	public ResourceLoader getResourceLoader() {
+		return this.resourceLoader;
 	}
 }

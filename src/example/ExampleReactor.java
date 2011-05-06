@@ -1,8 +1,9 @@
 package example;
 
-import hobbystation.HobbyStationReactor;
 
 import java.awt.Color;
+
+import openreactor.hobbystation.HobbyStationReactor;
 
 import oreactor.core.Context;
 import oreactor.exceptions.OpenReactorException;
@@ -26,6 +27,8 @@ public class ExampleReactor extends HobbyStationReactor {
 	public Action action() {
 		return new Action() {
 			public void perform(Context c) throws OpenReactorException {
+				ResourceLoader loader = c.getResourceLoader();
+				loader.loadConfigFromUrl("example/config.json");
 				SpritePlane s = spriteplane(c);
 				ss = s.createSprite(spriteSpecs.get("spr00"));
 				tt = s.createSprite(spriteSpecs.get("spr00"));
@@ -47,7 +50,7 @@ public class ExampleReactor extends HobbyStationReactor {
 						PatternPlane p = patternplane(c);
 						for (int i = 0; i < p.columns(); i++) {
 							for (int j = 0; j < p.rows(); j++) {
-								int no = Math.abs((int)(Math.random() * 40));
+								int no = Math.abs((int)(Math.random() * 100));
 								if (no < 10) {
 									p.put(i, j, no);
 								} else {
@@ -56,7 +59,7 @@ public class ExampleReactor extends HobbyStationReactor {
 							}
 						}
 
-						tt.put(x, 200, 0);
+						tt.put(x, 200 + y, 0);
 						ss.put(x + 200, x+22, (x*Math.PI/200));
 						uu.put(-x + 1200, -x+600, -(x*Math.PI/200));
 						Stick s = stick();
@@ -66,15 +69,11 @@ public class ExampleReactor extends HobbyStationReactor {
 							x = x + 2 * xsig;
 							y = y + 2 * ysig;
 						}
+						
+						g.print("hello world", 10, 400);
 					}
 				};
 			}
 		};
 	}
-	
-	@Override
-	protected void loadConfig(ResourceLoader loader) throws OpenReactorException {
-		loader.loadConfigFromUrl("example/config.json");
-	}
-
 }
