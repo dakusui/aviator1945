@@ -2,13 +2,15 @@ package oreactor.joystick;
 
 import java.io.IOException;
 
+import oreactor.joystick.JoystickEngine.Trigger;
+
 import com.centralnexus.input.Joystick;
 
-public class JoypadDevice extends JoystickDevice {
+class JoypadDevice extends JoystickDevice {
 	protected static final float CURSOR_THRESHOLD = (float) 0.5;
 	
 	public JoypadDevice() throws IOException {
-		super();
+		super(JoystickEngine.Type.Joypad);
 	}
 
 	@Override

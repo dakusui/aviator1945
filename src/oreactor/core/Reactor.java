@@ -19,8 +19,10 @@ public class Reactor {
 		};
 		protected abstract void run(Reactor reactor, Context c) throws OpenReactorException;
 	}
-	
-	protected long interval;
+	/**
+	 * (1/60Hz) to wait.
+	 */
+	protected long interval = (1000 * 1000* 1000) / 60;
 
 	protected ArgParser argParser;
 
@@ -47,8 +49,16 @@ public class Reactor {
 	}
 
 	@ExtensionPoint
-	protected Context initialize(Settings settings) {
-		return new Context(settings);
+	protected Context initialize(Settings settings) throws OpenReactorException {
+		Context c = new Context(settings);
+		c.getIOEngine().initialize(c);
+		c.getJoystickEngine().initialize(c);
+		c.getKeyboardEngine().initialize(c);
+		c.getMusicEngine().initialize(c);
+		c.getNetworkEngine().initialize(c);
+		c.getSoundEngine().initialize(c);
+		c.getVideoEngine().initialize(c);
+		return c;
 	}
 	
 	@ExtensionPoint
@@ -57,81 +67,6 @@ public class Reactor {
 		// This method does nothing by default.
 	}
 	
-	@ExtensionPoint
-	protected void terminate(Context c) {
-		System.err.println("----");
-		System.err.println(this.statistcs);
-		System.err.println("----");
-	}
-
-	public void argParser(ArgParser argParser) {
-		this.argParser = argParser;
-	}
-
-	public final void execute(Settings settings) throws OpenReactorException {
-		System.err.println("START:perform");
-		System.err.println("START:initialization");
-		Context c = initialize(settings);
-		System.err.println("END:initialization");
-		State state = State.Running;
-		State nextState = null;
-		try {
-			long frameDebt = 0;
-			while (true) {
-				
-				long before = System.nanoTime();
-				////
-				// 1. Perform action
-				try {
-					state.run(this, c);
-				} catch (OpenReactorExitException e) {
-					System.err.println("User gear:<" + this.getClass().getSimpleName() + "> has been exitted.");
-					String msg;
-					if ((msg = e.getMessage()) != null) {
-						System.err.println("Message:<" + msg + ">");
-					} else {
-						System.err.println("Message is not given.");
-					}
-					nextState = State.Exitted;
-				}
-				
-				////
-				// 2. Run engines
-				this.prepareEngines(c);
-				try {
-					this.runEngines(c);
-				} finally {
-					this.finishEngines(c);
-				}
-
-				////
-				// 3. Calibrate the interval
-				long after = System.nanoTime();
-				long timeSpent = after - before + frameDebt;
-				long durationToWait = this.interval - timeSpent;
-				if (frameDebt <= 0) {
-					Thread.sleep(Math.max(durationToWait / 1000000, 0));
-				}
-				frameDebt = (settings.frameMode() == Settings.FrameMode.NONDROP) ? 0
-						: Math.max(0, -(durationToWait));
-				if (frameDebt > 0) {
-					this.statistcs.frameProcessedNotInTime(timeSpent);
-				} else {
-					this.statistcs.frameProcessedInTime(timeSpent);
-				}
-				////
-				// 4. Determine the next action to be performed.
-				if (nextState != null) {
-					state = nextState;
-				}
-			}
-		} catch (InterruptedException e) {
-			throw new OpenReactorException(e.getMessage(), e);
-		} finally {
-			terminate(c);
-		}
-	}
-
 	private void prepareEngines(Context c) throws OpenReactorException {
 		c.getIOEngine().prepare();
 		c.getJoystickEngine().prepare();
@@ -162,6 +97,89 @@ public class Reactor {
 		c.getJoystickEngine().finish();
 		c.getIOEngine().finish();
 	}
+
+	@ExtensionPoint
+	protected void terminate(Context c) throws OpenReactorException {
+		System.err.println("----");
+		System.err.println(this.statistcs);
+		System.err.println("----");
+		c.getVideoEngine().terminate(c);		
+		c.getSoundEngine().terminate(c);
+		c.getNetworkEngine().terminate(c);
+		c.getMusicEngine().terminate(c);
+		c.getKeyboardEngine().terminate(c);
+		c.getJoystickEngine().terminate(c);
+		c.getIOEngine().terminate(c);	
+	}
+
+	public void argParser(ArgParser argParser) {
+		this.argParser = argParser;
+	}
+
+	public final void execute(Settings settings) throws OpenReactorException {
+		System.err.println("START:perform");
+		System.err.println("START:initialization");
+		Context c = initialize(settings);
+		System.err.println("END:initialization");
+		State state = State.Running;
+		State nextState = null;
+		try {
+			while (true) {
+				
+				long before = System.nanoTime();
+				////
+				// 1. Perform action
+				try {
+					state.run(this, c);
+				} catch (OpenReactorExitException e) {
+					System.err.println("User gear:<" + this.getClass().getSimpleName() + "> has been exitted.");
+					String msg;
+					if ((msg = e.getMessage()) != null) {
+						System.err.println("Message:<" + msg + ">");
+					} else {
+						System.err.println("Message is not given.");
+					}
+					nextState = State.Exitted;
+				}
+				
+				////
+				// 2. Run engines
+				this.prepareEngines(c);
+				try {
+					this.runEngines(c);
+				} finally {
+					this.finishEngines(c);
+				}
+
+				////
+				// 3. Calibrate the interval
+				long after = System.nanoTime();
+				long timeSpent = after - before;
+				long durationToWait = this.interval - timeSpent;
+				if (durationToWait > 0) {
+					Thread.sleep(durationToWait / 1000000, (int)(durationToWait % 1000000));
+				}
+				if (timeSpent > this.interval) {
+					this.statistcs.frameProcessedNotInTime(timeSpent);
+				} else {
+					this.statistcs.frameProcessedInTime(timeSpent);
+				}
+				////
+				// 4. Determine the next action to be performed.
+				if (nextState != null) {
+					state = nextState;
+				}
+			}
+		} catch (InterruptedException e) {
+			throw new OpenReactorException(e.getMessage(), e);
+		} finally {
+			System.err.println("START:termination");
+			terminate(c);
+			System.err.println("END:termination");
+			System.err.println("END:perform");
+		}
+	}
+
 
 	protected void exit(String msg) throws OpenReactorExitException {
 		throw new OpenReactorExitException(msg);

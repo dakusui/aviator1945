@@ -3,7 +3,10 @@ package oreactor.joystick;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KeyboardDevice implements KeyListener, InputDevice {
+import oreactor.joystick.JoystickEngine.Stick;
+import oreactor.joystick.JoystickEngine.Trigger;
+
+class KeyboardDevice extends BaseInputDevice implements KeyListener {
     protected boolean up;
     protected boolean right;
     protected boolean down;
@@ -23,7 +26,7 @@ public class KeyboardDevice implements KeyListener, InputDevice {
 	protected boolean r2;
 	
     public KeyboardDevice() {
-        super();
+        super(JoystickEngine.Type.Keyboard);
     }
 
     public void keyTyped(KeyEvent e) {
@@ -206,4 +209,5 @@ public class KeyboardDevice implements KeyListener, InputDevice {
 	public void poll() {
 		// does nothing
 	}
+
 }

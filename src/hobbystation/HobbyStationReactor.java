@@ -1,4 +1,4 @@
-package hobbbystation;
+package hobbystation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +11,9 @@ import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.ResourceLoader;
 import oreactor.io.ResourceMonitor;
+import oreactor.joystick.InputDevice;
+import oreactor.joystick.JoystickEngine.Stick;
+import oreactor.joystick.JoystickEngine.Trigger;
 import oreactor.video.Plane;
 import oreactor.video.PlaneDesc;
 import oreactor.video.Screen;
@@ -38,6 +41,7 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 	protected Map<String, SpriteSpec> spriteSpecs = new HashMap<String, SpriteSpec>();
 	protected Map<Integer, Pattern> patterns = new HashMap<Integer, Pattern>();
 	protected Action action = null;
+	InputDevice joystick = null;
 	
 	@Override
 	protected Settings loadSettings() throws OpenReactorException {
@@ -77,9 +81,10 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 	}
 	
 	@Override 
-	protected Context initialize(Settings settings) {
+	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context ret = super.initialize(settings);
 		this.action = action();
+		this.joystick = ret.getJoystickEngine().devices().get(0);
 		return ret;
 	}
 
@@ -170,5 +175,15 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 		if (this.action == null) {
 			exit();
 		}
+	}
+	
+	protected Stick stick() {
+		Stick ret = joystick.stick();
+		return ret;
+	}
+	
+	protected boolean trigger(Trigger t) {
+		boolean ret = joystick.trigger(t);
+		return ret;
 	}
 }

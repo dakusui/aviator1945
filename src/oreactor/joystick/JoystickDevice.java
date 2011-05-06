@@ -2,13 +2,17 @@ package oreactor.joystick;
 
 import java.io.IOException;
 
+import oreactor.joystick.JoystickEngine.Stick;
+import oreactor.joystick.JoystickEngine.Trigger;
+
 import com.centralnexus.input.Joystick;
 
-public abstract class JoystickDevice implements InputDevice {
+abstract class JoystickDevice extends BaseInputDevice {
 	Joystick device;
 	protected int buttons;
 	
-	public JoystickDevice() throws IOException {
+	public JoystickDevice(JoystickEngine.Type type) throws IOException {
+		super(type);
 		device = Joystick.createInstance();
 	}
 	

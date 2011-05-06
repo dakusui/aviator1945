@@ -1,12 +1,13 @@
 package example;
 
-import hobbbystation.HobbyStationReactor;
+import hobbystation.HobbyStationReactor;
 
 import java.awt.Color;
 
 import oreactor.core.Context;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.ResourceLoader;
+import oreactor.joystick.JoystickEngine.Stick;
 import oreactor.video.graphics.GraphicsPlane;
 import oreactor.video.pattern.Pattern;
 import oreactor.video.pattern.PatternPlane;
@@ -19,6 +20,7 @@ public class ExampleReactor extends HobbyStationReactor {
 	protected Sprite tt;
 	protected Sprite uu;
 	protected double x = 0;
+	protected double y = 0;
 
 	@Override
 	public Action action() {
@@ -57,10 +59,12 @@ public class ExampleReactor extends HobbyStationReactor {
 						tt.put(x, 200, 0);
 						ss.put(x + 200, x+22, (x*Math.PI/200));
 						uu.put(-x + 1200, -x+600, -(x*Math.PI/200));
-						x = x + 2;
-						
-						if (x > 512) {
-							next = null;
+						Stick s = stick();
+						if (s != null) {
+							int xsig = s.x();
+							int ysig = s.y();
+							x = x + 2 * xsig;
+							y = y + 2 * ysig;
 						}
 					}
 				};

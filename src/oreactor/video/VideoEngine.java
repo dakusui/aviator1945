@@ -1,9 +1,13 @@
 package oreactor.video;
 
+import java.awt.event.KeyListener;
+
 import oreactor.core.BaseEngine;
+import oreactor.core.Context;
 import oreactor.core.Settings;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
+import oreactor.joystick.InputDevice;
 
 public class VideoEngine extends BaseEngine {
 	private Screen screen;
@@ -14,6 +18,15 @@ public class VideoEngine extends BaseEngine {
 		this.screen.setVisible(true);
 	}
 	
+	@Override 
+	public void initialize(Context c) throws OpenReactorException {
+		for (InputDevice d : c.getJoystickEngine().devices()) {
+			if (d instanceof KeyListener) {
+				this.screen.addKeyListener((KeyListener) d);
+			}
+		}
+	}
+
 	@Override
 	public void prepare() throws OpenReactorException {
 		screen.prepare();

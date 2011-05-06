@@ -4,7 +4,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CompositeDevice implements InputDevice {
+import oreactor.joystick.JoystickEngine.Stick;
+import oreactor.joystick.JoystickEngine.Trigger;
+
+class CompositeDevice implements InputDevice {
 	private List<InputDevice> devices;
 
 	public CompositeDevice() {

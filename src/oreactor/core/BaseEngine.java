@@ -9,10 +9,17 @@ public abstract class BaseEngine {
 		this.settings = settings;
 	}
 	
+	public void initialize(Context c) throws OpenReactorException {
+	}
+
 	public void prepare() throws OpenReactorException {
 	}
+	
 	public abstract void run() throws OpenReactorException;
 
 	public void finish() throws OpenReactorException {
+	}
+	
+	public void terminate(Context c) throws OpenReactorException {
 	}
 }

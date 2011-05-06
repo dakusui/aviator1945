@@ -2,12 +2,14 @@ package oreactor.joystick;
 
 import java.io.IOException;
 
+import oreactor.joystick.JoystickEngine.Trigger;
+
 import com.centralnexus.input.Joystick;
 
-public class PS3JoystickDevice extends JoystickDevice {
+class PS3JoystickDevice extends JoystickDevice {
 
 	public PS3JoystickDevice() throws IOException {
-		super();
+		super(JoystickEngine.Type.PS3Joystick);
 	}
 	
 	@Override
