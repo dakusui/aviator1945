@@ -20,6 +20,7 @@ public class VideoEngine extends BaseEngine {
 	
 	@Override 
 	public void initialize(Context c) throws OpenReactorException {
+		super.initialize(c);
 		for (InputDevice d : c.getJoystickEngine().devices()) {
 			if (d instanceof KeyListener) {
 				this.screen.addKeyListener((KeyListener) d);

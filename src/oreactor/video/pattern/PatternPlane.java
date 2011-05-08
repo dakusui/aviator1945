@@ -69,7 +69,7 @@ public class PatternPlane extends Plane {
 		if (p == null) {
 			ExceptionThrower.throwParameterException("Parameter 'p' must not be null.");
 		}
-		int patternno = p.id();
+		int patternno = p.num();
 		if (patternno < 0 || patternno >= this.patterns.length) {
 			ExceptionThrower.throwParameterException("Parameter 'p''s id must be greater or equal to 0 and less than " + this.patterns.length + ".");
 		}

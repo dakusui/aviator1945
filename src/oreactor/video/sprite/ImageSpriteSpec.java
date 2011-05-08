@@ -14,8 +14,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ImageSpriteRenderer extends SpriteRenderer {
-	static class RenderingParametersForImageSprite extends RenderingParameters {
+public class ImageSpriteSpec extends SpriteSpec {
+	public static class RenderingParameters extends SpriteSpec.RenderingParameters {
 		int patternno = 0;
 		public void patternno(int i) {
 			this.patternno = i;
@@ -26,6 +26,11 @@ public class ImageSpriteRenderer extends SpriteRenderer {
 	}
 
 	protected Image images[] = null;
+
+	public ImageSpriteSpec(String name) {
+		super(name);
+	}
+
 	@Override
 	public void init(JSONObject params, ResourceLoader loader) throws OpenReactorException {
 		try {
@@ -35,7 +40,7 @@ public class ImageSpriteRenderer extends SpriteRenderer {
 			for (int i = 0; i < len; i ++) {
 				String cur;
 				cur = resources.getString(i);
-				Image im = loader.loadImage(cur);
+				Image im = loader.getImage(cur).image();
 				imageList.add(im);
 			}
 			images = new Image[0];
@@ -43,7 +48,8 @@ public class ImageSpriteRenderer extends SpriteRenderer {
 		} catch (JSONException e) {
 			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
 		}
-	}	
+	}
+	
 	@Override
 	public void render(Graphics2D gg, Sprite sprite) {
 		AffineTransform backup = gg.getTransform();
@@ -54,7 +60,7 @@ public class ImageSpriteRenderer extends SpriteRenderer {
 			double biasX = sprite.width() / 2;
 			double biasY = sprite.height() / 2;
 			double theta = sprite.theta();
-			RenderingParametersForImageSprite p = (RenderingParametersForImageSprite) sprite.renderingParameters();
+			RenderingParameters p = (RenderingParameters) sprite.renderingParameters();
 			int patternno = 0;
 			if (p != null) {
 				patternno = p.patternno();
@@ -79,7 +85,7 @@ public class ImageSpriteRenderer extends SpriteRenderer {
 
 	@Override
 	public RenderingParameters createRenderingParameters() {
-		return new RenderingParametersForImageSprite();
+		return new RenderingParameters();
 	}
 
 }

@@ -1,194 +1,323 @@
 package oreactor.io;
 
 import java.awt.Image;
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
+import oreactor.core.Logger;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
-import oreactor.music.MusicClip;
-import oreactor.sound.SoundClip;
-import oreactor.video.pattern.Pattern;
-import oreactor.video.sprite.SpriteSpec;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class ResourceLoader {
-	protected static Class<? extends ResourceLoader> loaderClass = ResourceLoader.class;
-
-	public static ResourceLoader getResourceLoader() throws OpenReactorException {
-		ResourceLoader ret = null;
-		synchronized (ResourceLoader.class) {
+	public static abstract class Data {
+		public static enum Type {
+			Image {
+				@Override
+				Class<? extends Data> dataClass() {
+					return ImageData.class;
+				}
+			}, 
+			Midi {
+				@Override
+				Class<? extends Data> dataClass() {
+					return MidiData.class;
+				}
+			}, 
+			Sound {
+				@Override
+				Class<? extends Data> dataClass() {
+					return SoundData.class;
+				}
+			}, 
+			Raw {
+				@Override
+				Class<? extends Data> dataClass() {
+					return RawData.class;
+				}
+			};
+			Data create(String resourceUrl) throws OpenReactorException {
+				Data ret = null;
+				try {
+					ret = dataClass().getConstructor(String.class).newInstance(resourceUrl);
+				} catch (IllegalArgumentException e) {
+					ExceptionThrower.throwResourceException("Failed to load resource:<" + resourceUrl + ">", e);
+				} catch (SecurityException e) {
+					ExceptionThrower.throwResourceException("Failed to load resource:<" + resourceUrl + ">", e);
+				} catch (InstantiationException e) {
+					ExceptionThrower.throwResourceException("Failed to load resource:<" + resourceUrl + ">", e);
+				} catch (IllegalAccessException e) {
+					ExceptionThrower.throwResourceException("Failed to load resource:<" + resourceUrl + ">", e);
+				} catch (InvocationTargetException e) {
+					ExceptionThrower.throwResourceException("Failed to load resource:<" + resourceUrl + ">", e);
+				} catch (NoSuchMethodException e) {
+					ExceptionThrower.throwResourceException("Failed to load resource:<" + resourceUrl + ">", e);
+				}
+				return ret;
+			}
+			boolean isCompatible(Data d) {
+				return dataClass().isAssignableFrom(d.getClass());
+			}
+			abstract Class<? extends Data> dataClass();
+		}
+	
+		String resourceUrl;
+		boolean initialized = false;
+		private int refcount;
+		
+		public Data(String resourceUrl) throws OpenReactorException {
+			this.resourceUrl = resourceUrl;
+		}
+		
+		public void init() throws OpenReactorException {
+			if (initialized) {
+				return;
+			}
+			InputStream is = openUrl(resourceUrl);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+			byte[] b = new byte[8192];
 			try {
-				ret = loaderClass.newInstance();
-			} catch (InstantiationException e) {
-				ExceptionThrower.throwResourceLoaderInstanciationException(e.getMessage(), e);
-			} catch (IllegalAccessException e) {
-				ExceptionThrower.throwResourceLoaderInstanciationException(e.getMessage(), e);
+				try {
+					while (is.read(b) != -1) {
+						baos.write(b);
+					}
+					this._init(baos.toByteArray());
+				} finally {
+					is.close();
+				}
+			} catch (IOException e) {
+				ExceptionThrower.throwIOException("Failed to load data from <" + resourceUrl + ">", e);
+			}
+			this.initialized = true;
+		}
+	
+		protected abstract void _init(byte[] byteArray) throws OpenReactorException;
+		
+		protected InputStream openUrl(String url) throws OpenReactorException {
+			InputStream ret = ClassLoader.getSystemClassLoader().getResourceAsStream(url);
+			if (ret == null) {
+				ExceptionThrower.throwResourceNotFoundException(url, null);
+			}
+			return ret;
+		}
+		
+		public abstract InputStream inputStream() throws OpenReactorException;
+			
+		public int release() throws OpenReactorException {
+			this.refcount--;
+			if (this.refcount <= 0) {
+				this._release();
+			}
+			return this.refcount;
+		}
+		
+		protected abstract void _release();
+	
+		public String resourceUrl() {
+			return this.resourceUrl;
+		}
+		
+		@Override
+		public int hashCode() {
+			return this.resourceUrl.hashCode();
+		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof Data) {
+				return this.resourceUrl.equals(((Data)o).resourceUrl);
+			}
+			return false;
+		}
+		
+		public void inc() {
+			this.refcount++;
+		}
+	}
+
+	public static class RawData extends Data {
+		byte[] buf;
+	
+		public RawData(String resourceUrl) throws OpenReactorException {
+			super(resourceUrl);
+		}
+	
+		protected void _init(byte[] byteArray) throws OpenReactorException {
+			this.buf = byteArray;
+		}
+		
+		public InputStream inputStream() {
+			ByteArrayInputStream ret = new ByteArrayInputStream(buf);
+			return ret;
+		}
+		
+		
+		protected void _release() {
+			this.buf = null;
+		}
+	
+		byte[] rawData() {
+			return this.buf;
+		}
+	}
+
+	public static class SoundData extends RawData {
+		AudioFormat format = null;
+		
+		public SoundData(String resourceUrl) throws OpenReactorException {
+			super(resourceUrl);
+		}
+	
+		@Override
+		protected InputStream openUrl(String resourceUrl) throws OpenReactorException {
+			AudioInputStream ret = null;
+			try {
+				ret = AudioSystem.getAudioInputStream(super.openUrl(resourceUrl()));
+			} catch (UnsupportedAudioFileException e) {
+				ExceptionThrower.throwResourceException("Failed to load audio resource:<" + resourceUrl + ">(" + e.getMessage() + ">", e);
+			} catch (IOException e) {
+				ExceptionThrower.throwResourceException("Failed to load audio resource:<" + resourceUrl + ">(" + e.getMessage() + ">", e);
+			}
+			this.format = ret.getFormat(); 
+			return ret;
+		}
+
+		public byte[] bytes() {
+			return rawData();
+		}
+
+		public AudioFormat format() {
+			return this.format;
+		}
+	}
+
+	public static class ImageData extends Data {
+		Image image = null;
+		public ImageData(String resourceUrl) throws OpenReactorException {
+			super(resourceUrl);
+		}
+		
+		@Override
+		public void _init(byte[] byteArray) throws OpenReactorException { 
+			try {
+				this.image = ImageIO.read(new ByteArrayInputStream(byteArray));
+			} catch (IOException e) {
+				ExceptionThrower.throwResourceException("Failed to load image resource:<" + resourceUrl + ">(" + e.getMessage() + ">", e);
 			}
 		}
-		return ret;
-	}
+		
+		protected void _release() {
+			this.image = null;
+		}
 	
-	public static void main(String[] args) throws Exception {
-		ResourceLoader loader = new ResourceLoader();
-		JSONObject obj = loader.loadJsonObjectFromUrl("example-sprite-01/example-01.json");
-		System.out.println(obj.get("class"));
-		System.out.println(obj.get("width"));
-		System.out.println(obj.get("height"));
-		System.out.println(obj.get("images"));
-	}
-	
-	public static void main01(String[] args) throws Exception {
-		ResourceLoader loader = new ResourceLoader();
-		BufferedReader r = new BufferedReader(new InputStreamReader(loader.openUrl("example-sprite-01/example-01.json")));
-		String l = null;
-		while ((l = r.readLine()) != null) {
-			System.out.println(l);
+		@Override
+		public InputStream inputStream() throws OpenReactorException { 
+			ExceptionThrower.throwResourceException("This method:<inputStream()> is not available for this object:<" + this + ">.");
+			return null;
+		}
+
+		public Image image() {
+			return this.image;
 		}
 	}
 	
-
-	private List<ResourceMonitor> monitors = new LinkedList<ResourceMonitor>();
+	public static class MidiData extends RawData {
+		public MidiData(String resourceUrl) throws OpenReactorException {
+			super(resourceUrl);
+		}
+	}
 	
+	protected static Logger logger = Logger.getLogger();
+
+	private Map<String, Data> dataMap = new HashMap<String, Data>();
+	
+	protected static ResourceLoader instance = null;
+
 	protected ResourceLoader() {
 	}
 	
-	public void addMonitor(ResourceMonitor monitor) {
-		this.monitors.add(monitor);
-	}
-	
-	public void loadConfigFromString(String s) throws OpenReactorException {
-		JSONObject config = this.loadJsonObjectFromString(s);
-		parseJsonObject(config);
-	}
-	
-	public void loadConfigFromUrl(String resourceName) throws OpenReactorException {
-		JSONObject config = this.loadJsonObjectFromUrl(resourceName);
-		parseJsonObject(config);
-	}
-	
-	public Image loadImage(String resourceName) throws OpenReactorException {
-		Image ret = null;
-		try {
-			InputStream is = openUrl(resourceName);
-			try {
-				ret =  ImageIO.read(is);
-			} finally {
-				is.close();
-			}
-		} catch (IOException e) {
-			ExceptionThrower.throwIOException("Failed to load resource:<" + resourceName + ">", e);
-		}
-		return ret;
-	}
-	
-	protected JSONObject loadJsonObjectFromString(String s) throws OpenReactorException {
-		JSONObject ret = null;
-		try {
-			ret = new JSONObject(s);
-		} catch (JSONException e) {
-			ExceptionThrower.throwMalformatJsonException("Malformat JSON:<" + "> is given:<" + s + "> (" + e.getMessage() + ")", e);
-		}
-		return ret;
-	}
-	
-	protected JSONObject loadJsonObjectFromUrl(String resourceName) throws OpenReactorException {
-		JSONObject ret = null;
-		try {
-			BufferedReader r = new BufferedReader(new InputStreamReader(openUrl(resourceName)));
-			try {
-				String s = null;
-				String l = null;
-				StringBuffer b = new StringBuffer(1024);
-				while ((l = r.readLine()) != null) {
-					b.append(l);
+	public static ResourceLoader getResourceLoader(
+			Class<? extends ResourceLoader> resourceLoaderClass) throws OpenReactorException {
+		ResourceLoader ret = instance;
+		synchronized (ResourceLoader.class) {
+			if (ret == null) {
+				try {
+					ret  = resourceLoaderClass.newInstance();
+				} catch (SecurityException e) {
+					ExceptionThrower.throwResourceLoaderInstanciationException("Failed to instantiate resourceLoader:<" + resourceLoaderClass + ">", e);
+				} catch (IllegalArgumentException e) {
+					ExceptionThrower.throwResourceLoaderInstanciationException("Failed to instantiate resourceLoader:<" + resourceLoaderClass + ">", e);
+				} catch (IllegalAccessException e) {
+					ExceptionThrower.throwResourceLoaderInstanciationException("Failed to instantiate resourceLoader:<" + resourceLoaderClass + ">", e);
+				} catch (InstantiationException e) {
+					ExceptionThrower.throwResourceLoaderInstanciationException("Failed to instantiate resourceLoader:<" + resourceLoaderClass + ">", e);
 				}
-				s = b.toString();
-				ret = new JSONObject(s);
-			} finally {
-				r.close();
+				instance = ret;
 			}
-		} catch (JSONException e) {
-			ExceptionThrower.throwMalformatJsonException("Malformat JSON:<" + "> is given for resource:<" + resourceName + "> (" + e.getMessage() + ")", e);
-		} catch (IOException e) {
-			ExceptionThrower.throwIOException("Failed to load resource:<" + resourceName + ">", e);
 		}
 		return ret;
 	}
 
-	public MusicClip loadMusicClip(String resourceName) {
-		// TODO
-		return null;
-	}
-
-	public SoundClip loadSound(String resourceName) {
-		return null;
-	}
-	
-	protected InputStream openUrl(String resourceName) throws OpenReactorException {
-		// see Avis.openUrl
-		InputStream ret = ClassLoader.getSystemClassLoader().getResourceAsStream(resourceName);
-		if (ret == null) {
-			ExceptionThrower.throwResourceNotFoundException(resourceName, null);
+	public Data get(String resourceUrl, Data.Type type) throws OpenReactorException {
+		Data ret = null;
+		if (resourceUrl == null) {
+			ExceptionThrower.throwParameterException("'resourceUrl' must not be null.");
+		}
+		if (type == null) {
+			ExceptionThrower.throwParameterException("'type' must not be null.");
+		}
+		if ((ret = this.dataMap.get(resourceUrl)) == null) {
+			ret = type.create(resourceUrl);
+			ret.init();
+			this.dataMap.put(resourceUrl, ret);
+		}
+		if (ret != null) {
+			if (type.isCompatible(ret)) {
+				ret.inc();
+			} else {
+				ExceptionThrower.throwResourceException("Requested resource:<" + resourceUrl + "> is not compatible with <" + type + ">");
+			}
 		}
 		return ret;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void parseJsonObject(JSONObject config) throws OpenReactorException {
-		try {
-			JSONObject spriteConfig = config.getJSONObject("spritespecs");
-			int numSpriteSpecs = spriteConfig.length();
-			for (ResourceMonitor m: monitors) {
-				m.numSpriteSpecs(numSpriteSpecs);
-			}
-			JSONArray patternConfig = config.getJSONArray("patterns");
-			int numPatterns = patternConfig.length();
-			for (ResourceMonitor m: monitors) {
-				m.numPatterns(numPatterns);
-			}
-			{
-				////
-				// Loading sprite specs
-				Iterator<String> keys = spriteConfig.keys();
-				while (keys.hasNext()) {
-					String cur = keys.next();
-					String name = cur.toString();
-					JSONObject v = spriteConfig.getJSONObject(name);
-					SpriteSpec spec = new SpriteSpec(name);
-					spec.loadRenderer(v.getString("renderer"));
-					spec.width(v.getInt("hresolution"));
-					spec.height(v.getInt("vresolution"));
-					spec.init(v.getJSONObject("params"), this);
-					for (ResourceMonitor m: monitors) {
-						m.spriteSpecLoaded(spec);
-					}
-				}
-			}
-			{
-				////
-				// Loading patterns
-				for (int i = 0; i < numPatterns; i ++) {
-					JSONObject v = patternConfig.getJSONObject(i);
-					Pattern p = new Pattern(i);
-					p.init(v, this);
-					for (ResourceMonitor m: monitors) {
-						m.patternLoaded(p);
-					}
-				}
-			}
-		} catch (JSONException e) {
-			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
+	public RawData getRaw(String resourceUrl) throws OpenReactorException {
+		return (RawData) get(resourceUrl, Data.Type.Raw);
+	}
+
+	public SoundData getSound(String resourceUrl) throws OpenReactorException {
+		return (SoundData) get(resourceUrl, Data.Type.Sound);
+	}
+
+	public MidiData getMidi(String resourceUrl) throws OpenReactorException {
+		return (MidiData) get(resourceUrl, Data.Type.Midi);
+	}
+	
+	public ImageData getImage(String resourceUrl) throws OpenReactorException {
+		return (ImageData) get(resourceUrl, Data.Type.Image);
+	}
+	
+	void release(String resourceUrl) throws OpenReactorException {
+		Data d = this.dataMap.get(resourceUrl);
+		if (d == null) {
+			ExceptionThrower.throwResourceException("Specified resource is not managed.:<" + resourceUrl + ">");
 		}
+		if (d.release() <= 0) {
+			this.dataMap.remove(resourceUrl);
+		}
+	}
+	
+	public void reset() {
+		this.dataMap.clear();
 	}
 }

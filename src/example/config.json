@@ -1,7 +1,7 @@
 {
     'spritespecs':{
         'spr00':{
-            'renderer':'oreactor.video.sprite.ImageSpriteRenderer',
+            'class':'oreactor.video.sprite.ImageSpriteSpec',
             'params':{
                 'images':['example/images/spr00.jpg'],
             },

@@ -3,8 +3,9 @@ package oreactor.core;
 import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
+import oreactor.io.ResourceLoader;
 
-public class Reactor {
+public abstract class Reactor {
 	enum State {
 		Running {
 			@Override
@@ -50,7 +51,7 @@ public class Reactor {
 
 	@ExtensionPoint
 	protected Context initialize(Settings settings) throws OpenReactorException {
-		Context c = new Context(settings);
+		Context c = new Context(this, settings);
 		c.getIOEngine().initialize(c);
 		c.getJoystickEngine().initialize(c);
 		c.getKeyboardEngine().initialize(c);
@@ -188,5 +189,7 @@ public class Reactor {
 	protected void exit() throws OpenReactorExitException {
 		throw new OpenReactorExitException(null);
 	}
+
+	public abstract Class<? extends ResourceLoader> resourceLoaderClass();
 }
 

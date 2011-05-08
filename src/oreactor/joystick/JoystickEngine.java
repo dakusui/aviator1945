@@ -152,6 +152,7 @@ public class JoystickEngine  extends BaseEngine {
 
 	@Override 
 	public void initialize(Context c) throws OpenReactorException {
+		super.initialize(c);
 		devices.add(new KeyboardDevice());
 	}
 	

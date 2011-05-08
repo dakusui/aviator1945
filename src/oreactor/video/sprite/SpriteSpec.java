@@ -1,36 +1,28 @@
 package oreactor.video.sprite;
 
 import java.awt.Graphics2D;
+import java.lang.reflect.InvocationTargetException;
 
 import oreactor.exceptions.OpenReactorException;
-import oreactor.io.BaseResource;
 import oreactor.io.ResourceLoader;
-import oreactor.video.sprite.SpriteRenderer.RenderingParameters;
 
 import org.json.JSONObject;
 
-public final class SpriteSpec extends BaseResource {
+public abstract class SpriteSpec {
+	static class RenderingParameters {
+	}
+	public abstract RenderingParameters createRenderingParameters();
+
 	private double width;
 	private int height;
-	private SpriteRenderer renderer = null;
+	private String name;
 	
 	public SpriteSpec(String name) {
-		super(name);
+		this.name = name;
 	}
 
-	public void render(Graphics2D gg, Sprite sprite) {
-		this.renderer.render(gg, sprite);
-	}
+	public abstract void render(Graphics2D gg, Sprite sprite);
 	
-	@Override
-	public Type type() {
-		return Type.SpriteSpec;
-	}
-
-	@Override
-	public void init(JSONObject params, ResourceLoader loader) throws OpenReactorException {
-		this.renderer.init(params, loader);
-	}
 
 	public void width(double w) {
 		this.width = w;
@@ -49,11 +41,12 @@ public final class SpriteSpec extends BaseResource {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void loadRenderer(String className) {
+	public static SpriteSpec loadSpec(String name, String className) {
+		SpriteSpec ret = null;
 		try {
-			Class<? extends SpriteRenderer> rendererClass;
-			rendererClass = (Class<? extends SpriteRenderer>) Class.forName(className);
-			this.renderer = rendererClass.newInstance();
+			Class<? extends SpriteSpec> specClass;
+			specClass = (Class<? extends SpriteSpec>) Class.forName(className);
+			ret = specClass.getConstructor(String.class).newInstance(name);
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -63,14 +56,33 @@ public final class SpriteSpec extends BaseResource {
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return ret;
 		
 	}
 	
 	public Sprite createSprite() {
 		Sprite ret = new Sprite(this);
-		RenderingParameters p = this.renderer.createRenderingParameters();
+		RenderingParameters p = this.createRenderingParameters();
 		ret.renderingParameters(p);
 		return ret;
 	}
+	
+	public String name() {
+		return this.name;
+	}
+
+	public abstract void init(JSONObject params, ResourceLoader loader) throws OpenReactorException ;
 }

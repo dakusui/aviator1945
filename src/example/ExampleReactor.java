@@ -3,11 +3,10 @@ package example;
 
 import java.awt.Color;
 
-import openreactor.hobbystation.HobbyStationReactor;
-
+import openreactor.nu64.Nu64Reactor;
+import openreactor.nu64.Nu64ResourceLoader;
 import oreactor.core.Context;
 import oreactor.exceptions.OpenReactorException;
-import oreactor.io.ResourceLoader;
 import oreactor.joystick.JoystickEngine.Stick;
 import oreactor.video.graphics.GraphicsPlane;
 import oreactor.video.pattern.Pattern;
@@ -15,7 +14,7 @@ import oreactor.video.pattern.PatternPlane;
 import oreactor.video.sprite.Sprite;
 import oreactor.video.sprite.SpritePlane;
 
-public class ExampleReactor extends HobbyStationReactor {
+public class ExampleReactor extends Nu64Reactor {
 
 	protected Sprite ss;
 	protected Sprite tt;
@@ -27,7 +26,7 @@ public class ExampleReactor extends HobbyStationReactor {
 	public Action action() {
 		return new Action() {
 			public void perform(Context c) throws OpenReactorException {
-				ResourceLoader loader = c.getResourceLoader();
+				Nu64ResourceLoader loader = (Nu64ResourceLoader) c.getResourceLoader();
 				loader.loadConfigFromUrl("example/config.json");
 				SpritePlane s = spriteplane(c);
 				ss = s.createSprite(spriteSpecs.get("spr00"));
@@ -60,9 +59,9 @@ public class ExampleReactor extends HobbyStationReactor {
 						}
 
 						tt.put(x, 200 + y, 0);
-						ss.put(x + 200, x+22, (x*Math.PI/200));
-						uu.put(-x + 1200, -x+600, -(x*Math.PI/200));
-						Stick s = stick();
+						ss.put(x + 200, x+22 - y, (x*Math.PI/200));
+						uu.put(-x + 1200 + y, -x+600, -(x*Math.PI/200));
+						Stick s = stick(c);
 						if (s != null) {
 							int xsig = s.x();
 							int ysig = s.y();
@@ -70,7 +69,7 @@ public class ExampleReactor extends HobbyStationReactor {
 							y = y + 2 * ysig;
 						}
 						
-						g.print("hello world", 10, 400);
+						g.print("hello world", 10 + x, 400 - y, Color.green);
 					}
 				};
 			}

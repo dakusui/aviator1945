@@ -2,6 +2,8 @@ package oreactor.exceptions;
 
 import java.text.MessageFormat;
 
+import javax.sound.sampled.AudioFormat;
+
 import oreactor.core.Reactor;
 
 public class ExceptionThrower {
@@ -71,5 +73,16 @@ public class ExceptionThrower {
 
 	public static void throwParameterException(String message) throws OpenReactorException {
 		throw new OpenReactorException(message);
+	}
+
+	public static void throwResourceException(String message) throws OpenReactorException {
+		throw new OpenReactorException(message);
+	}
+	public static void throwResourceException(String message, Throwable t) throws OpenReactorException {
+		throw new OpenReactorException(message, t);
+	}
+
+	public static void throwAudioLineWasUnavailable(AudioFormat format,Throwable t) throws OpenReactorException {
+		throw new OpenReactorException("Failed to get audio line for format <" + format + ">", t);
 	}
 }

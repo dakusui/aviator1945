@@ -2,14 +2,12 @@ package oreactor.video.sprite;
 
 import java.awt.Graphics2D;
 
-import oreactor.video.sprite.SpriteRenderer.RenderingParameters;
-
 public final class Sprite {
 	private SpriteSpec spec;
 	private double x;
 	private double y;
 	private double theta;
-	private RenderingParameters parameters;
+	private SpriteSpec.RenderingParameters parameters;
 
 	Sprite(SpriteSpec spec) {
 		this.spec = spec;
@@ -41,11 +39,11 @@ public final class Sprite {
 		return this.theta;
 	}
 	
-	public SpriteRenderer.RenderingParameters renderingParameters() {
+	public SpriteSpec.RenderingParameters renderingParameters() {
 		return this.parameters;
 	}
 
-	public void renderingParameters(SpriteRenderer.RenderingParameters p) {
+	void renderingParameters(SpriteSpec.RenderingParameters p) {
 		this.parameters = p;
 	}
 

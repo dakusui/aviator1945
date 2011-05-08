@@ -1,14 +1,8 @@
 package oreactor.io;
 
-public abstract class BaseResource implements Resource {
-	private String name;
+import oreactor.exceptions.OpenReactorException;
 
-	protected BaseResource(String name) {
-		this.name = name;
-	}
-	
-	@Override
-	public String name() {
-		return this.name;
-	}
+
+public abstract class BaseResource implements Resource {
+	public void release() throws OpenReactorException {}
 }

@@ -178,4 +178,8 @@ public class Settings {
 	public void videoMode(VideoMode videoMode) {
 		this.videoMode = videoMode;
 	}
+
+	public int maxVoices() {
+		return 8;
+	}
 }

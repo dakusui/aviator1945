@@ -32,7 +32,7 @@ public class GraphicsPlane extends Plane {
 
 	public void box(double x, double y, double w, double h, Color c) {
 		Graphics g = this.image.getGraphics();
-		g.setColor(c);
+		g.setColor(figureOutColor(c));
 		g.drawRect((int)x, (int)y, (int)w, (int)h);
 	}
 
@@ -70,10 +70,10 @@ public class GraphicsPlane extends Plane {
 		return new Color(this.image.getRGB((int)x, (int)y));
 	}
 
-	public void print(String msg, double x, double y) {
+	public void print(String msg, double x, double y, Color c) {
 		Graphics g = this.image.getGraphics();
+		g.setColor(figureOutColor(c));
 		g.drawString(msg, (int)x, (int)y);
-
 	}
 
 	public void clear() {

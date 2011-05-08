@@ -24,7 +24,7 @@ public class Context {
 	private NetworkEngine networkEngine;
 	private ResourceLoader resourceLoader;
 	
-	public Context(Settings settings) throws OpenReactorException {
+	public Context(Reactor reactor, Settings settings) throws OpenReactorException {
 		this.videoEngine = new VideoEngine(settings);
 		List<PlaneDesc> planeDescs = settings.planeInfoItems();
 		Screen s = this.videoEngine.screen();
@@ -38,7 +38,7 @@ public class Context {
 		this.joystickEngine = new JoystickEngine(settings);
 		this.ioEngine = new IOEngine(settings);
 		this.networkEngine = new NetworkEngine(settings);
-		this.resourceLoader = ResourceLoader.getResourceLoader();
+		this.resourceLoader = ResourceLoader.getResourceLoader(reactor.resourceLoaderClass());
 	}
 	
 	public VideoEngine getVideoEngine() {

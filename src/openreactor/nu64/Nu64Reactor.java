@@ -1,4 +1,4 @@
-package openreactor.hobbystation;
+package openreactor.nu64;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +9,7 @@ import oreactor.core.Context;
 import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
+import oreactor.io.ResourceLoader;
 import oreactor.io.ResourceMonitor;
 import oreactor.joystick.InputDevice;
 import oreactor.joystick.JoystickEngine.Stick;
@@ -23,7 +24,7 @@ import oreactor.video.pattern.PatternPlane;
 import oreactor.video.sprite.SpritePlane;
 import oreactor.video.sprite.SpriteSpec;
 
-public class HobbyStationReactor extends Reactor implements ResourceMonitor {
+public class Nu64Reactor extends Reactor implements ResourceMonitor {
 	public static abstract class Action {
 		public static final Action NullAction = new Action() {
 			@Override
@@ -40,7 +41,6 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 	protected Map<String, SpriteSpec> spriteSpecs = new HashMap<String, SpriteSpec>();
 	protected Map<Integer, Pattern> patterns = new HashMap<Integer, Pattern>();
 	protected Action action = null;
-	InputDevice joystick = null;
 	
 	@Override
 	protected Settings loadSettings() throws OpenReactorException {
@@ -76,8 +76,7 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context ret = super.initialize(settings);
 		this.action = action();
-		this.joystick = ret.getJoystickEngine().devices().get(0);
-		ret.getResourceLoader().addMonitor(this);
+		((Nu64ResourceLoader)ret.getResourceLoader()).addMonitor(this);
 		return ret;
 	}
 
@@ -132,6 +131,19 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 		return ret;
 	}
 	
+	private InputDevice joystick(Context c) {
+		return c.getJoystickEngine().devices().get(0);
+	}
+	
+	protected final Stick stick(Context c) {
+		Stick ret = joystick(c).stick();
+		return ret;
+	}
+	
+	protected final boolean trigger(Context c, Trigger t) {
+		boolean ret = joystick(c).trigger(t);
+		return ret;
+	}
 	@Override
 	public void numPatterns(int numPatterns) {
 		// does nothing
@@ -140,8 +152,8 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 	
 	@Override
 	public void patternLoaded(Pattern pattern) {
-		patterns.put(pattern.id(), pattern);
-		System.err.println("  Pattern:<" + pattern.name() + "> is loaded.");
+		patterns.put(pattern.num(), pattern);
+		System.err.println("  Pattern:<" + pattern.num() + "> is loaded.");
 	}
 	
 	@Override
@@ -171,13 +183,7 @@ public class HobbyStationReactor extends Reactor implements ResourceMonitor {
 		}
 	}
 	
-	protected final Stick stick() {
-		Stick ret = joystick.stick();
-		return ret;
-	}
-	
-	protected final boolean trigger(Trigger t) {
-		boolean ret = joystick.trigger(t);
-		return ret;
+	public Class<? extends ResourceLoader> resourceLoaderClass() {
+		return Nu64ResourceLoader.class;
 	}
 }
