@@ -59,6 +59,7 @@ public abstract class Reactor {
 		c.getNetworkEngine().initialize(c);
 		c.getSoundEngine().initialize(c);
 		c.getVideoEngine().initialize(c);
+
 		return c;
 	}
 	

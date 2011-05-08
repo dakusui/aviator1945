@@ -10,6 +10,7 @@ import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.ResourceLoader;
+import oreactor.io.ResourceLoader.SoundData;
 import oreactor.io.ResourceMonitor;
 import oreactor.joystick.InputDevice;
 import oreactor.joystick.JoystickEngine.Stick;
@@ -77,6 +78,7 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 		Context ret = super.initialize(settings);
 		this.action = action();
 		((Nu64ResourceLoader)ret.getResourceLoader()).addMonitor(this);
+		((Nu64ResourceLoader)ret.getResourceLoader()).addMonitor(ret.getSoundEngine());
 		return ret;
 	}
 
@@ -140,6 +142,9 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 		return ret;
 	}
 	
+	protected final boolean trigger(Context c) {
+		return trigger(c, Trigger.ANY);
+	}
 	protected final boolean trigger(Context c, Trigger t) {
 		boolean ret = joystick(c).trigger(t);
 		return ret;
@@ -185,5 +190,19 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 	
 	public Class<? extends ResourceLoader> resourceLoaderClass() {
 		return Nu64ResourceLoader.class;
+	}
+
+	public void playwave(Context c, String name) throws OpenReactorException {
+		c.getSoundEngine().player(name).start();
+	}
+
+	@Override
+	public void numSoundClips(int numSoundClips) {
+		System.err.println("Loading " + numSoundClips + " soud clips.");
+	}
+
+	@Override
+	public void soundClipLoaded(String name, SoundData soundData) {
+		System.err.println("  Sound data:<" + soundData.resourceUrl() + "> is loaded as '" + name + "'.");
 	}
 }

@@ -40,6 +40,8 @@ public class ExampleReactor extends Nu64Reactor {
 			}
 			public Action next() {
 				return new Action() {
+					private int counter;
+
 					@Override
 					public void perform(Context c) throws OpenReactorException {
 						GraphicsPlane g = graphicsplane(c);
@@ -68,7 +70,15 @@ public class ExampleReactor extends Nu64Reactor {
 							x = x + 2 * xsig;
 							y = y + 2 * ysig;
 						}
-						
+						if (trigger(c)) {
+							if ( counter <= 0 ) {
+								playwave(c, "spell");
+								counter = 5;
+							}
+						}
+						if (counter > 0) {
+							counter--;
+						}
 						g.print("hello world", 10 + x, 400 - y, Color.green);
 					}
 				};

@@ -6,17 +6,23 @@ import javax.sound.sampled.SourceDataLine;
 import oreactor.io.ResourceLoader.SoundData;
 
 public class SoundPlayer {
-	static enum State {
+	public static enum State {
 		NOP {
 		},
 		Prepared {
+			@Override
 			public void start(SoundPlayer soundPlayer) {
 				soundPlayer.cur = 0;
 				soundPlayer.line.flush();
 				soundPlayer.line.start();
 			}
+			@Override
+			public State feed(SoundPlayer soundPlayer, long millisec) {
+				return Playing;
+			}
 		},
 		Playing {
+			@Override
 			public State feed(SoundPlayer soundPlayer, long millisec) {
 				State ret = this;
 				byte[] b = soundPlayer.data.bytes();
@@ -30,10 +36,9 @@ public class SoundPlayer {
 				}
 				return ret;
 			}
-
+			@Override
 			public void stop(SoundPlayer soundPlayer) {
 				soundPlayer.line.stop();		
-				soundPlayer.manager.release(soundPlayer);
 			}
 		},
 		Finished {
@@ -57,13 +62,11 @@ public class SoundPlayer {
 	private int cur = 0;
 	SoundData data = null;
 	SourceDataLine line = null;
-	private SoundEngine manager;
 	private State state;
 	
 	SoundPlayer(SoundData data, SoundEngine manager) {
 		this.data = data;
 		this.line = manager.getLine();
-		this.manager = manager;
 		this.state = this.line != null ? State.Prepared : State.NOP;
 	}
 	
@@ -84,11 +87,11 @@ public class SoundPlayer {
 		state = state.feed(this, millisec);
 	}
 	
-	public boolean isPlaying() {
-		return state.isPlaying();
+	public State state() {
+		return state;
 	}
 
 	public SourceDataLine line() {
-		return this.line;
+		return line;
 	}
 }

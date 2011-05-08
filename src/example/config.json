@@ -29,5 +29,8 @@
     'musicclips':{
     },
     'soundclips':{
+    	'spell':{
+    		'wave':'example/wav/spell.wav',
+    	}
     },
 }
