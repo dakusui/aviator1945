@@ -37,6 +37,9 @@ public class ExampleReactor extends Nu64Reactor {
 				for (Pattern pt : patterns.values()) {
 					p.bind(pt);
 				}
+				p.viewport().offset(100, 100);
+				//p.viewport().i((1024-32)/1, (32)/1);
+				//p.viewport().j((-32)/1, (768-32)/1);
 			}
 			public Action next() {
 				return new Action() {
@@ -46,8 +49,10 @@ public class ExampleReactor extends Nu64Reactor {
 					public void perform(Context c) throws OpenReactorException {
 						GraphicsPlane g = graphicsplane(c);
 						g.box(100 + x, 100, 80, 100, Color.blue);
+						//g.paint(105, 90, Color.pink, Color.blue);
 						g.line(10, 600 + x, 1000, 50, Color.red);
 
+						/*
 						PatternPlane p = patternplane(c);
 						for (int i = 0; i < p.columns(); i++) {
 							for (int j = 0; j < p.rows(); j++) {
@@ -59,6 +64,7 @@ public class ExampleReactor extends Nu64Reactor {
 								}
 							}
 						}
+						*/
 
 						tt.put(x, 200 + y, 0);
 						ss.put(x + 200, x+22 - y, (x*Math.PI/200));

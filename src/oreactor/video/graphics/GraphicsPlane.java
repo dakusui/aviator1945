@@ -6,8 +6,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.List;
 
 import oreactor.video.Plane;
+import oreactor.video.Viewport;
 
 /**
  * A graphics plane.
@@ -19,8 +22,8 @@ public class GraphicsPlane extends Plane {
 	private Color fgColor;
 	private Color bgColor;
 
-	public GraphicsPlane(String name, double width, double height) {
-		super(name, width, height);
+	public GraphicsPlane(String name, double width, double height, Viewport viewport) {
+		super(name, width, height, viewport);
 		this.image = new BufferedImage((int)width, (int)height, ColorSpace.TYPE_RGB); 
 	}
 
@@ -82,10 +85,65 @@ public class GraphicsPlane extends Plane {
 	}
 
 	public void paint(double x1, double y1, Color c, Color b) {
-		//this.image.getRGB(x1, y1);
-		// TODO
+		//scanLineFill((int)x1, (int)y1, c.getRGB(), c, b.getRGB());
 	}
 
+	static enum Direction {
+		BOTH, UPWARD, DOWNWAWRD;
+	};
+	private void scanLineFill(int x, int y, Color c, Color b, Direction d, int left, int right) {
+		int cc = c.getRGB();
+		int bb = b.getRGB();
+		if (!shouldPaint(x, y, cc, bb)) {
+			return;
+		}
+		int r;
+		for (r = x; r < this.width; r++) {
+			if (!shouldPaint(r, y, cc, bb)) {
+				break;
+			}
+		}
+		int l;
+		for (l = x; l >= 0; l--) {
+			if (!shouldPaint(r, y, cc, bb)) {
+				break;
+			}
+		}
+		line(l, y, r, y, c);	
+		List<Integer> points = new LinkedList<Integer>();
+		if (d == Direction.BOTH || d == Direction.UPWARD) {
+			points.clear();
+			scanLine(points, l, r, y - 1);
+			for (int i: points) {
+				scanLineFill(i, y - 1, c, b, Direction.UPWARD, l, r);
+				Graphics2D g;
+			}
+		}
+		if (d == Direction.BOTH || d == Direction.DOWNWAWRD) {
+			points.clear();
+			scanLine(points, l, r, y + 1);
+		}
+	}
+	
+	private void scanLine(List<Integer> points, int l, int r, int y) {
+		// TODO Auto-generated method stub
+	}
+
+	boolean shouldPaint(int x, int y, int c, int b) {
+		try {
+			if (x < 0 || x >= this.image.getWidth() || y < 0 || y >= this.image.getHeight()) {
+				return false;
+			}
+			int tmp = this.image.getRGB(x, y);
+			if (tmp == c || tmp == b) {
+				return false;
+			}
+			return true;
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("(x,y)=(" + x + "," + y + ")");
+			throw e;
+		}
+	}
 	public void color(Color foreground, Color background) {
 		this.fgColor = foreground;
 		this.bgColor = background;

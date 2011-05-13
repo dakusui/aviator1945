@@ -27,10 +27,14 @@
         { 'image':'example/images/15.jpg',  },
     ],
     'musicclips':{
+    	'carmen':{
+    		'midi':'example/bizet_carmen_1_2.mid',
+    		'repeattick':6000000,
+    	},
     },
     'soundclips':{
     	'spell':{
     		'wave':'example/wav/spell.wav',
-    	}
+    	},
     },
 }

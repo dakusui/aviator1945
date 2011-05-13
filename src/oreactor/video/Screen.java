@@ -14,9 +14,6 @@ import javax.swing.JFrame;
 
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
-import oreactor.video.graphics.GraphicsPlane;
-import oreactor.video.pattern.PatternPlane;
-import oreactor.video.sprite.SpritePlane;
 
 public class Screen extends JFrame {
 	/**
@@ -68,23 +65,8 @@ public class Screen extends JFrame {
 		}
     }
 
-	GraphicsPlane createGraphicsPlane(String name, double width, double height) {
-		GraphicsPlane ret = new GraphicsPlane(name, width, height);
-		return ret;
-	}
-	
-	SpritePlane createSpritePlane(String name, double width, double height) {
-		SpritePlane ret = new SpritePlane(name, width, height);
-		return ret;
-	}
-	
-	PatternPlane createPatternPlane(String name, double width, double height, double patternwidth, double patternheight) {
-		PatternPlane ret = new PatternPlane(name, width, height, patternwidth, patternheight, 256);
-		return ret;
-	}
-
 	public void createPlane(PlaneDesc desc) {
-		Plane p = desc.createPlane(this);
+		Plane p = desc.createPlane(this, new Viewport(this.width, this.height));
 		System.err.println("Created plane is:" + p);
 		this.planes.add(p);
 	}
@@ -97,7 +79,7 @@ public class Screen extends JFrame {
 	
 	protected void renderPlanes(Graphics2D graphics) throws OpenReactorException {
         for (Plane p: this.planes()) {
-        	p.render(graphics);
+        	p.render(graphics, width, height);
         }
 	}
 

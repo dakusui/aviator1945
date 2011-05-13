@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.video.Plane;
+import oreactor.video.Viewport;
 
 public class PatternPlane extends Plane {
 	double patternwidth = 16;
@@ -14,8 +15,8 @@ public class PatternPlane extends Plane {
 	int columns;
 	int rows;
 	
-	public PatternPlane(String name, double width, double height, double patternwidth, double patternheight, int numpatterns) {
-		super(name, width, height);
+	public PatternPlane(String name, double width, double height, double patternwidth, double patternheight, int numpatterns, Viewport viewport) {
+		super(name, width, height, viewport);
 		this.patternwidth = patternwidth;
 		this.patternheight = patternheight;
 		this.columns = (int)(width / patternwidth) + 1;

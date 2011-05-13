@@ -10,6 +10,7 @@ import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.ResourceLoader;
+import oreactor.io.ResourceLoader.MidiData;
 import oreactor.io.ResourceLoader.SoundData;
 import oreactor.io.ResourceMonitor;
 import oreactor.joystick.InputDevice;
@@ -48,8 +49,8 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 		Settings settings = super.loadSettings();
 		double w = 1024;
 		double h = 768;
-		double pw = 32;
-		double ph = 32;
+		double pw = 64;
+		double ph = 64;
 		{
 			PlaneDesc desc = new PlaneDesc("graphics", PlaneDesc.Type.Graphics);
 			desc.width(w);
@@ -79,6 +80,7 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 		this.action = action();
 		((Nu64ResourceLoader)ret.getResourceLoader()).addMonitor(this);
 		((Nu64ResourceLoader)ret.getResourceLoader()).addMonitor(ret.getSoundEngine());
+		((Nu64ResourceLoader)ret.getResourceLoader()).addMonitor(ret.getMusicEngine());
 		return ret;
 	}
 
@@ -204,5 +206,13 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 	@Override
 	public void soundClipLoaded(String name, SoundData soundData) {
 		System.err.println("  Sound data:<" + soundData.resourceUrl() + "> is loaded as '" + name + "'.");
+	}
+
+	@Override
+	public void numMidiClips(int numClips) {
+	}
+
+	@Override
+	public void midiClipLoaded(String name, MidiData midiData) {
 	}
 }

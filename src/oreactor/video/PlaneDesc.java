@@ -15,25 +15,25 @@ public class PlaneDesc {
 	public static enum Type {
 		Graphics {
 			@Override
-			protected Plane createPlane(PlaneDesc desc) {
-				return new GraphicsPlane(desc.name(), desc.width(), desc.height());
+			protected Plane createPlane(PlaneDesc desc, Viewport viewport) {
+				return new GraphicsPlane(desc.name(), desc.width(), desc.height(), viewport);
 			}
 		},
 		Pattern {
 			@Override
-			protected Plane createPlane(PlaneDesc desc) {
+			protected Plane createPlane(PlaneDesc desc, Viewport viewport) {
 				double patternwidth = ((Number)desc.get(PATTERNWIDTH_KEY)).doubleValue();
 				double patternheight = ((Number)desc.get(PATTERNHEIGHT_KEY)).doubleValue();
-				return new PatternPlane(desc.name(), desc.width(), desc.height(), patternwidth, patternheight, 256);
+				return new PatternPlane(desc.name(), desc.width(), desc.height(), patternwidth, patternheight, 256, viewport);
 			}
 		},
 		Sprite {
 			@Override
-			protected Plane createPlane(PlaneDesc desc) {
-				return new SpritePlane(desc.name(), desc.width(), desc.height());
+			protected Plane createPlane(PlaneDesc desc, Viewport viewport) {
+				return new SpritePlane(desc.name(), desc.width(), desc.height(), viewport);
 			}
 		};
-		protected abstract Plane createPlane(PlaneDesc desc);
+		protected abstract Plane createPlane(PlaneDesc desc, Viewport viewport);
 	}
 	protected String name;	
 	protected Type type;
@@ -88,7 +88,7 @@ public class PlaneDesc {
 		return "Plane:" + this.name + "(" + this.type() + ")";
 	}
 
-	public Plane createPlane(Screen screen) {
-		return this.type.createPlane(this);
+	public Plane createPlane(Screen screen, Viewport viewport) {
+		return this.type.createPlane(this, viewport);
 	}
 }

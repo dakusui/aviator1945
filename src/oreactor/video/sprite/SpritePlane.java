@@ -6,12 +6,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import oreactor.video.Plane;
+import oreactor.video.Viewport;
 
 public class SpritePlane extends Plane {
 	protected List<Sprite> sprites;
 
-	public SpritePlane(String name, double width, double height) {
-		super(name, width, height);
+	public SpritePlane(String name, double width, double height, Viewport viewport) {
+		super(name, width, height, viewport);
 		this.sprites = new LinkedList<Sprite>();
 	}
 

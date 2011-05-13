@@ -3,11 +3,10 @@ package oreactor.core;
 import java.util.List;
 
 import oreactor.exceptions.OpenReactorException;
-import oreactor.io.IOEngine;
 import oreactor.io.ResourceLoader;
 import oreactor.joystick.JoystickEngine;
 import oreactor.keyboard.KeyboardEngine;
-import oreactor.music.MusicEngine;
+import oreactor.music.MidiEngine;
 import oreactor.network.NetworkEngine;
 import oreactor.sound.SoundEngine;
 import oreactor.video.PlaneDesc;
@@ -17,10 +16,9 @@ import oreactor.video.VideoEngine;
 public class Context {
 	private VideoEngine videoEngine;
 	private SoundEngine soundEngine;
-	private MusicEngine musicEngine;
+	private MidiEngine musicEngine;
 	private KeyboardEngine keyboardEngine;
 	private JoystickEngine joystickEngine;
-	private IOEngine ioEngine;
 	private NetworkEngine networkEngine;
 	private ResourceLoader resourceLoader;
 	
@@ -33,10 +31,9 @@ public class Context {
 			s.createPlane(desc);
 		}
 		this.soundEngine = new SoundEngine(settings);
-		this.musicEngine = new MusicEngine(settings);
+		this.musicEngine = new MidiEngine(settings);
 		this.keyboardEngine = new KeyboardEngine(settings);
 		this.joystickEngine = new JoystickEngine(settings);
-		this.ioEngine = new IOEngine(settings);
 		this.networkEngine = new NetworkEngine(settings);
 		this.resourceLoader = ResourceLoader.getResourceLoader(reactor.resourceLoaderClass());
 	}
@@ -49,7 +46,7 @@ public class Context {
 		return this.soundEngine;
 	}
 	
-	public MusicEngine getMusicEngine() {
+	public MidiEngine getMusicEngine() {
 		return this.musicEngine;
 	}
 	
@@ -61,9 +58,6 @@ public class Context {
 		return this.joystickEngine;
 	}
 	
-	public IOEngine getIOEngine() {
-		return this.ioEngine;
-	}
 	public NetworkEngine getNetworkEngine() {
 		return this.networkEngine;
 	}

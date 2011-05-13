@@ -17,11 +17,10 @@ import oreactor.core.Settings;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.ResourceLoader.SoundData;
-import oreactor.io.ResourceMonitor;
 import oreactor.video.pattern.Pattern;
 import oreactor.video.sprite.SpriteSpec;
 
-public class SoundEngine extends BaseEngine implements ResourceMonitor {
+public class SoundEngine extends BaseEngine {
 	private List<SourceDataLine> availableLines = new LinkedList<SourceDataLine>();
 	private List<SoundPlayer> activePlayers = new LinkedList<SoundPlayer>();
 	private int maxVoices;

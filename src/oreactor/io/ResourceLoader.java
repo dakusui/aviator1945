@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -231,9 +234,35 @@ public class ResourceLoader {
 		}
 	}
 	
-	public static class MidiData extends RawData {
+	public static class MidiData extends Data {
+		Sequence seq;
 		public MidiData(String resourceUrl) throws OpenReactorException {
 			super(resourceUrl);
+		}
+
+		@Override
+		public void _init(byte[] byteArray) throws OpenReactorException { 
+			try {
+				this.seq = MidiSystem.getSequence(new ByteArrayInputStream(byteArray));
+			} catch (IOException e) {
+				ExceptionThrower.throwResourceException("Failed to load midi resource:<" + resourceUrl + ">(" + e.getMessage() + ">", e);
+			} catch (InvalidMidiDataException e) {
+				ExceptionThrower.throwResourceException("Failed to load midi resource:<" + resourceUrl + ">(" + e.getMessage() + ">", e);
+			}
+		}
+		
+		protected void _release() {
+			this.seq = null;
+		}
+	
+		@Override
+		public InputStream inputStream() throws OpenReactorException { 
+			ExceptionThrower.throwResourceException("This method:<inputStream()> is not available for this object:<" + this + ">.");
+			return null;
+		}
+
+		public  Sequence sequence() {
+			return this.seq;
 		}
 	}
 	

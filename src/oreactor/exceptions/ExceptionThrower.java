@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import javax.sound.sampled.AudioFormat;
 
 import oreactor.core.Reactor;
+import oreactor.video.Viewport;
 
 public class ExceptionThrower {
 
@@ -84,5 +85,9 @@ public class ExceptionThrower {
 
 	public static void throwAudioLineWasUnavailable(AudioFormat format,Throwable t) throws OpenReactorException {
 		throw new OpenReactorException("Failed to get audio line for format <" + format + ">", t);
+	}
+
+	public static void throwViewportStateException(String msg, Viewport viewport) throws OpenReactorException {
+		throw new OpenReactorException(msg + ":<" + viewport + ">");
 	}
 }

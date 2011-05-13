@@ -52,7 +52,6 @@ public abstract class Reactor {
 	@ExtensionPoint
 	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context c = new Context(this, settings);
-		c.getIOEngine().initialize(c);
 		c.getJoystickEngine().initialize(c);
 		c.getKeyboardEngine().initialize(c);
 		c.getMusicEngine().initialize(c);
@@ -70,7 +69,6 @@ public abstract class Reactor {
 	}
 	
 	private void prepareEngines(Context c) throws OpenReactorException {
-		c.getIOEngine().prepare();
 		c.getJoystickEngine().prepare();
 		c.getKeyboardEngine().prepare();
 		c.getMusicEngine().prepare();
@@ -80,7 +78,6 @@ public abstract class Reactor {
 	}
 
 	private void runEngines(Context c) throws OpenReactorException {
-		c.getIOEngine().run();
 		c.getJoystickEngine().run();
 		c.getKeyboardEngine().run();
 		c.getMusicEngine().run();
@@ -97,7 +94,6 @@ public abstract class Reactor {
 		c.getMusicEngine().finish();
 		c.getKeyboardEngine().finish();
 		c.getJoystickEngine().finish();
-		c.getIOEngine().finish();
 	}
 
 	@ExtensionPoint
@@ -111,7 +107,6 @@ public abstract class Reactor {
 		c.getMusicEngine().terminate(c);
 		c.getKeyboardEngine().terminate(c);
 		c.getJoystickEngine().terminate(c);
-		c.getIOEngine().terminate(c);	
 	}
 
 	public void argParser(ArgParser argParser) {
