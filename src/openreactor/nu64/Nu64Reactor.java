@@ -49,8 +49,8 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 		Settings settings = super.loadSettings();
 		double w = 1024;
 		double h = 768;
-		double pw = 64;
-		double ph = 64;
+		double pw = 32;
+		double ph = 32;
 		{
 			PlaneDesc desc = new PlaneDesc("graphics", PlaneDesc.Type.Graphics);
 			desc.width(w);

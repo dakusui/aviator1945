@@ -25,9 +25,9 @@ public final class Pattern {
 	public void render(Graphics2D g, double x, double y, double w, double h) {
 		g.drawImage(
 				this.image, 
-				(int)x, (int)y, (int)w, (int)h, 
-				null
-				);
+				(int)x, (int)y, (int)(x + w), (int)(y + h), 
+				0,      0,      (int)w,       (int)h, 
+				null);
 	}
 	
 	public void init(JSONObject json, ResourceLoader loader) throws OpenReactorException {

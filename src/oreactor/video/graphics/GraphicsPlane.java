@@ -159,11 +159,13 @@ public class GraphicsPlane extends Plane {
 	
 	@Override
 	protected void render_Protected(Graphics2D g) {
+		/*
 		g.drawImage(
 				this.image, 
 				0, 0, (int)this.width, (int)this.height, 
 				0, 0, (int)this.width, (int)this.height, 
 				this.bgColor, null
 				);
+				*/
 	} 
 }

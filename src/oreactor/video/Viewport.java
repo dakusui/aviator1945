@@ -1,7 +1,6 @@
 package oreactor.video;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
