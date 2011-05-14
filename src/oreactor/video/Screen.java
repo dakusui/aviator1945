@@ -1,11 +1,18 @@
 package oreactor.video;
 
+import java.awt.AWTException;
+import java.awt.BufferCapabilities;
+import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.ImageCapabilities;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.awt.image.VolatileImage;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,26 +29,28 @@ public class Screen extends JFrame {
 	 */
 	private static final long serialVersionUID = -7060260135859428693L;
 
-    protected Graphics2D graphics2d;
-    
-    protected Image    bImage;
+	protected Graphics2D graphics2d;
+
+	protected Image bImage;
 
 	protected Settings settings;
 
 	private List<Plane> planes;
 
 	private boolean closed;
-	
+
 	double width;
-	
+
 	double height;
 
 	private BufferStrategy strategy;
-	
-	Logger logger = Logger.getLogger(); 
-	
+
+	Logger logger = Logger.getLogger();
+
+	private boolean bsEnabled = true;
+
 	public Screen(Settings settings) {
-    	this.settings = settings;
+		this.settings = settings;
 		this.planes = new LinkedList<Plane>();
 		this.width = settings.screenSize().width();
 		this.height = settings.screenSize().height();
@@ -52,21 +61,54 @@ public class Screen extends JFrame {
 				closed = true;
 			}
 		});
-		this.setSize(settings.screenSize().width(), settings.screenSize().height());
+		this.setSize(settings.screenSize().width(), settings.screenSize()
+				.height());
 		this.setVisible(true);
-    	this.createBufferStrategy(2);
-    	this.strategy = getBufferStrategy();
-    	logger.debug("starategy-=<" + strategy + ">");
-    	logger.debug("backbuffer:");
-    	logger.debug("    accelerated:" + strategy.getCapabilities().getBackBufferCapabilities().isAccelerated());
-    	logger.debug("    volatile:" + strategy.getCapabilities().getBackBufferCapabilities().isTrueVolatile());
-    	logger.debug("frontbuffer:");
-    	logger.debug("    accelerated:" + strategy.getCapabilities().getFrontBufferCapabilities().isAccelerated());
-    	logger.debug("    volatile:" + strategy.getCapabilities().getFrontBufferCapabilities().isTrueVolatile());
-    	logger.debug("pageflipping:" + strategy.getCapabilities().isPageFlipping());
-    	
-    }
-    
+		this.createBufferStrategy(2);
+		this.strategy = getBufferStrategy();
+		logger.debug("starategy-=<" + strategy + ">");
+		logger.debug("backbuffer:");
+		logger.debug("    accelerated:"
+				+ strategy.getCapabilities().getBackBufferCapabilities()
+						.isAccelerated());
+		logger.debug("    volatile:"
+				+ strategy.getCapabilities().getBackBufferCapabilities()
+						.isTrueVolatile());
+		logger.debug("frontbuffer:");
+		logger.debug("    accelerated:"
+				+ strategy.getCapabilities().getFrontBufferCapabilities()
+						.isAccelerated());
+		logger.debug("    volatile:"
+				+ strategy.getCapabilities().getFrontBufferCapabilities()
+						.isTrueVolatile());
+		logger.debug("pageflipping:"
+				+ strategy.getCapabilities().isPageFlipping());
+
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		for (GraphicsDevice gd : ge.getScreenDevices()) {
+			boolean isDefault = false;
+			if (gd == ge.getDefaultScreenDevice()) {
+				isDefault = true;
+			}
+
+			logger.debug("====");
+			String s = "";
+			if (isDefault) {
+				s = "(default)";
+			}
+			
+			logger.debug("ID:" + gd.getIDstring() + s);
+			logger.debug("----");
+			logger.debug("Full Screen Supported:" + gd.isFullScreenSupported());
+			logger.debug("Display Change Supported:" + gd.isDisplayChangeSupported());
+			logger.debug("Accelerated Memory:" + gd.getAvailableAcceleratedMemory());
+			logger.debug("Modes:");
+			for (DisplayMode dm : gd.getDisplayModes()) {
+				logger.debug("    (w,h,d,rr)=(" + dm.getWidth() + "," + dm.getHeight() + "," + dm.getBitDepth() + "," + dm.getRefreshRate() + ")");
+			}
+		}
+	}
+	
 	@Override
 	public void paint(Graphics g) {
 		try {
@@ -75,61 +117,76 @@ public class Screen extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }
+	}
 
 	public void createPlane(PlaneDesc desc) {
 		Plane p = desc.createPlane(this, new Viewport(this.width, this.height));
 		System.err.println("Created plane is:" + p);
 		this.planes.add(p);
 	}
-	
+
 	public void prepare() {
-		for (Plane p: this.planes) {
+		for (Plane p : this.planes) {
 			p.prepare();
-		}		
-	}
-	
-	protected void renderPlanes(Graphics2D graphics) throws OpenReactorException {
-        for (Plane p: this.planes()) {
-        	p.render(graphics, width, height);
-        }
+		}
 	}
 
-    public void render() throws OpenReactorException {
-		/////
-	    // Render single frame
-	    do {
-	        // The following loop ensures that the contents of the drawing buffer
-	        // are consistent in case the underlying surface was recreated
-	        do {
-	            // Get a new graphics context every time through the loop
-	            // to make sure the strategy is validated
-	            Graphics2D graphics = (Graphics2D) strategy.getDrawGraphics();
-	    
-				/////
-	            // Render all the planes.
-	            this.renderPlanes(graphics);
-	            
-	            // Dispose the graphics
-	            graphics.dispose();
-	            // Repeat the rendering if the drawing buffer contents 
-	            // were restored
-	        } while (strategy.contentsRestored());
+	protected void renderPlanes(Graphics2D graphics)
+			throws OpenReactorException {
+		for (Plane p : this.planes()) {
+			p.render(graphics, width, height);
+		}
+	}
 
-	        // Display the buffer
-	        strategy.show();
+	public void render() throws OpenReactorException {
+		// ///
+		// Render single frame
+		if (bsEnabled) {
+			do {
+				// The following loop ensures that the contents of the drawing
+				// buffer
+				// are consistent in case the underlying surface was recreated
+				do {
+					// Get a new graphics context every time through the loop
+					// to make sure the strategy is validated
+					Graphics2D graphics = (Graphics2D) strategy
+							.getDrawGraphics();
 
-	        // Repeat the rendering if the drawing buffer was lost
-	    } while (strategy.contentsLost());
-    }
+					// ///
+					// Render all the planes.
+					this.renderPlanes(graphics);
 
-    public void finish() {
+					// Dispose the graphics
+					graphics.dispose();
+					// Repeat the rendering if the drawing buffer contents
+					// were restored
+				} while (strategy.contentsRestored());
+
+				// Display the buffer
+				strategy.show();
+
+				// Repeat the rendering if the drawing buffer was lost
+			} while (strategy.contentsLost());
+		} else {
+			VolatileImage vImg = createVolatileImage((int) width, (int) height);
+			Graphics2D graphics = vImg.createGraphics();
+			do {
+				this.renderPlanes(graphics);
+				graphics.dispose();
+			} while (vImg.contentsLost());
+			Graphics2D gg = (Graphics2D) this.getGraphics();
+			gg.drawImage(vImg, 0, 0, (int)width, (int)height, 0, 0, (int)width, (int)height, null);
+			gg.dispose();
+		}
+	}
+
+	public void finish() {
 		List<Plane> rev = new LinkedList<Plane>();
 		rev.addAll(this.planes);
 		Collections.reverse(rev);
-		for (Plane p: rev) {
+		for (Plane p : rev) {
 			p.finish();
-		}	
+		}
 	}
 
 	public boolean isClosed() {
