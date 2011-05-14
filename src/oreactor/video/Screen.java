@@ -58,7 +58,7 @@ public class Screen extends JFrame {
     	this.strategy = getBufferStrategy();
     	logger.debug("starategy-=<" + strategy + ">");
     	logger.debug("backbuffer:");
-    	logger.debug("    accelerateg:" + strategy.getCapabilities().getBackBufferCapabilities().isAccelerated());
+    	logger.debug("    accelerated:" + strategy.getCapabilities().getBackBufferCapabilities().isAccelerated());
     	logger.debug("    volatile:" + strategy.getCapabilities().getBackBufferCapabilities().isTrueVolatile());
     	logger.debug("frontbuffer:");
     	logger.debug("    accelerated:" + strategy.getCapabilities().getFrontBufferCapabilities().isAccelerated());
