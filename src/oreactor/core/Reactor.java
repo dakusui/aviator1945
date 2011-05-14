@@ -122,7 +122,7 @@ public abstract class Reactor {
 		State nextState = null;
 		try {
 			while (true) {
-				
+				long timeSpentForAction = 0;
 				long before = System.nanoTime();
 				////
 				// 1. Perform action
@@ -137,7 +137,10 @@ public abstract class Reactor {
 						System.err.println("Message is not given.");
 					}
 					nextState = State.Exitted;
+				} finally {
+					timeSpentForAction = System.nanoTime() - before;
 				}
+			
 				
 				////
 				// 2. Run engines
@@ -157,9 +160,9 @@ public abstract class Reactor {
 					Thread.sleep(durationToWait / 1000000, (int)(durationToWait % 1000000));
 				}
 				if (timeSpent > this.interval) {
-					this.statistcs.frameProcessedNotInTime(timeSpent);
+					this.statistcs.frameProcessedNotInTime(timeSpent, timeSpentForAction);
 				} else {
-					this.statistcs.frameProcessedInTime(timeSpent);
+					this.statistcs.frameProcessedInTime(timeSpent, timeSpentForAction);
 				}
 				////
 				// 4. Determine the next action to be performed.
