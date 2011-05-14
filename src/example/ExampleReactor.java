@@ -6,6 +6,7 @@ import java.awt.Color;
 import openreactor.nu64.Nu64Reactor;
 import openreactor.nu64.Nu64ResourceLoader;
 import oreactor.core.Context;
+import oreactor.core.ReactorRunner;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.JoystickEngine.Stick;
 import oreactor.video.graphics.GraphicsPlane;
@@ -52,7 +53,7 @@ public class ExampleReactor extends Nu64Reactor {
 						//g.paint(105, 90, Color.pink, Color.blue);
 						g.line(10, 600 + x, 1000, 50, Color.red);
 
-						/*
+						
 						PatternPlane p = patternplane(c);
 						for (int i = 0; i < p.columns(); i++) {
 							for (int j = 0; j < p.rows(); j++) {
@@ -64,7 +65,7 @@ public class ExampleReactor extends Nu64Reactor {
 								}
 							}
 						}
-						*/
+						
 
 						tt.put(x, 200 + y, 0);
 						ss.put(x + 200, x+22 - y, (x*Math.PI/200));
@@ -90,5 +91,8 @@ public class ExampleReactor extends Nu64Reactor {
 				};
 			}
 		};
+	}
+	public static void main(String[] args) throws Exception {
+		ReactorRunner.main(new String[]{"--reactor=example.ExampleReactor"});
 	}
 }
