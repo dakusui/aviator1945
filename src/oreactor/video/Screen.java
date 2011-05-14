@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import oreactor.core.Logger;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
 
@@ -37,6 +38,8 @@ public class Screen extends JFrame {
 
 	private BufferStrategy strategy;
 	
+	Logger logger = Logger.getLogger(); 
+	
 	public Screen(Settings settings) {
     	this.settings = settings;
 		this.planes = new LinkedList<Plane>();
@@ -53,6 +56,15 @@ public class Screen extends JFrame {
 		this.setVisible(true);
     	this.createBufferStrategy(2);
     	this.strategy = getBufferStrategy();
+    	logger.debug("starategy-=<" + strategy + ">");
+    	logger.debug("backbuffer:");
+    	logger.debug("    accelerateg:" + strategy.getCapabilities().getBackBufferCapabilities().isAccelerated());
+    	logger.debug("    volatile:" + strategy.getCapabilities().getBackBufferCapabilities().isTrueVolatile());
+    	logger.debug("frontbuffer:");
+    	logger.debug("    accelerated:" + strategy.getCapabilities().getFrontBufferCapabilities().isAccelerated());
+    	logger.debug("    volatile:" + strategy.getCapabilities().getFrontBufferCapabilities().isTrueVolatile());
+    	logger.debug("pageflipping:" + strategy.getCapabilities().isPageFlipping());
+    	
     }
     
 	@Override
