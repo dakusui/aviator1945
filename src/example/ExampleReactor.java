@@ -38,7 +38,9 @@ public class ExampleReactor extends Nu64Reactor {
 				for (Pattern pt : patterns.values()) {
 					p.bind(pt);
 				}
-				p.viewport().offset(100, 100);
+				//p.viewport().offset(100, 100);
+				//p.viewport().i(2048,0);
+				//p.viewport().j(0, 1536);
 				//p.viewport().i((1024-32)/1, (32)/1);
 				//p.viewport().j((-32)/1, (768-32)/1);
 			}
@@ -55,13 +57,15 @@ public class ExampleReactor extends Nu64Reactor {
 
 						
 						PatternPlane p = patternplane(c);
-						for (int i = 0; i < p.columns(); i++) {
-							for (int j = 0; j < p.rows(); j++) {
-								int no = Math.abs((int)(Math.random() * 100));
-								if (no < 10) {
-									p.put(i, j, no);
-								} else {
-									p.reset(i, j);
+						if (Math.random() * 100 > 95) {
+							for (int i = 0; i < p.columns(); i++) {
+								for (int j = 0; j < p.rows(); j++) {
+									int no = Math.abs((int)(Math.random() * 10));
+									if (no < 10) {
+										p.put(i, j, no);
+									} else {
+										p.reset(i, j);
+									}
 								}
 							}
 						}
