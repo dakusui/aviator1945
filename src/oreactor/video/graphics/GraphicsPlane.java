@@ -163,7 +163,7 @@ public class GraphicsPlane extends Plane {
 		if (interval == null) {
 			return null;
 		}
-		fillLine(interval, c);
+		fillLine(interval, y, c);
 
 		Interval newinterval;
 		{
@@ -232,8 +232,8 @@ public class GraphicsPlane extends Plane {
 		}
 	}
 	
-	private void fillLine(Interval interval, Color c) {
-		//line(interval.left, interval.y, interval.right, interval.y, c);
+	private void fillLine(Interval interval, int y, Color c) {
+		line(interval.left(), y, interval.right(), y, c);
 	}
 
 	public void color(Color foreground, Color background) {
