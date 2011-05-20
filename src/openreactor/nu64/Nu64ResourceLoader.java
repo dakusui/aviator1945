@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import oreactor.core.Reactor;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.ResourceLoader;
@@ -20,6 +21,7 @@ import oreactor.video.pattern.Pattern;
 import oreactor.video.sprite.SpriteSpec;
 
 public class Nu64ResourceLoader extends ResourceLoader {
+
 	private List<ResourceMonitor> monitors = new LinkedList<ResourceMonitor>();
 	
 	public void addMonitor(ResourceMonitor monitor) {
@@ -124,9 +126,10 @@ public class Nu64ResourceLoader extends ResourceLoader {
 			{
 				////
 				// Loading patterns
+				Reactor r = reactor();
 				for (int i = 0; i < numPatterns; i ++) {
 					JSONObject v = patternConfig.getJSONObject(i);
-					Pattern p = new Pattern(i);
+					Pattern p = new Pattern(i, r.patternWidth(), r.patternHeight());
 					p.init(v, this);
 					for (ResourceMonitor m: monitors()) {
 						m.patternLoaded(p);

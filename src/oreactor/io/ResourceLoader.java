@@ -19,6 +19,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import oreactor.core.Logger;
+import oreactor.core.Reactor;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 
@@ -269,19 +270,24 @@ public class ResourceLoader {
 	protected static Logger logger = Logger.getLogger();
 
 	private Map<String, Data> dataMap = new HashMap<String, Data>();
+
+	private Reactor reactor;
 	
 	protected static ResourceLoader instance = null;
 
-	protected ResourceLoader() {
+	public Reactor reactor() {
+		return this.reactor;
 	}
 	
 	public static ResourceLoader getResourceLoader(
+			Reactor reactor,
 			Class<? extends ResourceLoader> resourceLoaderClass) throws OpenReactorException {
 		ResourceLoader ret = instance;
 		synchronized (ResourceLoader.class) {
 			if (ret == null) {
 				try {
 					ret  = resourceLoaderClass.newInstance();
+					ret.reactor(reactor);
 				} catch (SecurityException e) {
 					ExceptionThrower.throwResourceLoaderInstanciationException("Failed to instantiate resourceLoader:<" + resourceLoaderClass + ">", e);
 				} catch (IllegalArgumentException e) {
@@ -295,6 +301,10 @@ public class ResourceLoader {
 			}
 		}
 		return ret;
+	}
+
+	private void reactor(Reactor reactor) {
+		this.reactor = reactor;
 	}
 
 	public Data get(String resourceUrl, Data.Type type) throws OpenReactorException {

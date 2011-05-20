@@ -1,14 +1,11 @@
 package oreactor.video;
 
-import java.awt.AWTException;
-import java.awt.BufferCapabilities;
 import java.awt.DisplayMode;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.ImageCapabilities;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -49,6 +46,8 @@ public class Screen extends JFrame {
 
 	private boolean bsEnabled = true;
 
+	private boolean isFullScreen = false;
+
 	public Screen(Settings settings) {
 		this.settings = settings;
 		this.planes = new LinkedList<Plane>();
@@ -63,6 +62,13 @@ public class Screen extends JFrame {
 		});
 		this.setSize(settings.screenSize().width(), settings.screenSize()
 				.height());
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		if (isFullScreen ) {
+			this.setUndecorated(true);
+			GraphicsDevice gd = ge.getDefaultScreenDevice(); 
+			gd.setFullScreenWindow(this);
+			gd.setDisplayMode(new DisplayMode(1024, 768, 32, 0));
+		}
 		this.setVisible(true);
 		this.createBufferStrategy(2);
 		this.strategy = getBufferStrategy();
@@ -84,7 +90,6 @@ public class Screen extends JFrame {
 		logger.debug("pageflipping:"
 				+ strategy.getCapabilities().isPageFlipping());
 
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		for (GraphicsDevice gd : ge.getScreenDevices()) {
 			boolean isDefault = false;
 			if (gd == ge.getDefaultScreenDevice()) {
@@ -114,8 +119,9 @@ public class Screen extends JFrame {
 		try {
 			this.renderPlanes((Graphics2D) g);
 		} catch (OpenReactorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("Rendering failed:" + e.getMessage());
+			for (StackTraceElement st : e.getStackTrace())
+			logger.debug("---- " + st);
 		}
 	}
 

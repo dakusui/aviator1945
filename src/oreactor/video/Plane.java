@@ -15,8 +15,9 @@ public abstract class Plane {
 	protected String name;
 	protected double width;
 	protected double height;
-
-	protected Plane(String name, double width, double height,Viewport viewport) {
+	protected VideoUtil util;
+	
+	protected Plane(String name, double width, double height, Viewport viewport) {
 		super();
 		this.name = name;
 		this.width = width;
@@ -51,6 +52,10 @@ public abstract class Plane {
 	}
 	
 	protected abstract void render_Protected(Graphics2D g) throws OpenReactorException;
+	
+	protected VideoUtil util() {
+		return this.util;
+	}
 	
 	@Override
 	public String toString() {

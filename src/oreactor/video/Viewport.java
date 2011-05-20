@@ -2,6 +2,7 @@ package oreactor.video;
 
 import java.awt.geom.AffineTransform;
 
+import oreactor.core.Logger;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 
@@ -32,7 +33,10 @@ public class Viewport {
 	 * Second base vector for the view port.
 	 */
 	Vector j;
+	
 	private boolean firstTime = true;
+	
+	Logger logger = Logger.getLogger();
 	
 	public Viewport(double screenWidth, double screenHeight) {
 		this.offset = new Vector();
@@ -74,43 +78,31 @@ public class Viewport {
 		if (delta == 0) {
 			ExceptionThrower.throwViewportStateException("Viewport's determinant is currently 0", this);
 		}
-		//  m00 m01   i.x i.y   w  0
-		//          *         =     
-		//  m10 m11   i.y j.y   0  h
+		//  m00 m01 T    i.x i.y   w  0
+		//            *         =     
+		//  m10 m11      i.y j.y   0  h
 		//
-		//  m00 m01    w     0     j.y/delta  -i.y/delta      1      w*j.y  -w*i.y
-		//           =          *                         = ----- * 
-		//  m10 m11    0     h    -j.x/delta   i.x/delta    delta   -h*j.x   h*i.x 
+		//  m00 m01 T    w     0     j.y/delta  -i.y/delta      1      w*j.y  -w*i.y
+		//             =          *                         = ----- * 
+		//  m10 m11      0     h    -j.x/delta   i.x/delta    delta   -h*j.x   h*i.x
+		//
+		//  m00 m10        1      w*j.y  -w*i.y
+		//             = ----- * 
+		//  m01 m11      delta   -h*j.x   h*i.x
+		
 		double m00 =  screenWidth*j.y/delta;
 		double m01 = -screenHeight*j.x/delta;
 		double m10 = -screenWidth*i.y/delta;
-		double m11 = screenHeight*i.x/delta;
+		double m11 =  screenHeight*i.x/delta;
 
-		//  i.x i.y   m00 m01   w  0
-		//          *         =    
-		//  i.y j.y   m10 m11   0  h
-		//
-		//  m00 m01     j.y/delta  -i.y/delta       w     0          1      j.y*w   -i.y*h
-		//           =                         *                 = ----- * 
-		//  m10 m11    -j.x/delta   i.x/delta       0     h        delta   -j.x*w    i.x*h
-		//double m00 =   screenWidth*j.y/delta;
-		//double m01 = -screenHeight*i.y/delta;
-		//double m10 =  -screenWidth*j.x/delta;
-		//double m11 =  screenHeight*i.x/delta;
 		AffineTransform ret = new AffineTransform(
 				m00,                    m10,
 				m01,                    m11, 
 				-this.offset.x/*m02*/, -this.offset.y/*m12*/
 				);
-		//try {
-		//ret.invert();
-		//} catch (NoninvertibleTransformException e) {
-			// TODO Auto-generated catch block
-		//			e.printStackTrace();
-		//}
 		if (firstTime) {
-			System.out.println(ret);
-			System.out.println(this);
+			logger.debug(ret.toString());
+			logger.debug(this.toString());
 			firstTime  = false;
 		}
 		return ret;

@@ -8,14 +8,14 @@ import oreactor.video.Plane;
 import oreactor.video.Viewport;
 
 public class PatternPlane extends Plane {
-	double patternwidth = 16;
-	double patternheight = 16;
+	double patternwidth = 32;
+	double patternheight = 32;
 	int[][] map;
 	Pattern[] patterns;
 	int columns;
 	int rows;
 	
-	public PatternPlane(String name, double width, double height, double patternwidth, double patternheight, int numpatterns, Viewport viewport) {
+	public PatternPlane(String name, double width, double height, double patternwidth, double patternheight, int numpatterns,  Viewport viewport) {
 		super(name, width, height, viewport);
 		this.patternwidth = patternwidth;
 		this.patternheight = patternheight;
@@ -83,7 +83,7 @@ public class PatternPlane extends Plane {
 			for (int y = 0; y < this.rows; y++) {
 				Pattern p = get(x, y);
 				if (p != null) {
-					p.render(g, x * patternwidth, y * patternheight, patternwidth, patternheight);
+					p.render(g, x * patternwidth, y * patternheight);
 				}
 			}
 		}

@@ -3,6 +3,7 @@ package oreactor.core;
 import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
+import oreactor.exceptions.OpenReactorQuitException;
 import oreactor.io.ResourceLoader;
 
 public abstract class Reactor {
@@ -23,7 +24,7 @@ public abstract class Reactor {
 	/**
 	 * (1/60Hz) to wait.
 	 */
-	protected long interval = (1000 * 1000* 1000) / 60;
+	protected long interval = (1000 * 1000* 1000) / 50;
 
 	protected ArgParser argParser;
 
@@ -188,7 +189,21 @@ public abstract class Reactor {
 	protected void exit() throws OpenReactorExitException {
 		throw new OpenReactorExitException(null);
 	}
+	
+	protected void quit(String msg) throws OpenReactorException {
+		throw new OpenReactorQuitException(msg);
+	}
+	
+	protected void quit() throws OpenReactorException {
+		throw new OpenReactorQuitException(null);
+	}
 
 	public abstract Class<? extends ResourceLoader> resourceLoaderClass();
+
+	@ExtensionPoint
+	public abstract int patternWidth();
+	
+	@ExtensionPoint
+	public abstract int patternHeight();
 }
 

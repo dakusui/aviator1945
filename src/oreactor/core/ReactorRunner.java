@@ -1,6 +1,7 @@
 package oreactor.core;
 
 import oreactor.exceptions.OpenReactorException;
+import oreactor.exceptions.OpenReactorQuitException;
 import oreactor.exceptions.OpenReactorWindowClosedException;
 
 public class ReactorRunner {
@@ -18,6 +19,9 @@ public class ReactorRunner {
 			System.err.println("settings are loaded.");
 			reactor.execute(settings);
 		} catch (OpenReactorWindowClosedException e) {
+			System.out.println(e.getMessage());
+			ret = 0;
+		} catch (OpenReactorQuitException e) {
 			System.out.println(e.getMessage());
 			ret = 0;
 		} catch (OpenReactorException e) {

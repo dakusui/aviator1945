@@ -22,7 +22,7 @@ public class GraphicsPlane extends Plane {
 	private Color fgColor;
 	private Color bgColor;
 
-	public GraphicsPlane(String name, double width, double height, Viewport viewport) {
+	public GraphicsPlane(String name, double width, double height,  Viewport viewport) {
 		super(name, width, height, viewport);
 		this.image = new BufferedImage((int)width, (int)height, ColorSpace.TYPE_RGB); 
 	}
@@ -91,11 +91,115 @@ public class GraphicsPlane extends Plane {
 	static enum Direction {
 		BOTH, UPWARD, DOWNWAWRD;
 	};
-	private void scanLineFill(int x, int y, Color c, Color b, Direction d, int left, int right) {
+	
+	static abstract class Interval {
+		abstract int left();
+		abstract int right();
+		boolean covers(Interval another) {
+			if (left() <= another.left() && right() >= another.right()) {
+				return true;
+			}
+			return false;
+		}
+		Interval protrusion(Interval another) {
+			Interval ret = null;
+			if ((ret = rightProtrusion(another)) != null) {
+				return ret;
+			}
+			return leftProtrusion(another);
+		}
+		private Interval rightProtrusion(Interval another) {
+			return null;
+		}
+		private Interval leftProtrusion(Interval another) {
+			return null;
+		}
+	}
+
+	static class CompositeInterval extends Interval {
+		List<Interval> children = new LinkedList<Interval>();
+		void add(Interval i) {
+			children.add(i);
+		}
+		@Override
+		int left() {
+			int ret = Integer.MAX_VALUE;
+			for (Interval i : children) {
+				ret = Math.min(i.left(), ret);
+			}
+			return ret;
+		}
+		@Override
+		int right() {
+			int ret = 0;
+			for (Interval i : children) {
+				ret = Math.max(i.right(), ret);
+			}
+			return ret;
+		}
+	}
+	
+	static class SimpleInterval extends Interval {
+		int left;
+		int right;
+		public SimpleInterval(int left, int right) {
+			this.left = Math.min(left, right);
+			this.right = Math.max(left, right);
+		}
+		@Override
+		int left() {
+			return this.left;
+		}
+		@Override
+		int right() {
+			return this.right;
+		}
+	}
+	Interval scanLineFill(int x, int y, Interval from, Color c, Color b) {
 		int cc = c.getRGB();
 		int bb = b.getRGB();
+		Interval interval = null;
+		interval = scanLine(x, y, cc, bb);
+		if (interval == null) {
+			return null;
+		}
+		fillLine(interval, c);
+
+		Interval newinterval;
+		{
+			int s = x;
+			do {
+				if (shouldPaint(s, y -1, cc, bb)) {
+					newinterval = scanLineFill(s, y-1, interval, c, b);
+					if (newinterval != null) {
+						s = newinterval.right() + 1;
+					} else {
+						s = s + 1;
+					}
+				} else {
+					s = s + 1;
+				}
+			} while (s <= interval.right());
+			s = x - 1 ;
+			do {
+				if (shouldPaint(s, y -1, cc, bb)) {
+					newinterval = scanLineFill(s, y-1, interval, c, b);
+					if (newinterval != null) {
+						s = newinterval.left() - 1;
+					} else {
+						s = s - 1;
+					}
+				} else {
+					s = s - 1;
+				}
+			} while (s <= interval.right());
+		}
+		return interval;
+	}
+	
+	private Interval scanLine(int x, int y, int cc, int bb) {
 		if (!shouldPaint(x, y, cc, bb)) {
-			return;
+			return null;
 		}
 		int r;
 		for (r = x; r < this.width; r++) {
@@ -109,24 +213,7 @@ public class GraphicsPlane extends Plane {
 				break;
 			}
 		}
-		line(l, y, r, y, c);	
-		List<Integer> points = new LinkedList<Integer>();
-		if (d == Direction.BOTH || d == Direction.UPWARD) {
-			points.clear();
-			scanLine(points, l, r, y - 1);
-			for (int i: points) {
-				scanLineFill(i, y - 1, c, b, Direction.UPWARD, l, r);
-				Graphics2D g;
-			}
-		}
-		if (d == Direction.BOTH || d == Direction.DOWNWAWRD) {
-			points.clear();
-			scanLine(points, l, r, y + 1);
-		}
-	}
-	
-	private void scanLine(List<Integer> points, int l, int r, int y) {
-		// TODO Auto-generated method stub
+		return null;//new Interval(l, r, y);
 	}
 
 	boolean shouldPaint(int x, int y, int c, int b) {
@@ -144,10 +231,17 @@ public class GraphicsPlane extends Plane {
 			throw e;
 		}
 	}
+	
+	private void fillLine(Interval interval, Color c) {
+		//line(interval.left, interval.y, interval.right, interval.y, c);
+	}
+
 	public void color(Color foreground, Color background) {
 		this.fgColor = foreground;
 		this.bgColor = background;
 	}
+
+
 
 	private Color figureOutColor(Color c) {
 		Color ret = c;

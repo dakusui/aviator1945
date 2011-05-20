@@ -9,6 +9,7 @@ import oreactor.core.Context;
 import oreactor.core.ReactorRunner;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.JoystickEngine.Stick;
+import oreactor.joystick.JoystickEngine.Trigger;
 import oreactor.video.graphics.GraphicsPlane;
 import oreactor.video.pattern.Pattern;
 import oreactor.video.pattern.PatternPlane;
@@ -81,11 +82,14 @@ public class ExampleReactor extends Nu64Reactor {
 							x = x + 2 * xsig;
 							y = y + 2 * ysig;
 						}
-						if (trigger(c)) {
+						if (trigger(c, Trigger.SQUARE)) {
 							if ( counter <= 0 ) {
 								playwave(c, "spell");
 								counter = 5;
 							}
+						}
+						if (trigger(c, Trigger.START)) {
+							quit();
 						}
 						if (counter > 0) {
 							counter--;
