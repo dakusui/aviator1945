@@ -38,7 +38,7 @@ public final class Pattern {
 		if (isVCacheEnabled) {
 			VolatileImage vTmp = this.vImage;
 			if (vTmp == null) {
-				vTmp = VideoUtil.createVolatileVersion(gConfig, this.image);
+				vTmp = VideoUtil.createVolatileVersion(gConfig, this.image, this.w, this.h);
 			}
 			int i = 0;
 			do {
@@ -49,7 +49,7 @@ public final class Pattern {
 						null);
 				i++;
 				this.vImage = vTmp;
-			} while ((vTmp = VideoUtil.createVolatileVersionForRetry(gConfig, this.image, vTmp)) != null);
+			} while ((vTmp = VideoUtil.createVolatileVersionForRetry(gConfig, this.image, vTmp, this.w, this.h)) != null);
 			if (i > 1) {
 				System.out.println("--- i = <" + i  + ">");
 			}

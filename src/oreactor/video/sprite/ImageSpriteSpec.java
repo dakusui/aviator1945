@@ -51,6 +51,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 			images = imageList.toArray(images);
 			vImages = new VolatileImage[images.length];
 		} catch (JSONException e) {
+			System.out.println("--->" + params.toString());
 			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
 		}
 	}
@@ -76,7 +77,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 				Image img = images[patternno];
 				VolatileImage vImage = vImages[patternno];
 				if (vImage == null) {
-					vImage = VideoUtil.createVolatileVersion(gConfig, img);
+					vImage = VideoUtil.createVolatileVersion(gConfig, img, (int)width(), (int)height());
 				}
 				int i = 0;
 				do {
@@ -95,7 +96,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 					);
 					vImages[patternno] = vImage;
 					i ++;
-				} while ((vImage = VideoUtil.createVolatileVersionForRetry(gConfig, img, vImage)) != null);
+				} while ((vImage = VideoUtil.createVolatileVersionForRetry(gConfig, img, vImage, (int)width(), (int)height())) != null);
 				if (i > 1) {
 					System.out.println("--: i = <" + i  + ">");
 				}				

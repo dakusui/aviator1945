@@ -106,6 +106,11 @@ public class Nu64ResourceLoader extends ResourceLoader {
 			for (ResourceMonitor m: monitors()) {
 				m.numSoundClips(numSoundClips);
 			}
+			JSONObject midiClipConfig = config.getJSONObject("midiclips");
+			int numMidiClips = midiClipConfig.length();
+			for (ResourceMonitor m: monitors()) {
+				m.numMidiClips(numMidiClips);
+			}
 			{
 				////
 				// Loading sprite specs
@@ -147,6 +152,20 @@ public class Nu64ResourceLoader extends ResourceLoader {
 					SoundData soundData = this.getSound(v.getString("wave"));
 					for (ResourceMonitor m: monitors()) {
 						m.soundClipLoaded(name, soundData);
+					}
+				}
+			}
+			{
+				////
+				// Loading midi clips
+				Iterator<String> keys = midiClipConfig.keys();
+				while (keys.hasNext()) {
+					String cur = keys.next();
+					String name = cur.toString();
+					JSONObject v = midiClipConfig.getJSONObject(name);
+					MidiData soundData = this.getMidi(v.getString("midi"));
+					for (ResourceMonitor m: monitors()) {
+						m.midiClipLoaded(name, soundData);
 					}
 				}
 			}

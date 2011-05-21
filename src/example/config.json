@@ -26,9 +26,9 @@
         { 'image':'example/images/14.jpg',  },
         { 'image':'example/images/15.jpg',  },
     ],
-    'musicclips':{
+    'midiclips':{
     	'carmen':{
-    		'midi':'example/bizet_carmen_1_2.mid',
+    		'midi':'example/midi/bizet_carmen_1_2.mid',
     		'repeattick':6000000,
     	},
     },

@@ -194,9 +194,14 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 		return Nu64ResourceLoader.class;
 	}
 
-	public void playwave(Context c, String name) throws OpenReactorException {
-		c.getSoundEngine().player(name).start();
+	public void playwave(Context c, String soundclipName) throws OpenReactorException {
+		c.getSoundEngine().player(soundclipName).start();
 	}
+
+	public void playmidi(Context c, String midiclipName) throws OpenReactorException {
+		c.getMusicEngine().player(midiclipName).play();
+	}
+	
 
 	@Override
 	public void numSoundClips(int numSoundClips) {

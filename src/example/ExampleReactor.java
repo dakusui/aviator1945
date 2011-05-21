@@ -56,6 +56,7 @@ public class ExampleReactor extends Nu64Reactor {
 						g.box(100 + x, 100, 80, 100, Color.blue);
 						if (firstTime) {
 							g.paint(80, 110, Color.pink, Color.blue);
+							playmidi(c, "carmen");
 							firstTime = false;
 						}
 						g.line(10, 600 + x, 1000, 50, Color.red);
@@ -64,7 +65,7 @@ public class ExampleReactor extends Nu64Reactor {
 						if (Math.random() * 100 > 95) {
 							for (int i = 0; i < p.columns(); i++) {
 								for (int j = 0; j < p.rows(); j++) {
-									int no = Math.abs((int)(Math.random() * 200));
+									int no = Math.abs((int)(Math.random() * 10));
 									if (no < 10) {
 										p.put(i, j, no);
 									} else {
@@ -102,6 +103,15 @@ public class ExampleReactor extends Nu64Reactor {
 			}
 		};
 	}
+	@Override
+	public int patternWidth() {
+		return 64;
+	}
+	@Override
+	public int patternHeight() {
+		return 64;
+	}
+	
 	public static void main(String[] args) throws Exception {
 		ReactorRunner.main(new String[]{"--reactor=example.ExampleReactor"});
 	}

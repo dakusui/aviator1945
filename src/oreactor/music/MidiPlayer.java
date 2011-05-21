@@ -3,6 +3,7 @@ package oreactor.music;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaEventListener;
 import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 
@@ -73,9 +74,13 @@ public class MidiPlayer {
 		pause();
 		try {
 			this.sequencer.setSequence(this.midi.sequence());
+			this.sequencer.open();
 			this.sequencer.start();
 		} catch (InvalidMidiDataException e) {
 			ExceptionThrower.throwResourceException("Invalid midi resource was given:" + e.getMessage(), e);
+		} catch (MidiUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
