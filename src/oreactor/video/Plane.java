@@ -16,6 +16,7 @@ public abstract class Plane {
 	protected double width;
 	protected double height;
 	protected VideoUtil util;
+	private boolean enabled = true;
 	
 	protected Plane(String name, double width, double height, Viewport viewport) {
 		super();
@@ -30,12 +31,14 @@ public abstract class Plane {
 	}
 	
 	public void render(Graphics2D g, double screenWidth, double screenHeight) throws OpenReactorException {
-		AffineTransform tx = g.getTransform();
-		g.setTransform(this.viewport().affineTransform(screenWidth, screenHeight));
-		try {
-			this.render_Protected(g);
-		} finally {
-			g.setTransform(tx);
+		if (this.enabled) {
+			AffineTransform tx = g.getTransform();
+			g.setTransform(this.viewport().affineTransform(screenWidth, screenHeight));
+			try {
+				this.render_Protected(g);
+			} finally {
+				g.setTransform(tx);
+			}
 		}
 	}
 
@@ -61,5 +64,14 @@ public abstract class Plane {
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" +  System.identityHashCode(this) + ")";
 	}
+	
+	public void enable() {
+		this.enabled = true;
+	}
+	
+	public void disable() {
+		this.enabled = false;
+	}
+
 }
 

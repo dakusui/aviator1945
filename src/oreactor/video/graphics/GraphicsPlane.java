@@ -6,8 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
-import java.util.List;
 
 import oreactor.video.Plane;
 import oreactor.video.Viewport;
@@ -84,136 +82,86 @@ public class GraphicsPlane extends Plane {
 		g.clearRect(0, 0, this.image.getWidth(), this.image.getHeight());
 	}
 
-	public void paint(double x1, double y1, Color c, Color b) {
-		//scanLineFill((int)x1, (int)y1, c.getRGB(), c, b.getRGB());
-	}
-
-	static enum Direction {
-		BOTH, UPWARD, DOWNWAWRD;
-	};
-	
-	static abstract class Interval {
-		abstract int left();
-		abstract int right();
+	static class Interval {
+		int left;
+		int right;
+		public Interval(int left, int right) {
+			this.left = Math.min(left, right);
+			this.right = Math.max(left, right);
+		}
 		boolean covers(Interval another) {
 			if (left() <= another.left() && right() >= another.right()) {
 				return true;
 			}
 			return false;
 		}
-		Interval protrusion(Interval another) {
-			Interval ret = null;
-			if ((ret = rightProtrusion(another)) != null) {
-				return ret;
-			}
-			return leftProtrusion(another);
+		boolean contains(int x) {
+			return x >= left() && x <= right();
 		}
-		private Interval rightProtrusion(Interval another) {
-			return null;
-		}
-		private Interval leftProtrusion(Interval another) {
-			return null;
-		}
-	}
-
-	static class CompositeInterval extends Interval {
-		List<Interval> children = new LinkedList<Interval>();
-		void add(Interval i) {
-			children.add(i);
-		}
-		@Override
-		int left() {
-			int ret = Integer.MAX_VALUE;
-			for (Interval i : children) {
-				ret = Math.min(i.left(), ret);
-			}
-			return ret;
-		}
-		@Override
-		int right() {
-			int ret = 0;
-			for (Interval i : children) {
-				ret = Math.max(i.right(), ret);
-			}
-			return ret;
-		}
-	}
-	
-	static class SimpleInterval extends Interval {
-		int left;
-		int right;
-		public SimpleInterval(int left, int right) {
-			this.left = Math.min(left, right);
-			this.right = Math.max(left, right);
-		}
-		@Override
 		int left() {
 			return this.left;
 		}
-		@Override
 		int right() {
 			return this.right;
 		}
 	}
-	Interval scanLineFill(int x, int y, Interval from, Color c, Color b) {
-		int cc = c.getRGB();
-		int bb = b.getRGB();
-		Interval interval = null;
-		interval = scanLine(x, y, cc, bb);
-		if (interval == null) {
-			return null;
-		}
-		fillLine(interval, y, c);
 
-		Interval newinterval;
-		{
-			int s = x;
-			do {
-				if (shouldPaint(s, y -1, cc, bb)) {
-					newinterval = scanLineFill(s, y-1, interval, c, b);
-					if (newinterval != null) {
-						s = newinterval.right() + 1;
-					} else {
-						s = s + 1;
-					}
-				} else {
-					s = s + 1;
-				}
-			} while (s <= interval.right());
-			s = x - 1 ;
-			do {
-				if (shouldPaint(s, y -1, cc, bb)) {
-					newinterval = scanLineFill(s, y-1, interval, c, b);
-					if (newinterval != null) {
-						s = newinterval.left() - 1;
-					} else {
-						s = s - 1;
-					}
-				} else {
-					s = s - 1;
-				}
-			} while (s <= interval.right());
+	public void paint(double x1, double y1, Color c, Color b) {
+		f((int)x1, (int)y1, c.getRGB(), b.getRGB());
+	}
+
+	Interval f(int x, int y, int cc, int bb) {
+		Interval interval = scanLine(x, y, cc, bb);
+		if (interval != null) {
+			fillLine(interval, y, cc);
+		g(x, y + 1, interval, cc, bb);
+		g(x, y - 1, interval, cc, bb);
 		}
 		return interval;
 	}
 	
+	void g(int x, int y, Interval limit, int cc, int bb) {
+		Interval interval = null;
+		int xx;
+		xx = x;
+		do {
+			interval = f(xx, y, cc, bb);
+			if (interval != null) {
+				xx = interval.right();
+			} else {
+				xx ++;
+			}
+		} while (limit.contains(xx));
+		xx = x - 1;
+		do {
+			interval = f(xx, y, cc, bb);
+			if (interval != null) {
+				xx = interval.left();
+			} else {
+				xx --;
+			}
+		} while (limit.contains(xx));
+	}
+	
 	private Interval scanLine(int x, int y, int cc, int bb) {
 		if (!shouldPaint(x, y, cc, bb)) {
-			return null;
-		}
-		int r;
-		for (r = x; r < this.width; r++) {
-			if (!shouldPaint(r, y, cc, bb)) {
-				break;
+			Interval ret = null;
+			return ret;
+		} else {
+			int r;
+			for (r = x; r < this.width; r++) {
+				if (!shouldPaint(r, y, cc, bb)) {
+					break;
+				}
 			}
-		}
-		int l;
-		for (l = x; l >= 0; l--) {
-			if (!shouldPaint(r, y, cc, bb)) {
-				break;
+			int l;
+			for (l = x - 1; l >= 0; l--) {
+				if (!shouldPaint(l, y, cc, bb)) {
+					break;
+				}
 			}
+			return new Interval(l, r);
 		}
-		return null;//new Interval(l, r, y);
 	}
 
 	boolean shouldPaint(int x, int y, int c, int b) {
@@ -232,16 +180,14 @@ public class GraphicsPlane extends Plane {
 		}
 	}
 	
-	private void fillLine(Interval interval, int y, Color c) {
-		line(interval.left(), y, interval.right(), y, c);
+	private void fillLine(Interval interval, int y, int cc) {
+		line(interval.left(), y, interval.right(), y, new Color(cc));
 	}
 
 	public void color(Color foreground, Color background) {
 		this.fgColor = foreground;
 		this.bgColor = background;
 	}
-
-
 
 	private Color figureOutColor(Color c) {
 		Color ret = c;

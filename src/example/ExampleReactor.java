@@ -48,20 +48,23 @@ public class ExampleReactor extends Nu64Reactor {
 			public Action next() {
 				return new Action() {
 					private int counter;
+					private boolean firstTime = true;
 
 					@Override
 					public void perform(Context c) throws OpenReactorException {
 						GraphicsPlane g = graphicsplane(c);
 						g.box(100 + x, 100, 80, 100, Color.blue);
-						//g.paint(105, 90, Color.pink, Color.blue);
+						if (firstTime) {
+							g.paint(80, 110, Color.pink, Color.blue);
+							firstTime = false;
+						}
 						g.line(10, 600 + x, 1000, 50, Color.red);
 
-						
 						PatternPlane p = patternplane(c);
 						if (Math.random() * 100 > 95) {
 							for (int i = 0; i < p.columns(); i++) {
 								for (int j = 0; j < p.rows(); j++) {
-									int no = Math.abs((int)(Math.random() * 10));
+									int no = Math.abs((int)(Math.random() * 200));
 									if (no < 10) {
 										p.put(i, j, no);
 									} else {
@@ -70,7 +73,6 @@ public class ExampleReactor extends Nu64Reactor {
 								}
 							}
 						}
-						
 
 						tt.put(x, 200 + y, 0);
 						ss.put(x + 200, x+22 - y, (x*Math.PI/200));
