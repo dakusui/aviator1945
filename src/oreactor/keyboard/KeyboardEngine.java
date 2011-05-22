@@ -3,7 +3,7 @@ package oreactor.keyboard;
 import oreactor.core.BaseEngine;
 import oreactor.core.Settings;
 
-public class KeyboardEngine  extends BaseEngine{
+public class KeyboardEngine  extends BaseEngine {
 
 	public KeyboardEngine(Settings settings) {
 		super(settings);

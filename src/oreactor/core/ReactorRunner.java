@@ -5,6 +5,7 @@ import oreactor.exceptions.OpenReactorQuitException;
 import oreactor.exceptions.OpenReactorWindowClosedException;
 
 public class ReactorRunner {
+	private Logger logger = Logger.getLogger();
 	ReactorRunner() {
 	}
 
@@ -14,9 +15,9 @@ public class ReactorRunner {
 			ArgParser argParser = ArgParser.createArgParser(args);
 			Reactor reactor = argParser.chooseReactor();
 			reactor.argParser(argParser);
-			System.err.println("reactor=<" + reactor + ">");
+			logger.debug("reactor=<" + reactor + ">");
 			Settings settings = reactor.loadSettings(); 
-			System.err.println("settings are loaded.");
+			logger.debug("settings are loaded.");
 			reactor.execute(settings);
 		} catch (OpenReactorWindowClosedException e) {
 			System.out.println(e.getMessage());

@@ -9,9 +9,9 @@ import oreactor.core.Context;
 import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
-import oreactor.io.ResourceLoader;
 import oreactor.io.ResourceLoader.MidiData;
 import oreactor.io.ResourceLoader.SoundData;
+import oreactor.io.ResourceLoader;
 import oreactor.io.ResourceMonitor;
 import oreactor.joystick.InputDevice;
 import oreactor.joystick.JoystickEngine.Stick;
@@ -27,14 +27,15 @@ import oreactor.video.sprite.SpritePlane;
 import oreactor.video.sprite.SpriteSpec;
 
 public class Nu64Reactor extends Reactor implements ResourceMonitor {
+	private Context context;
 	public static abstract class Action {
 		public static final Action NullAction = new Action() {
 			@Override
-			public void perform(Context c) {
+			public void perform() {
 			}
 		};
 		protected Action next = this;
-		public abstract void perform(Context c) throws OpenReactorException;
+		public abstract void perform() throws OpenReactorException;
 		public Action next() {
 			return next ;
 		}
@@ -78,19 +79,19 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context ret = super.initialize(settings);
 		this.action = action();
-		((Nu64ResourceLoader)ret.getResourceLoader()).addMonitor(this);
-		((Nu64ResourceLoader)ret.getResourceLoader()).addMonitor(ret.getSoundEngine());
-		((Nu64ResourceLoader)ret.getResourceLoader()).addMonitor(ret.getMusicEngine());
+		ret.getResourceLoader().addMonitor(this);
+		ret.getResourceLoader().addMonitor(ret.getSoundEngine());
+		ret.getResourceLoader().addMonitor(ret.getMusicEngine());
 		return ret;
 	}
 
-	protected GraphicsPlane graphicsplane(Context c) {
-		return graphicsplane(c, "graphics");
+	protected GraphicsPlane graphicsplane() {
+		return graphicsplane("graphics");
 	}
 	   
-	protected GraphicsPlane graphicsplane(Context c, String name) {
+	protected GraphicsPlane graphicsplane(String name) {
 		GraphicsPlane ret = null; 
-		VideoEngine ve = c.getVideoEngine();
+		VideoEngine ve = context.getVideoEngine();
 		Screen s = ve.screen();
 		List<Plane> planes = s.planes();
 		for (Plane p : planes) {
@@ -101,13 +102,13 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 		return ret;
 	}
 	
-	protected PatternPlane patternplane(Context c) {
-		return patternplane(c, "pattern");
+	protected PatternPlane patternplane() {
+		return patternplane("pattern");
 	}
 	
-	protected SpritePlane spriteplane(Context c, String name) {
+	protected SpritePlane spriteplane(String name) {
 		SpritePlane ret = null; 
-		VideoEngine ve = c.getVideoEngine();
+		VideoEngine ve = context.getVideoEngine();
 		Screen s = ve.screen();
 		List<Plane> planes = s.planes();
 		for (Plane p : planes) {
@@ -118,13 +119,13 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 		return ret;
 	}
 
-	protected SpritePlane spriteplane(Context c) {
-		return spriteplane(c, "sprite");
+	protected SpritePlane spriteplane() {
+		return spriteplane("sprite");
 	}
 	
-	protected PatternPlane patternplane(Context c, String name) {
+	protected PatternPlane patternplane(String name) {
 		PatternPlane ret = null; 
-		VideoEngine ve = c.getVideoEngine();
+		VideoEngine ve = context.getVideoEngine();
 		Screen s = ve.screen();
 		List<Plane> planes = s.planes();
 		for (Plane p : planes) {
@@ -135,44 +136,42 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 		return ret;
 	}
 	
-	private InputDevice joystick(Context c) {
-		return c.getJoystickEngine().devices().get(0);
+	private InputDevice joystick() {
+		return context.getJoystickEngine().devices().get(0);
 	}
 	
-	protected final Stick stick(Context c) {
-		Stick ret = joystick(c).stick();
+	protected final Stick stick() {
+		Stick ret = joystick().stick();
 		return ret;
 	}
 	
-	protected final boolean trigger(Context c) {
-		return trigger(c, Trigger.ANY);
+	protected final boolean trigger() {
+		return trigger(Trigger.ANY);
 	}
-	protected final boolean trigger(Context c, Trigger t) {
-		boolean ret = joystick(c).trigger(t);
+	protected final boolean trigger(Trigger t) {
+		boolean ret = joystick().trigger(t);
 		return ret;
 	}
 	@Override
 	public void numPatterns(int numPatterns) {
-		// does nothing
-		System.err.println("Loading " + numPatterns + " patterns.");
+		logger().debug("Loading " + numPatterns + " patterns.");
 	}
 	
 	@Override
 	public void patternLoaded(Pattern pattern) {
 		patterns.put(pattern.num(), pattern);
-		System.err.println("  Pattern:<" + pattern.num() + "> is loaded.");
+		logger().debug("  Pattern:<" + pattern.num() + "> is loaded.");
 	}
 	
 	@Override
 	public void numSpriteSpecs(int numSpriteSpecs) {
-		// does nothing
-		System.err.println("Loading " + numSpriteSpecs + " sprite specs.");
+		logger().debug("Loading " + numSpriteSpecs + " sprite specs.");
 	}
 	
 	@Override
 	public void spriteSpecLoaded(SpriteSpec spriteSpec) {
 		spriteSpecs.put(spriteSpec.name(), spriteSpec);
-		System.err.println("  SpriteSpec:<" + spriteSpec.name() + "> is loaded.");
+		logger().debug("  SpriteSpec:<" + spriteSpec.name() + "> is loaded.");
 	}
 
 	@ExtensionPoint
@@ -181,36 +180,45 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 	}
 
 	@Override
+	protected final void run(Context c) throws OpenReactorException {
+		this.currentContext(c);
+		try {
+			run();
+		} finally {
+			this.currentContext(null);
+		}
+	}
+	
 	@ExtensionPoint
-	protected void run(Context c) throws OpenReactorException {
-		this.action.perform(c);
+	protected void run() throws OpenReactorException {
+		this.action.perform();
 		this.action = this.action.next();
 		if (this.action == null) {
 			exit();
 		}
 	}
 	
-	public Class<? extends ResourceLoader> resourceLoaderClass() {
-		return Nu64ResourceLoader.class;
+	private void currentContext(Context context) {
+		this.context = context;
 	}
 
-	public void playwave(Context c, String soundclipName) throws OpenReactorException {
-		c.getSoundEngine().player(soundclipName).start();
+	public void playwave(String soundclipName) throws OpenReactorException {
+		context.getSoundEngine().player(soundclipName).start();
 	}
 
-	public void playmidi(Context c, String midiclipName) throws OpenReactorException {
-		c.getMusicEngine().player(midiclipName).play();
+	public void playmidi(String midiclipName) throws OpenReactorException {
+		context.getMusicEngine().player(midiclipName).play();
 	}
 	
 
 	@Override
 	public void numSoundClips(int numSoundClips) {
-		System.err.println("Loading " + numSoundClips + " soud clips.");
+		logger().debug("Loading " + numSoundClips + " soud clips.");
 	}
 
 	@Override
 	public void soundClipLoaded(String name, SoundData soundData) {
-		System.err.println("  Sound data:<" + soundData.resourceUrl() + "> is loaded as '" + name + "'.");
+		logger().debug("  Sound data:<" + soundData.resourceUrl() + "> is loaded as '" + name + "'.");
 	}
 
 	@Override
@@ -225,8 +233,18 @@ public class Nu64Reactor extends Reactor implements ResourceMonitor {
 	public int patternWidth() {
 		return 32;
 	}
+	
 	@ExtensionPoint
 	public int patternHeight() {
 		return 32;
+	}
+
+	protected Context context() {
+		return context;
+	}
+	
+	protected void loadConfig(String url) throws OpenReactorException {
+		ResourceLoader loader = context().getResourceLoader();
+		loader.loadConfigFromUrl(url);
 	}
 }

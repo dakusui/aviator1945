@@ -35,7 +35,7 @@ public class Context {
 		this.keyboardEngine = new KeyboardEngine(settings);
 		this.joystickEngine = new JoystickEngine(settings);
 		this.networkEngine = new NetworkEngine(settings);
-		this.resourceLoader = ResourceLoader.getResourceLoader(reactor, reactor.resourceLoaderClass());
+		this.resourceLoader = ResourceLoader.getResourceLoader(reactor);
 	}
 	
 	public VideoEngine getVideoEngine() {

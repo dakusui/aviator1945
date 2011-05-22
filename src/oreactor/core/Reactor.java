@@ -4,7 +4,6 @@ import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
 import oreactor.exceptions.OpenReactorQuitException;
-import oreactor.io.ResourceLoader;
 
 public abstract class Reactor {
 	enum State {
@@ -24,14 +23,22 @@ public abstract class Reactor {
 	/**
 	 * (1/60Hz) to wait.
 	 */
-	protected long interval = (1000 * 1000* 1000) / 50;
+	protected long interval = (1000 * 1000* 1000) / fps();
 
 	protected ArgParser argParser;
 
 	private Statistics statistcs;
+
+	private Logger logger;
 	
 	public Reactor() {
 		this.statistcs = new Statistics();
+		this.logger = Logger.getLogger();
+	}
+
+	@ExtensionPoint
+	protected int fps() {
+		return 50;
 	}
 
 	@ExtensionPoint
@@ -198,12 +205,14 @@ public abstract class Reactor {
 		throw new OpenReactorQuitException(null);
 	}
 
-	public abstract Class<? extends ResourceLoader> resourceLoaderClass();
-
 	@ExtensionPoint
 	public abstract int patternWidth();
 	
 	@ExtensionPoint
 	public abstract int patternHeight();
+
+	protected Logger logger() {
+		return this.logger;
+	}
 }
 
