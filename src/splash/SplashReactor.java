@@ -12,12 +12,12 @@ import oreactor.video.sprite.SpritePlane;
 public class SplashReactor extends Mu64Reactor {
 	Sprite[] lines = new Sprite[120];
 	double[] factors = new double[lines.length];
-	double frames = 64;
+	double frames = 128;
 	@Override
 	public void run() throws OpenReactorException {
 		SpritePlane spriteplane = spriteplane();
 		if (isFirstTime()) {
-			graphicsplane().boxfill(0, 0, 1024, 768, Color.BLUE);
+			graphicsplane().boxfill(0, 0, 1024, 768, Color.BLACK);
 			loadConfig("splash/config.json");
 			for (int i = 0; i < lines.length; i ++) {
 				lines[i] = spriteplane.createSprite(spritespec("splash"));
@@ -41,8 +41,13 @@ public class SplashReactor extends Mu64Reactor {
 			spriteplane.viewport().offset(ox, oy);
 			spriteplane.viewport().i( cos*(1024 - ox*c), -sin*(768 -oy*c));
 			spriteplane.viewport().j( sin*(768 - oy*c), cos*(1024 - ox*c));
+			graphicsplane().boxfill(0, 0, 1024, 768, new Color(0, 0, (int) (255 * ticks() / frames)));
 		} else {
-			graphicsplane().print("Mu=64: Handy programming platform", 384, 400, Color.white);
+			graphicsplane().print("Mu=64: Programming platform", 384, 400, Color.white);
+			graphicsplane().print("Total Memory:" + Runtime.getRuntime().maxMemory(), 384, 420, Color.white);
+			graphicsplane().print("Free Memory:" + Runtime.getRuntime().freeMemory(), 384, 440, Color.white);
+			graphicsplane().print("Processors:" + Runtime.getRuntime().availableProcessors(), 384, 460, Color.white);
+			graphicsplane().print("Created by Hiroshi Ukai", 384, 520, Color.white);
 			exit();
 		}
 	}
