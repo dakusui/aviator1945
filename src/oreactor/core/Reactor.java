@@ -106,9 +106,9 @@ public abstract class Reactor {
 
 	@ExtensionPoint
 	protected void terminate(Context c) throws OpenReactorException {
-		System.err.println("----");
-		System.err.println(this.statistcs);
-		System.err.println("----");
+		logger.debug("----");
+		logger.debug(this.statistcs.toString());
+		logger.debug("----");
 		c.getVideoEngine().terminate(c);		
 		c.getSoundEngine().terminate(c);
 		c.getNetworkEngine().terminate(c);
@@ -122,10 +122,10 @@ public abstract class Reactor {
 	}
 
 	public final void execute(Settings settings) throws OpenReactorException {
-		System.err.println("START:perform");
-		System.err.println("START:initialization");
+		logger.info("START:perform");
+		logger.info("START:initialization");
 		Context c = initialize(settings);
-		System.err.println("END:initialization");
+		logger.info("END:initialization");
 		State state = State.Running;
 		State nextState = null;
 		try {
@@ -137,12 +137,12 @@ public abstract class Reactor {
 				try {
 					state.run(this, c);
 				} catch (OpenReactorExitException e) {
-					System.err.println("User gear:<" + this.getClass().getSimpleName() + "> has been exitted.");
+					logger.info("User gear:<" + this.getClass().getSimpleName() + "> has been exitted.");
 					String msg;
 					if ((msg = e.getMessage()) != null) {
-						System.err.println("Message:<" + msg + ">");
+						logger.info("Message:<" + msg + ">");
 					} else {
-						System.err.println("Message is not given.");
+						logger.info("Message is not given.");
 					}
 					nextState = State.Exitted;
 				} finally {
@@ -181,10 +181,10 @@ public abstract class Reactor {
 		} catch (InterruptedException e) {
 			throw new OpenReactorException(e.getMessage(), e);
 		} finally {
-			System.err.println("START:termination");
+			logger.info("START:termination");
 			terminate(c);
-			System.err.println("END:termination");
-			System.err.println("END:perform");
+			logger.info("END:termination");
+			logger.info("END:perform");
 		}
 	}
 

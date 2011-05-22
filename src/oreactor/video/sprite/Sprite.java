@@ -48,11 +48,11 @@ public final class Sprite {
 	}
 
 	public double width() {
-		return 64;
+		return spec.width();
 	}
 	
 	public double height() {
-		return 64;
+		return spec.height();
 	}
 
 }

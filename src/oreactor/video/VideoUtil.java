@@ -13,7 +13,7 @@ public class VideoUtil {
 		Graphics2D gg = (Graphics2D) ret.getGraphics();
 		gg.drawImage(img, 
 				0, 0, w, h, 
-				0, 0, img.getWidth(null), img.getHeight(null), 
+				0, 0, img.getWidth(null), img.getHeight(null),
 				null);
 		gg.dispose();
 		System.out.print("*");

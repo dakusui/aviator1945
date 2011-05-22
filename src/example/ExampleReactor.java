@@ -3,18 +3,17 @@ package example;
 
 import java.awt.Color;
 
-import openreactor.nu64.Nu64Reactor;
+import openreactor.mu64.Mu64Reactor;
 import oreactor.core.ReactorRunner;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.JoystickEngine.Stick;
 import oreactor.joystick.JoystickEngine.Trigger;
 import oreactor.video.graphics.GraphicsPlane;
-import oreactor.video.pattern.Pattern;
 import oreactor.video.pattern.PatternPlane;
 import oreactor.video.sprite.Sprite;
 import oreactor.video.sprite.SpritePlane;
 
-public class ExampleReactor extends Nu64Reactor {
+public class ExampleReactor extends Mu64Reactor {
 
 	protected Sprite ss;
 	protected Sprite tt;
@@ -28,14 +27,10 @@ public class ExampleReactor extends Nu64Reactor {
 			public void perform() throws OpenReactorException {
 				loadConfig("example/config.json");
 				SpritePlane s = spriteplane();
-				ss = s.createSprite(spriteSpecs.get("spr00"));
-				tt = s.createSprite(spriteSpecs.get("spr00"));
-				uu = s.createSprite(spriteSpecs.get("spr00"));
-				
-				PatternPlane p= patternplane();
-				for (Pattern pt : patterns.values()) {
-					p.bind(pt);
-				}
+				ss = s.createSprite(spritespec("spr00"));
+				tt = s.createSprite(spritespec("spr00"));
+				uu = s.createSprite(spritespec("spr00"));
+
 				/*
 				p.viewport().offset(100, 100);
 				p.viewport().i(2048,0);

@@ -24,10 +24,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 		int y;
 		int w;
 		int h;
-		
-		RenderingParameters(ImageSpriteSpec spec) {
-			this.crop(0, 0, (int)spec.width(), (int)spec.height());
-		}
+		private boolean cropEnabled;
 		
 		void patternno(int i) {
 			this.patternno = i;
@@ -35,11 +32,18 @@ public class ImageSpriteSpec extends SpriteSpec {
 		public int patternno() {
 			return this.patternno;
 		}
-		public void crop(int x, int y, int w, int h) {
+		public void enableCropping(int x, int y, int w, int h) {
 			this.x = x;
 			this.y = y;
 			this.w = w;
 			this.h = h;
+			this.cropEnabled = true;
+		}
+		public void diableCropping() {
+			this.cropEnabled = false;
+		}
+		public boolean isCroppingEnabled() {
+			return this.cropEnabled;
 		}
 	}
 
@@ -66,56 +70,61 @@ public class ImageSpriteSpec extends SpriteSpec {
 			images = imageList.toArray(images);
 			vImages = new VolatileImage[images.length];
 		} catch (JSONException e) {
-			System.out.println("--->" + params.toString());
-			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
+			ExceptionThrower.throwMalformedConfigurationException(
+					e.getMessage() + "<json:" + params + ">",
+					e
+			);
 		}
 	}
 	
 	@Override
 	public void render(Graphics2D gg, Sprite sprite) {
-		boolean isVCacheEnabled = true;
+		boolean isVCacheEnabled = false;
 		GraphicsConfiguration gConfig = gg.getDeviceConfiguration();
 		AffineTransform backup = gg.getTransform();
 		try {
+			int ox, oy, ow, oh;
+			RenderingParameters p = (RenderingParameters) sprite.renderingParameters();
+			int patternno = 0;
+			patternno = p.patternno();
+			Image img = images[patternno];
+			if (p.isCroppingEnabled()) {
+				ox = p.x;
+				oy = p.y;
+				ow = p.w;
+				oh = p.h;
+				//System.out.print("p.x=" + p.x + ",p.y="+p.y+",p.w=" + p.w + ",p.h=" + p.h);
+			} else {
+				ox = 0;
+				oy = 0;
+				ow = img.getWidth(null);
+				oh = img.getHeight(null);
+			}
 			if (isVCacheEnabled) {
 				double x = sprite.x();
 				double y = sprite.y();
 				double biasX = sprite.width() / 2;
 				double biasY = sprite.height() / 2;
 				double theta = sprite.theta();
-				RenderingParameters p = (RenderingParameters) sprite.renderingParameters();
-				int patternno = 0;
-				if (p != null) {
-					patternno = p.patternno();
-				}
-				Image img = images[patternno];
 				VolatileImage vImage = vImages[patternno];
 				if (vImage == null) {
 					vImage = VideoUtil.createVolatileVersion(gConfig, img, (int)width(), (int)height());
 				}
-				int i = 0;
 				do {
 					gg.rotate(theta, x, y);
-					drawImage(gg, vImage, x, y, biasX, biasY, p);
+					drawImage(gg, vImage, x, y, biasX, biasY, ox, oy, ow, oh);
 					vImages[patternno] = vImage;
-					i ++;
-				} while ((vImage = VideoUtil.createVolatileVersionForRetry(gConfig, img, vImage, (int)width(), (int)height())) != null);
-				if (i > 1) {
-					System.out.println("--: i = <" + i  + ">");
-				}				
+				} while (
+					(vImage = VideoUtil.createVolatileVersionForRetry(gConfig, img, vImage, (int)width(), (int)height())) != null
+					 );
 			} else {
 				double x = sprite.x();
 				double y = sprite.y();
 				double biasX = sprite.width() / 2;
 				double biasY = sprite.height() / 2;
 				double theta = sprite.theta();
-				RenderingParameters p = (RenderingParameters) sprite.renderingParameters();
-				int patternno = 0;
-				if (p != null) {
-					patternno = p.patternno();
-				}
 				gg.rotate(theta, x, y);
-				drawImage(gg, this.images[patternno], x, y, biasX, biasY, p);
+				drawImage(gg, this.images[patternno], x, y, biasX, biasY, ox, oy, ow, oh);
 			}
 		} finally {
 			gg.setTransform(backup);
@@ -125,17 +134,18 @@ public class ImageSpriteSpec extends SpriteSpec {
 	private void drawImage(
 			Graphics2D gg, Image image, 
 			double x, double y, double biasX, double biasY,
-			RenderingParameters p) {
+			int ox, int oy, int ow, int oh
+			) {
 		gg.drawImage(
 				image,
 				(int)(x - biasX),            
 				(int)(y - biasY), 
 				(int)(x + biasX),
-				(int)(y + biasY), 
-				0,         
-				0,
-				(int)(p.w),
-				(int)(p.h),
+				(int)(y + biasY),
+				ox,
+				oy,
+				ox + ow,
+				oy + oh,
 				null
 		);
 		
@@ -143,7 +153,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 
 	@Override
 	public RenderingParameters createRenderingParameters() {
-		return new RenderingParameters(this);
+		return new RenderingParameters();
 	}
 
 }
