@@ -85,9 +85,6 @@ public class ExampleReactor extends Mu64Reactor {
 								counter = 5;
 							}
 						}
-						if (trigger(Trigger.START)) {
-							quit();
-						}
 						if (counter > 0) {
 							counter--;
 						}

@@ -9,6 +9,7 @@ import oreactor.core.Context;
 import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
+import oreactor.exceptions.OpenReactorExitException;
 import oreactor.io.ResourceLoader.MidiData;
 import oreactor.io.ResourceLoader.SoundData;
 import oreactor.io.ResourceLoader;
@@ -46,6 +47,8 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	private Map<String, SpriteSpec> spriteSpecs = new HashMap<String, SpriteSpec>();
 	private boolean firstTime = true;
 	private int ticks = 0;
+
+	private boolean running = true;
 	
 	@ExtensionPoint
 	protected Action action() {
@@ -151,6 +154,11 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		logger().debug("Loading " + numSpriteSpecs + " sprite specs.");
 	}
 	
+	protected void parseConfig(String config) throws OpenReactorException {
+		ResourceLoader loader = context().getResourceLoader();
+		loader.loadConfigFromString(config);
+	}
+	
 	@ExtensionPoint
 	public int patternHeight() {
 		return 32;
@@ -211,7 +219,14 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	protected final void run(Context c) throws OpenReactorException {
 		this.currentContext(c);
 		try {
-			run();
+			if (running) {
+				run();
+			}
+			if (trigger(Trigger.START)) {
+				quit();
+			}
+		} catch (OpenReactorExitException e) {
+			running = false;
 		} finally {
 			this.currentContext(null);
 			this.firstTime = false;

@@ -46,7 +46,7 @@ public class Screen extends JFrame {
 
 	private boolean bsEnabled = true;
 
-	private boolean isFullScreen = false;
+	private boolean isFullScreen = true;
 
 	public Screen(Settings settings) {
 		this.settings = settings;

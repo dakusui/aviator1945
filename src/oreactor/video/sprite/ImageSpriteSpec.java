@@ -26,7 +26,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 		int h;
 		private boolean cropEnabled;
 		
-		void patternno(int i) {
+		public void patternno(int i) {
 			this.patternno = i;
 		}
 		public int patternno() {

@@ -10,6 +10,11 @@ public class NetworkEngine  extends BaseEngine {
 	}
 
 	@Override
+	public void prepare() {
+		
+	}
+	
+	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		
