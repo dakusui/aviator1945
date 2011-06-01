@@ -9,8 +9,9 @@ import oreactor.video.Viewport;
 
 public class ExceptionThrower {
 
+	@SuppressWarnings("unchecked")
 	public static void throwArgumentException(String keyword, String key,
-			@SuppressWarnings({"rawtypes" }) Class<? extends Enum> k) throws ArgumentException {
+			Class<? extends Enum> k) throws ArgumentException {
 		String availableValues = "";
 		boolean firstOne = true;
 		for (Enum<?> i : k.getEnumConstants()) {
