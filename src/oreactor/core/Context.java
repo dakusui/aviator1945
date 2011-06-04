@@ -6,6 +6,7 @@ import oreactor.exceptions.OpenReactorException;
 import oreactor.io.ResourceLoader;
 import oreactor.joystick.JoystickEngine;
 import oreactor.keyboard.KeyboardEngine;
+import oreactor.motion.MotionEngine;
 import oreactor.music.MidiEngine;
 import oreactor.network.NetworkEngine;
 import oreactor.sound.SoundEngine;
@@ -21,6 +22,7 @@ public class Context {
 	private JoystickEngine joystickEngine;
 	private NetworkEngine networkEngine;
 	private ResourceLoader resourceLoader;
+	private MotionEngine motionEngine;
 	
 	public Context(Reactor reactor, Settings settings) throws OpenReactorException {
 		this.videoEngine = new VideoEngine(settings);
@@ -35,6 +37,7 @@ public class Context {
 		this.keyboardEngine = new KeyboardEngine(settings);
 		this.joystickEngine = new JoystickEngine(settings);
 		this.networkEngine = new NetworkEngine(settings);
+		this.motionEngine = new MotionEngine(settings, reactor.motionProvider());
 		this.resourceLoader = ResourceLoader.getResourceLoader(reactor);
 	}
 	
@@ -64,5 +67,9 @@ public class Context {
 	
 	public ResourceLoader getResourceLoader() {
 		return this.resourceLoader;
+	}
+
+	public MotionEngine getMotionEngine() {
+		return this.motionEngine;
 	}
 }
