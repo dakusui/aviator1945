@@ -37,7 +37,8 @@ public class Context {
 		this.keyboardEngine = new KeyboardEngine(settings);
 		this.joystickEngine = new JoystickEngine(settings);
 		this.networkEngine = new NetworkEngine(settings);
-		this.motionEngine = new MotionEngine(settings, reactor.motionProvider());
+		this.motionEngine = new MotionEngine(settings);
+		this.motionEngine.setProvider(reactor.motionProvider());
 		this.resourceLoader = ResourceLoader.getResourceLoader(reactor);
 	}
 	

@@ -4,6 +4,7 @@ import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
 import oreactor.exceptions.OpenReactorQuitException;
+import oreactor.motion.MotionEngine;
 import oreactor.motion.MotionProvider;
 
 public abstract class Reactor {
@@ -61,12 +62,12 @@ public abstract class Reactor {
 	@ExtensionPoint
 	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context c = new Context(this, settings);
+		c.getMotionEngine().initialize(c);
 		c.getJoystickEngine().initialize(c);
 		c.getKeyboardEngine().initialize(c);
 		c.getMusicEngine().initialize(c);
 		c.getNetworkEngine().initialize(c);
 		c.getSoundEngine().initialize(c);
-		c.getMotionEngine().initialize(c);
 		c.getVideoEngine().initialize(c);
 		return c;
 	}
@@ -83,7 +84,6 @@ public abstract class Reactor {
 		c.getMusicEngine().prepare();
 		c.getNetworkEngine().prepare();
 		c.getSoundEngine().prepare();
-		c.getMotionEngine().prepare();
 		c.getVideoEngine().prepare();
 	}
 
@@ -93,7 +93,6 @@ public abstract class Reactor {
 		c.getMusicEngine().run();
 		c.getNetworkEngine().run();
 		c.getSoundEngine().run();
-		c.getMotionEngine().run();
 		c.getVideoEngine().run();
 	}
 
@@ -114,12 +113,13 @@ public abstract class Reactor {
 		logger.debug(this.statistcs.toString());
 		logger.debug("----");
 		c.getVideoEngine().terminate(c);		
-		c.getMotionEngine().terminate(c);
 		c.getSoundEngine().terminate(c);
 		c.getNetworkEngine().terminate(c);
 		c.getMusicEngine().terminate(c);
 		c.getKeyboardEngine().terminate(c);
 		c.getJoystickEngine().terminate(c);
+		c.getMotionEngine().terminate(c);
+		c.getMotionEngine().terminate(c);
 	}
 
 	public void argParser(ArgParser argParser) {
@@ -137,6 +137,16 @@ public abstract class Reactor {
 			while (true) {
 				long timeSpentForAction = 0;
 				long before = System.nanoTime();
+				////
+				// 0. Run motion engine
+				MotionEngine motionEngine = c.getMotionEngine();
+				motionEngine.prepare();
+				try {
+					motionEngine.run();
+				} finally {
+					motionEngine.finish();
+				}
+				
 				////
 				// 1. Perform action
 				try {
@@ -156,7 +166,7 @@ public abstract class Reactor {
 			
 				
 				////
-				// 2. Run engines
+				// 2. Run the other engines
 				this.prepareEngines(c);
 				try {
 					this.runEngines(c);
@@ -177,6 +187,7 @@ public abstract class Reactor {
 				} else {
 					this.statistcs.frameProcessedInTime(timeSpent, timeSpentForAction);
 				}
+				
 				////
 				// 4. Determine the next action to be performed.
 				if (nextState != null) {

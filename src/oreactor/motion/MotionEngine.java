@@ -7,12 +7,14 @@ import oreactor.motion.MotionProvider.InteractionMode;
 public class MotionEngine extends BaseEngine {
 	MotionProvider provider = null;
 
-	public MotionEngine(Settings settings, MotionProvider motionProvider) {
+	public MotionEngine(Settings settings) {
 		super(settings);
-		this.provider = motionProvider;
-		
 	}
 
+	public void setProvider(MotionProvider provider) {
+		this.provider = provider;
+	}
+	
 	public void run() {
 		if (provider != null) {
 			provider.prepareActions();
