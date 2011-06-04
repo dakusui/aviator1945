@@ -91,4 +91,8 @@ public class ExceptionThrower {
 	public static void throwViewportStateException(String msg, Viewport viewport) throws OpenReactorException {
 		throw new OpenReactorException(msg + ":<" + viewport + ">");
 	}
+
+	public static void throwException(String msg) throws OpenReactorException {
+		throw new OpenReactorException(msg);
+	}
 }
