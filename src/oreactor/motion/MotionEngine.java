@@ -5,11 +5,11 @@ import oreactor.motion.MotionProvider.InteractionMode;
 public class MotionEngine {
 	MotionProvider provider = null;
 	public void run() {
-		provider.prepareAction();
+		provider.prepareActions();
 		provider.performScavenging();
-		provider.performAction();
-		provider.performInteraction(InteractionMode.Collision);
-		provider.performInteraction(InteractionMode.Generic);
+		provider.performActions();
+		provider.performInteractions(InteractionMode.Collision);
+		provider.performInteractions(InteractionMode.Generic);
 		provider.commit();
 		provider.reset();
 	}

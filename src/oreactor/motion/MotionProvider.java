@@ -120,21 +120,21 @@ public abstract class MotionProvider implements List<MMachine> {
 	protected abstract Attributes createAttributes();
 	protected abstract Motion createMotionObject();
 
-	public void prepareAction() {
+	public void prepareActions() {
 		List<MMachine> mmachines = this.machines();
 		for (MMachine m : mmachines) {
 			m.prepare();
 		}
 	}
 
-	public void performAction() {
+	public void performActions() {
 		List<MMachine> mmachines = this.machines();
 		for (MMachine m : mmachines) {
 			m.performAction(this);
 		}
 	}
 
-	public void performInteraction(InteractionMode mode) {
+	public void performInteractions(InteractionMode mode) {
 		for (Group g : groups) {
 			for (Group h : groups.subList(groups.indexOf(g), groups.size())) {
 				if (mode.doesInteract(g, h)) {
