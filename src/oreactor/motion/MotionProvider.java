@@ -10,7 +10,7 @@ import java.util.Map;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 
-public abstract class MotionProvider implements List<MMachine> {
+public abstract class MotionProvider {
 	static class Tuple {
 		MMachine a;
 		MMachine b;
@@ -98,6 +98,7 @@ public abstract class MotionProvider implements List<MMachine> {
 		}
 	}
 
+	List<MotionObserver> observers = new LinkedList<MotionObserver>();
 	List<Group> groups = new ArrayList<Group>();
 	List<MMachine> machines = new LinkedList<MMachine>();
 	Map<Tuple, Double> distanceCache = new HashMap<Tuple, Double>();
@@ -185,15 +186,23 @@ public abstract class MotionProvider implements List<MMachine> {
 	public void register(MMachine m) {
 		if (m != null) {
 			this.machines.add(m);
+			for (MotionObserver o : observers) {
+				o.registered(m);
+			}
 		}
 	}
 	
-	public void unregister(MMachine m) {
+	public boolean unregister(MMachine m) {
+		boolean ret = false;
 		if (m != null) {
-			if (!this.machines.remove(m)) {
-				// tried to remove a non-existing object.
+			if (this.machines.remove(m)) {
+				ret = true;
+				for (MotionObserver o : observers) {
+					o.unregistered(m);
+				}
 			}
 		}
+		return ret;
 	}
 	
 	public void addGroup(Group g) throws OpenReactorException {
@@ -220,5 +229,15 @@ public abstract class MotionProvider implements List<MMachine> {
 	public void buildMMachine(MMachineSpec spec, MMachine parent) throws OpenReactorException {
 		MMachine machine = spec.buildMMachine(this, parent);
 		this.register(machine);
+	}
+	
+	public void addObserver(MotionObserver observer) {
+		if (!observers.contains(observer)) {
+			this.observers.add(observer);
+		}
+	}
+	
+	public boolean removeObserver(MotionObserver observer) {
+		return this.observers.remove(observer);
 	}
 }

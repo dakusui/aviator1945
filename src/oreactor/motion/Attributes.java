@@ -6,7 +6,7 @@ import java.io.Serializable;
 /**
  * Per application basis
  */
-abstract class Attributes implements Cloneable, Serializable {
+public abstract class Attributes implements Cloneable, Serializable {
 	/**
 	 * Serial version UID.
 	 */
