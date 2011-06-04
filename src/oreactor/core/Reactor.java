@@ -4,6 +4,7 @@ import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
 import oreactor.exceptions.OpenReactorQuitException;
+import oreactor.motion.MotionProvider;
 
 public abstract class Reactor {
 	enum State {
@@ -65,8 +66,8 @@ public abstract class Reactor {
 		c.getMusicEngine().initialize(c);
 		c.getNetworkEngine().initialize(c);
 		c.getSoundEngine().initialize(c);
+		c.getMotionEngine().initialize(c);
 		c.getVideoEngine().initialize(c);
-
 		return c;
 	}
 	
@@ -82,6 +83,7 @@ public abstract class Reactor {
 		c.getMusicEngine().prepare();
 		c.getNetworkEngine().prepare();
 		c.getSoundEngine().prepare();
+		c.getMotionEngine().prepare();
 		c.getVideoEngine().prepare();
 	}
 
@@ -91,12 +93,14 @@ public abstract class Reactor {
 		c.getMusicEngine().run();
 		c.getNetworkEngine().run();
 		c.getSoundEngine().run();
+		c.getMotionEngine().run();
 		c.getVideoEngine().run();
 	}
 
 
 	private void finishEngines(Context c) throws OpenReactorException {
 		c.getVideoEngine().finish();		
+		c.getMotionEngine().finish();
 		c.getSoundEngine().finish();
 		c.getNetworkEngine().finish();
 		c.getMusicEngine().finish();
@@ -110,6 +114,7 @@ public abstract class Reactor {
 		logger.debug(this.statistcs.toString());
 		logger.debug("----");
 		c.getVideoEngine().terminate(c);		
+		c.getMotionEngine().terminate(c);
 		c.getSoundEngine().terminate(c);
 		c.getNetworkEngine().terminate(c);
 		c.getMusicEngine().terminate(c);
@@ -211,6 +216,11 @@ public abstract class Reactor {
 	@ExtensionPoint
 	public abstract int patternHeight();
 
+	@ExtensionPoint
+	public MotionProvider motionProvider() {
+		return null;
+	}
+	
 	protected Logger logger() {
 		return this.logger;
 	}
