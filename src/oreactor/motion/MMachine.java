@@ -1,5 +1,7 @@
 package oreactor.motion;
 
+import oreactor.exceptions.OpenReactorException;
+
 public final class MMachine {
 	private Attributes inprocess;
 	private Attributes attr;
@@ -68,5 +70,16 @@ public final class MMachine {
 
 	public void setDrivant(Drivant drivant) {
 		this.drivant = drivant;
+	}
+
+	public void emit(MotionProvider motionProvider) throws OpenReactorException {
+		for (MMachineSpec spec : this.nextMotion.emissions()) {
+			MMachine n = spec.buildMMachine(this.provider, this);
+			provider.register(n);
+		}
+	}
+	
+	public boolean isDestroyed() {
+		return this.attributes().isDestroyed();
 	}
 }

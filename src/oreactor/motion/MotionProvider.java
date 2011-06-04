@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import oreactor.exceptions.ExceptionThrower;
+import oreactor.exceptions.OpenReactorException;
+
 public abstract class MotionProvider implements List<MMachine> {
 	static class Tuple {
 		MMachine a;
@@ -141,6 +144,22 @@ public abstract class MotionProvider implements List<MMachine> {
 		}
 	}
 
+	public void performEmissions() throws OpenReactorException {
+		List<MMachine> mmachines = this.machines();
+		for (MMachine m : mmachines) {
+			m.emit(this);
+		}
+	}
+	
+	public void performScavenging() {
+		List<MMachine> mmachines = this.machines();
+		for (MMachine m : mmachines) {
+			if (m.isDestroyed()) {
+				unregister(m);
+			}
+		}
+	}
+	
 	public void commit() {
 		List<MMachine> mmachines = this.machines();
 		for (MMachine m : mmachines) {
@@ -148,6 +167,7 @@ public abstract class MotionProvider implements List<MMachine> {
 		}
 	}
 
+	
 	void reset() {
 		distanceCache.clear();
 	}
@@ -159,4 +179,46 @@ public abstract class MotionProvider implements List<MMachine> {
 	protected abstract boolean isAcceptable(Drivant drivant);
 
 	protected abstract boolean isAcceptable(Attributes attr);
+	
+	protected abstract boolean isAcceptable(Group group);
+
+	public void register(MMachine m) {
+		if (m != null) {
+			this.machines.add(m);
+		}
+	}
+	
+	public void unregister(MMachine m) {
+		if (m != null) {
+			if (!this.machines.remove(m)) {
+				// tried to remove a non-existing object.
+			}
+		}
+	}
+	
+	public void addGroup(Group g) throws OpenReactorException {
+		if (g != null) {
+			if (this.isAcceptable(g)) {
+				ExceptionThrower.throwException("Given object is not valid for this application:<" + g + ">");
+			}
+			this.groups.add(g);
+		}
+	}
+	
+	public boolean removeGroup(Group g) {
+		return this.groups.remove(g);
+	}
+	
+	public List<Group> groups() {
+		return Collections.unmodifiableList(this.groups);
+	}
+	
+	public void buildMMachine(MMachineSpec spec) throws OpenReactorException {
+		this.buildMMachine(spec, null);
+	}
+
+	public void buildMMachine(MMachineSpec spec, MMachine parent) throws OpenReactorException {
+		MMachine machine = spec.buildMMachine(this, parent);
+		this.register(machine);
+	}
 }

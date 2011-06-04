@@ -13,19 +13,19 @@ public abstract class MMachineSpec {
 	protected MMachineSpec() {
 	}
 
-	public final MMachine buildMMachine(MotionProvider provider) throws OpenReactorException {
+	public final MMachine buildMMachine(MotionProvider provider, MMachine parent) throws OpenReactorException {
 		MMachine ret = new MMachine(provider);
 
 		Attributes attr = provider.createAttributes();
 		if (!provider.isAcceptable(attr)) {
-			ExceptionThrower.throwException("This object is not valid for this application:<" + attr + ">");
+			ExceptionThrower.throwException("Given object is not valid for this application:<" + attr + ">");
 		}
-		fillInAttribute(attr);
+		fillInAttributes(attr, parent);
 		ret.setAttributes(attr);
 
 		Drivant drivant = createDrivant();
 		if (!provider.isAcceptable(drivant)) {
-			ExceptionThrower.throwException("This object is not valid for this application:<" + drivant + ">");
+			ExceptionThrower.throwException("Given object is not valid for this application:<" + drivant + ">");
 		}
 		ret.setDrivant(drivant);
 
@@ -34,7 +34,7 @@ public abstract class MMachineSpec {
 		return ret;
 	}
 
-	protected abstract void fillInAttribute(Attributes attr);
+	protected abstract void fillInAttributes(Attributes attr, MMachine parent);
 
 	protected abstract Drivant createDrivant();
 
