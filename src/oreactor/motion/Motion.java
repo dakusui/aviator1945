@@ -9,14 +9,34 @@ import java.util.List;
  * @author hiroshi
  *
  */
-public abstract class Motion {
-	List<MMachine> collideWith = new LinkedList<MMachine>();
+public abstract class Motion implements Cloneable {
+	protected List<MMachine> collideWith = new LinkedList<MMachine>();
+	protected List<MMachineSpec> emissions;
 	
-	void collideWith(MMachine m) {
+	void addCollision(MMachine m) {
 		this.collideWith.add(m);
 	}
 	
-	public List<MMachine> collideWith() {
+	public List<MMachine> collidesWith() {
 		return Collections.unmodifiableList(this.collideWith);
+	}
+	
+	public void addEmission(MMachineSpec spec) {
+		if (spec != null) {
+			emissions.add(spec);
+		}
+	}
+	
+	List<MMachineSpec> emissions() {
+		return emissions;
+	}
+	
+	public Motion cloneMotion() {
+		try {
+			Motion ret = (Motion) this.clone();
+			return ret;
+		} catch (CloneNotSupportedException e) {
+			return null;
+		}
 	}
 }

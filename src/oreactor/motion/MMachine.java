@@ -4,12 +4,12 @@ public final class MMachine {
 	private Attributes inprocess;
 	private Attributes attr;
 	private Group      group;
-	private MMachineSpec spec;
+	private MotionProvider provider;
 	private Motion nextMotion;
 	private Drivant drivant;
 	
-	public MMachine(MMachineSpec spec) {
-		this.spec = spec;
+	public MMachine(MotionProvider provider) {
+		this.provider = provider;
 	}
 
 	void setAttributes(Attributes attr) {
@@ -17,7 +17,7 @@ public final class MMachine {
 	}
 
 	void prepare() {
-		this.nextMotion = spec.createMotionObject();
+		this.nextMotion = provider.createMotionObject();
 		this.inprocess = attr.cloneState();
 	}
 	
@@ -64,5 +64,9 @@ public final class MMachine {
 
 	boolean touches(MMachine n, double d) {
 		return this.attributes().touches(n.attributes(), d);
+	}
+
+	public void setDrivant(Drivant drivant) {
+		this.drivant = drivant;
 	}
 }
