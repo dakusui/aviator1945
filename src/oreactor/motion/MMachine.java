@@ -1,40 +1,68 @@
 package oreactor.motion;
 
-public class MMachine {
-	/**
-	 * Per application basis
-	 * @author hiroshi
-	 *
-	 */
-	static abstract class Behavior {
-		abstract void perform(State s);
-	}
-	/**
-	 * Per application basis
-	 */
-	static abstract class State implements Cloneable {
-		State cloneState() {
-			try {
-				return (State) this.clone();
-			} catch (CloneNotSupportedException e) {
-				return null;
-			}
-		}
-		public abstract void apply(Behavior b);
-	}
-	State inprocess;
-	State state;
+public final class MMachine {
+	private Attributes inprocess;
+	private Attributes attr;
+	private Group      group;
+	private MMachineSpec spec;
+	private Motion nextMotion;
+	private Drivant drivant;
 	
-	public void perform() {
-		Behavior b = null;
-		this.inprocess = state.cloneState();
-		this.inprocess.apply(b);
+	public MMachine(MMachineSpec spec) {
+		this.spec = spec;
+	}
+
+	void setAttributes(Attributes attr) {
+		this.attr = attr;
+	}
+
+	void prepare() {
+		this.nextMotion = spec.createMotionObject();
+		this.inprocess = attr.cloneState();
 	}
 	
-	public void commit() {
+	void performAction(MotionProvider provider) {
+		this.drivant.perform(this.nextMotion, this, provider);
+	}
+	
+	void performCollisionWith(MMachine another, double distance) {
+		this.drivant.performCollisionWith(this.nextMotion, this, another, distance);
+	}
+	
+	void performInteractionWith(MMachine another, double distance) {
+		this.drivant.performCollisionWith(this.nextMotion, this, another, distance);
+	}
+	
+	void commit() {
 		if (this.inprocess != null) {
-			this.state = this.inprocess;
+			this.inprocess.apply(nextMotion);
+			this.attr = this.inprocess;
 			this.inprocess = null;
 		}
+	}
+	
+	void rollback() {
+		this.inprocess = null;
+	}
+	
+	public void bind(Group g) {
+		if (g != null) {
+			this.unbind();
+			this.group.register(this);
+		}
+	}
+	
+	public void unbind() {
+		if (this.group != null) {
+			this.group.unregister(this);
+		}
+	}
+	
+	public Attributes attributes() {
+		return this.inprocess;
+	}
+
+	boolean touches(MMachine n, double d) {
+		return this.attributes().touches(n.attributes(), d);
 	}
 }

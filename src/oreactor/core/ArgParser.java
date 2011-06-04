@@ -46,7 +46,7 @@ public class ArgParser {
 		return ret;
 	}
 
-	@SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "unchecked", "rawtypes"})
 	private Enum<?> pickupEnumValue(String keyword, Class<? extends Enum> k) throws ArgumentException {
 		Enum<?> ret = null;
 		for (Tuple t : this.tuples) {
