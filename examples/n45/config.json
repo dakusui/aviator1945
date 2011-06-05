@@ -11,7 +11,7 @@
         'p38':{
             'class':'oreactor.video.sprite.ImageSpriteSpec',
             'params':{
-                'images':['example/images/00.jpg'],
+                'images':['n45/p38-01.png'],
             },
             'hresolution':64,
             'vresolution':64,
@@ -19,7 +19,7 @@
         'shot':{
             'class':'oreactor.video.sprite.ImageSpriteSpec',
             'params':{
-                'images':['example/images/00.jpg'],
+                'images':['n45/shot.png'],
             },
             'hresolution':64,
             'vresolution':64,
