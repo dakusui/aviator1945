@@ -11,7 +11,7 @@ import java.util.List;
  */
 public abstract class Motion implements Cloneable {
 	protected List<MMachine> collideWith = new LinkedList<MMachine>();
-	protected List<MMachineSpec> emissions;
+	protected List<MMachineSpec> emissions = new LinkedList<MMachineSpec>();
 	private boolean destroyed;
 	
 	void addCollision(MMachine m) {

@@ -214,7 +214,7 @@ public abstract class Reactor {
 	public abstract int patternHeight();
 
 	@ExtensionPoint
-	public MotionProvider newMotionProvider() {
+	public MotionProvider newMotionProvider() throws OpenReactorException {
 		return null;
 	}
 	protected Logger logger() {

@@ -20,6 +20,7 @@ public class MotionEngine extends BaseEngine {
 			provider.prepareActions();
 			provider.performScavenging();
 			provider.performActions();
+			provider.performEmissions();
 			provider.performInteractions(InteractionMode.Collision);
 			provider.performInteractions(InteractionMode.Generic);
 			provider.commit();

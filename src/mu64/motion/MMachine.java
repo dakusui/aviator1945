@@ -26,7 +26,7 @@ public final class MMachine {
 		this.inprocess = attr.cloneState();
 	}
 	
-	void performAction(MotionProvider provider) {
+	void performAction(MotionProvider provider) throws OpenReactorException {
 		this.drivant.perform(this.nextMotion, this, provider);
 	}
 	

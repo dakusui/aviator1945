@@ -18,7 +18,6 @@ public abstract class MotionProvider {
 			boolean doesInteract_(Group g, Group h) {
 				return g.doesCollide(h);
 			}
-
 			@Override
 			void exec_(MMachine m, MMachine n, MotionProvider provider) {
 				double d = provider.distance(m, n);
@@ -106,7 +105,7 @@ public abstract class MotionProvider {
 	
 	public void addGroup(Group g) throws OpenReactorException {
 		if (g != null) {
-			if (this.isAcceptable(g)) {
+			if (!this.isAcceptable(g)) {
 				ExceptionThrower.throwException("Given object is not valid for this application:<" + g + ">");
 			}
 			this.groups.add(g);
@@ -150,14 +149,25 @@ public abstract class MotionProvider {
 	public void performActions() {
 		List<MMachine> mmachines = this.machines();
 		for (MMachine m : mmachines) {
-			m.performAction(this);
+			try {
+				m.performAction(this);
+			} catch (OpenReactorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
-	public void performEmissions() throws OpenReactorException {
-		List<MMachine> mmachines = this.machines();
+	public void performEmissions() {
+		List<MMachine> mmachines = new LinkedList<MMachine>();
+		mmachines.addAll(this.machines());
 		for (MMachine m : mmachines) {
-			m.emit(this);
+			try {
+				m.emit(this);
+			} catch (OpenReactorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -220,6 +230,7 @@ public abstract class MotionProvider {
 	public boolean unregister(MMachine m) {
 		boolean ret = false;
 		if (m != null) {
+			m.unbind();
 			if (this.machines.remove(m)) {
 				ret = true;
 				for (MotionObserver o : observers) {
