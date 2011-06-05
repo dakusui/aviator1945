@@ -9,7 +9,7 @@ import oreactor.video.Viewport;
 
 public class ExceptionThrower {
 
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public static void throwArgumentException(String keyword, String key,
 			Class<? extends Enum> k) throws ArgumentException {
 		String availableValues = "";
