@@ -255,7 +255,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		logger().debug("  Sound data:<" + soundData.resourceUrl() + "> is loaded as '" + name + "'.");
 	}
 
-	protected SpritePlane spriteplane() {
+	public SpritePlane spriteplane() {
 		return spriteplane("sprite");
 	}
 
@@ -272,7 +272,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		return ret;
 	}
 	
-	protected SpriteSpec spritespec(String name) {
+	public SpriteSpec spritespec(String name) {
 		return spriteSpecs.get(name);
 		
 	}
