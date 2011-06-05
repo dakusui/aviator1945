@@ -1,0 +1,34 @@
+{
+    'spritespecs':{
+        'zero':{
+            'class':'oreactor.video.sprite.ImageSpriteSpec',
+            'params':{
+                'images':['n45/zero01.gif'],
+            },
+            'hresolution':64,
+            'vresolution':64,
+        },
+        'p38':{
+            'class':'oreactor.video.sprite.ImageSpriteSpec',
+            'params':{
+                'images':['example/images/00.jpg'],
+            },
+            'hresolution':64,
+            'vresolution':64,
+        },
+        'shot':{
+            'class':'oreactor.video.sprite.ImageSpriteSpec',
+            'params':{
+                'images':['example/images/00.jpg'],
+            },
+            'hresolution':64,
+            'vresolution':64,
+        }
+    },
+    'patterns':[
+    ],
+    'midiclips':{
+    },
+    'soundclips':{
+    },
+}
