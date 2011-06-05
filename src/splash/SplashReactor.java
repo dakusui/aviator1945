@@ -26,6 +26,7 @@ public class SplashReactor extends Mu64Reactor {
 				param.enableCropping(0, i, 320, 2);
 				factors[i] = Math.random() * 10 + 1;
 			}
+			patternplane().disable();
 		}
 		if (ticks() <= frames) {
 			for (int i = 0; i < lines.length; i ++) {

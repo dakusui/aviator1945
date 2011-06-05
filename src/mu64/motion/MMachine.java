@@ -53,6 +53,7 @@ public final class MMachine {
 	public void bind(Group g) {
 		if (g != null) {
 			this.unbind();
+			this.group = g;
 			this.group.register(this);
 		}
 	}

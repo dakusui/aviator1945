@@ -9,7 +9,7 @@ import java.util.List;
  * @author hiroshi
  *
  */
-public abstract class Group implements List<MMachine> {
+public abstract class Group implements Iterable<MMachine> {
 	List<MMachine> mmachines = new LinkedList<MMachine>();
 	private String name;
 	
