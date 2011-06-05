@@ -42,6 +42,7 @@ public abstract class MMachineSpec {
 	protected void release(MMachine m) {
 		Sprite s = m.sprite();
 		this.releaseSprite(s);
+		m.unbind();
 	}
 	
 	protected abstract void fillInAttributes(Attributes attr, MMachine parent);

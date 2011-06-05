@@ -230,7 +230,6 @@ public abstract class MotionProvider {
 	public boolean unregister(MMachine m) {
 		boolean ret = false;
 		if (m != null) {
-			m.unbind();
 			if (this.machines.remove(m)) {
 				ret = true;
 				for (MotionObserver o : observers) {
