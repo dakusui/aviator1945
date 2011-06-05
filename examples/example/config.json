@@ -1,0 +1,40 @@
+{
+    'spritespecs':{
+        'spr00':{
+            'class':'oreactor.video.sprite.ImageSpriteSpec',
+            'params':{
+                'images':['example/images/spr00.jpg'],
+            },
+            'hresolution':64,
+            'vresolution':64,
+        }
+    },
+    'patterns':[
+        { 'image':'example/images/00.jpg',  },
+        { 'image':'example/images/01.jpg',  },
+        { 'image':'example/images/02.jpg',  },
+        { 'image':'example/images/03.jpg',  },
+        { 'image':'example/images/04.jpg',  },
+        { 'image':'example/images/06.png',  },
+        { 'image':'example/images/07.png',  },
+        { 'image':'example/images/08.png',  },
+        { 'image':'example/images/09.jpg',  },
+        { 'image':'example/images/10.jpg',  },
+        { 'image':'example/images/11.jpg',  },
+        { 'image':'example/images/12.jpg',  },
+        { 'image':'example/images/13.jpg',  },
+        { 'image':'example/images/14.jpg',  },
+        { 'image':'example/images/15.jpg',  },
+    ],
+    'midiclips':{
+    	'carmen':{
+    		'midi':'example/midi/bizet_carmen_1_2.mid',
+    		'repeattick':6000000,
+    	},
+    },
+    'soundclips':{
+    	'spell':{
+    		'wave':'example/wav/spell.wav',
+    	},
+    },
+}
