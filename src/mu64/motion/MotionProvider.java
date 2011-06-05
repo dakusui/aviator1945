@@ -21,7 +21,7 @@ public abstract class MotionProvider {
 			@Override
 			void exec_(MMachine m, MMachine n, MotionProvider provider) {
 				double d = provider.distance(m, n);
-				if (m.touches(n, d)) {
+				if (provider.touches(m, n, d)) {
 					m.performCollisionWith(n, d);
 					n.performCollisionWith(m, d);
 				}
@@ -36,10 +36,8 @@ public abstract class MotionProvider {
 			@Override
 			void exec_(MMachine m, MMachine n, MotionProvider provider) {
 				double d = provider.distance(m, n);
-				if (m.touches(n, d)) {
-					m.performInteractionWith(n, d);
-					n.performInteractionWith(m, d);
-				}
+				m.performInteractionWith(n, d);
+				n.performInteractionWith(m, d);
 			}
 		};
 		public void exec(Group g, Group h, MotionProvider provider) {
@@ -111,6 +109,8 @@ public abstract class MotionProvider {
 			this.groups.add(g);
 		}
 	}
+
+	protected abstract boolean touches(MMachine m, MMachine n, double d);
 
 	public void addObserver(MotionObserver observer) {
 		if (!observers.contains(observer)) {

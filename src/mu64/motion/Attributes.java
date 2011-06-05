@@ -15,8 +15,6 @@ public abstract class Attributes implements Cloneable, Serializable {
 
 	protected abstract void applyMotion(Motion b);
 
-	protected abstract boolean touches(Attributes another, double distance);
-	
 	Attributes cloneState() {
 		try {
 			return (Attributes) this.clone();

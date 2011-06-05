@@ -72,10 +72,6 @@ public final class MMachine {
 		return ret;
 	}
 
-	boolean touches(MMachine n, double d) {
-		return this.attributes().touches(n.attributes(), d);
-	}
-
 	void setDrivant(Drivant drivant) {
 		this.drivant = drivant;
 	}

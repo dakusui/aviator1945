@@ -22,11 +22,6 @@ public class ExampleReactor2  extends Mu64Reactor {
 			y += ((Mtn)b).dy();
 			life--;
 		}
-		@Override
-		protected boolean touches(Attributes another, double distance) {
-			return false;
-		}
-		
 		public double x() {
 			return this.x;
 		}
@@ -90,6 +85,10 @@ public class ExampleReactor2  extends Mu64Reactor {
 			protected void putStrite(Sprite sprite, Attributes attributes) {
 				Attrs attr = (Attrs) attributes;
 				sprite.put(attr.x(), attr.y(), 0);
+			}
+			@Override
+			protected boolean touches(MMachine m, MMachine n, double d) {
+				return false;
 			}
 		};
 	}

@@ -43,13 +43,6 @@ public class N45Reactor extends Mu64Reactor {
 			x += ((N45Motion) b).dx();
 			y += ((N45Motion) b).dy();
 		}
-		@Override
-		protected boolean touches(Attributes another, double distance) {
-			if (distance < 32) {
-				return true;
-			}
-			return false;
-		}
 		public double x() {
 			return this.x;
 		}
@@ -159,6 +152,13 @@ public class N45Reactor extends Mu64Reactor {
 			protected void putStrite(Sprite sprite, Attributes attributes) {
 				N45Attrs attrs = (N45Attrs) attributes;
 				sprite.put(attrs.x(), attrs.y(), attrs.direction());
+			}
+			@Override
+			protected boolean touches(MMachine m, MMachine n, double d) {
+				if (d < 32) {
+					return true;
+				}
+				return false;
 			}
 		};
 		ret.addGroup(N45Group.FRIEND);
