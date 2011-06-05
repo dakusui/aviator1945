@@ -3,7 +3,8 @@ package example;
 
 import java.awt.Color;
 
-import openreactor.mu64.Mu64Reactor;
+import mu64.Mu64Reactor;
+
 import oreactor.core.ReactorRunner;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.JoystickEngine.Stick;
