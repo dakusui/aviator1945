@@ -1,11 +1,10 @@
 package oreactor.core;
 
+import mu64.motion.MotionProvider;
 import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
 import oreactor.exceptions.OpenReactorQuitException;
-import oreactor.motion.MotionEngine;
-import oreactor.motion.MotionProvider;
 
 public abstract class Reactor {
 	enum State {
@@ -32,7 +31,7 @@ public abstract class Reactor {
 	private Statistics statistcs;
 
 	private Logger logger;
-	
+
 	public Reactor() {
 		this.statistcs = new Statistics();
 		this.logger = Logger.getLogger();
@@ -62,7 +61,6 @@ public abstract class Reactor {
 	@ExtensionPoint
 	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context c = new Context(this, settings);
-		c.getMotionEngine().initialize(c);
 		c.getJoystickEngine().initialize(c);
 		c.getKeyboardEngine().initialize(c);
 		c.getMusicEngine().initialize(c);
@@ -99,7 +97,6 @@ public abstract class Reactor {
 
 	private void finishEngines(Context c) throws OpenReactorException {
 		c.getVideoEngine().finish();		
-		c.getMotionEngine().finish();
 		c.getSoundEngine().finish();
 		c.getNetworkEngine().finish();
 		c.getMusicEngine().finish();
@@ -118,8 +115,6 @@ public abstract class Reactor {
 		c.getMusicEngine().terminate(c);
 		c.getKeyboardEngine().terminate(c);
 		c.getJoystickEngine().terminate(c);
-		c.getMotionEngine().terminate(c);
-		c.getMotionEngine().terminate(c);
 	}
 
 	public void argParser(ArgParser argParser) {
@@ -137,16 +132,7 @@ public abstract class Reactor {
 			while (true) {
 				long timeSpentForAction = 0;
 				long before = System.nanoTime();
-				////
-				// 0. Run motion engine
-				MotionEngine motionEngine = c.getMotionEngine();
-				motionEngine.prepare();
-				try {
-					motionEngine.run();
-				} finally {
-					motionEngine.finish();
-				}
-				
+
 				////
 				// 1. Perform action
 				try {
@@ -228,10 +214,9 @@ public abstract class Reactor {
 	public abstract int patternHeight();
 
 	@ExtensionPoint
-	public MotionProvider motionProvider() {
+	public MotionProvider newMotionProvider() {
 		return null;
 	}
-	
 	protected Logger logger() {
 		return this.logger;
 	}

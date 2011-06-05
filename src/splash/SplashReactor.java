@@ -2,7 +2,8 @@ package splash;
 
 import java.awt.Color;
 
-import openreactor.mu64.Mu64Reactor;
+import mu64.Mu64Reactor;
+
 import oreactor.exceptions.OpenReactorException;
 import oreactor.video.sprite.ImageSpriteSpec;
 import oreactor.video.sprite.ImageSpriteSpec.RenderingParameters;

@@ -1,10 +1,10 @@
 package zero;
 
+import mu64.Mu64Reactor;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.JoystickEngine.Stick;
 import oreactor.video.sprite.ImageSpriteSpec.RenderingParameters;
 import oreactor.video.sprite.Sprite;
-import openreactor.mu64.Mu64Reactor;
 
 public class ZeroReactor extends Mu64Reactor {
 	public static final String config = 

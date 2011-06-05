@@ -1,10 +1,10 @@
 package splash;
 
+import mu64.Mu64Reactor;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.video.sprite.ImageSpriteSpec;
 import oreactor.video.sprite.ImageSpriteSpec.RenderingParameters;
 import oreactor.video.sprite.Sprite;
-import openreactor.mu64.Mu64Reactor;
 
 public class TestReactor extends Mu64Reactor {
 	Sprite s = null;
