@@ -66,7 +66,6 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	private void currentContext(Context context) {
 		this.context = context;
 	}
-
 	protected GraphicsPlane graphicsplane() {
 		return graphicsplane("graphics");
 	}
@@ -88,7 +87,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context ret = super.initialize(settings);
 		this.action = action();
-		this.motionEngine = new MotionEngine(settings);
+		this.motionEngine = new MotionEngine(this);
 		this.motionEngine.initialize(ret);
 		this.motionEngine.setProvider(newMotionProvider());
 		ret.getResourceLoader().addMonitor(this);
@@ -127,7 +126,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 			PlaneDesc desc = new PlaneDesc("graphics", PlaneDesc.Type.Graphics);
 			desc.width(w);
 			desc.height(h);
-			settings.addPlaneDesc(desc);
+			this.addPlaneDesc(desc);
 		}
 		{
 			PlaneDesc desc = new PlaneDesc("pattern", PlaneDesc.Type.Pattern);
@@ -135,13 +134,13 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 			desc.height(h);
 			desc.put(PlaneDesc.PATTERNWIDTH_KEY, pw);
 			desc.put(PlaneDesc.PATTERNHEIGHT_KEY, ph);
-			settings.addPlaneDesc(desc);
+			this.addPlaneDesc(desc);
 		}
 		{
 			PlaneDesc desc = new PlaneDesc("sprite", PlaneDesc.Type.Sprite);
 			desc.width(w);
 			desc.height(h);
-			settings.addPlaneDesc(desc);
+			this.addPlaneDesc(desc);
 		}
 		return settings;
 	}
@@ -149,7 +148,10 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	@Override
 	public void midiClipLoaded(String name, MidiData midiData) {
 	}
-	
+	@ExtensionPoint
+	protected MotionProvider newMotionProvider() throws OpenReactorException {
+		return null;
+	}
 	@Override
 	public void numMidiClips(int numClips) {
 	}

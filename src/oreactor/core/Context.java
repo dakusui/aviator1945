@@ -14,6 +14,7 @@ import oreactor.video.Screen;
 import oreactor.video.VideoEngine;
 
 public class Context {
+	private static final Logger logger = Logger.getLogger();
 	private VideoEngine videoEngine;
 	private SoundEngine soundEngine;
 	private MidiEngine musicEngine;
@@ -22,19 +23,19 @@ public class Context {
 	private NetworkEngine networkEngine;
 	private ResourceLoader resourceLoader;
 	
-	public Context(Reactor reactor, Settings settings) throws OpenReactorException {
-		this.videoEngine = new VideoEngine(settings);
-		List<PlaneDesc> planeDescs = settings.planeInfoItems();
+	public Context(Reactor reactor) throws OpenReactorException {
+		this.videoEngine = new VideoEngine(reactor);
+		List<PlaneDesc> planeDescs = reactor.planeInfoItems();
 		Screen s = this.videoEngine.screen();
-		System.err.println("List of plane info items:<" + planeDescs + ">");
+		logger.debug("List of plane info items:<" + planeDescs + ">");
 		for (PlaneDesc desc : planeDescs) {
 			s.createPlane(desc);
 		}
-		this.soundEngine = new SoundEngine(settings);
-		this.musicEngine = new MidiEngine(settings);
-		this.keyboardEngine = new KeyboardEngine(settings);
-		this.joystickEngine = new JoystickEngine(settings);
-		this.networkEngine = new NetworkEngine(settings);
+		this.soundEngine = new SoundEngine(reactor);
+		this.musicEngine = new MidiEngine(reactor);
+		this.keyboardEngine = new KeyboardEngine(reactor);
+		this.joystickEngine = new JoystickEngine(reactor);
+		this.networkEngine = new NetworkEngine(reactor);
 		this.resourceLoader = ResourceLoader.getResourceLoader(reactor);
 	}
 	

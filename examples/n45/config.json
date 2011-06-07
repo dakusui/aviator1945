@@ -21,8 +21,8 @@
             'params':{
                 'images':['n45/shot.png'],
             },
-            'hresolution':64,
-            'vresolution':64,
+            'hresolution':16,
+            'vresolution':16,
         }
     },
     'patterns':[

@@ -1,12 +1,12 @@
 package oreactor.network;
 
 import oreactor.core.BaseEngine;
-import oreactor.core.Settings;
+import oreactor.core.Reactor;
 
 public class NetworkEngine  extends BaseEngine {
 
-	public NetworkEngine(Settings settings) {
-		super(settings);
+	public NetworkEngine(Reactor reactor) {
+		super(reactor);
 	}
 
 	@Override

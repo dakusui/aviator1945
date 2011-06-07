@@ -95,4 +95,8 @@ public class ExceptionThrower {
 	public static void throwException(String msg) throws OpenReactorException {
 		throw new OpenReactorException(msg);
 	}
+
+	public static void throwMidiUnavailableException(String msg, Throwable t) throws OpenReactorException {
+		throw new OpenReactorException(msg, t);
+	}
 }

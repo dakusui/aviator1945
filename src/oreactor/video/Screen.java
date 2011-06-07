@@ -17,6 +17,7 @@ import java.util.List;
 import javax.swing.JFrame;
 
 import oreactor.core.Logger;
+import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
 
@@ -36,9 +37,9 @@ public class Screen extends JFrame {
 
 	private boolean closed;
 
-	double width;
+	int width;
 
-	double height;
+	int height;
 
 	private BufferStrategy strategy;
 
@@ -46,13 +47,11 @@ public class Screen extends JFrame {
 
 	private boolean bsEnabled = true;
 
-	private boolean isFullScreen = false;
-
-	public Screen(Settings settings) {
-		this.settings = settings;
+	public Screen(Reactor reactor) {
+		this.settings = reactor.getSettings();
 		this.planes = new LinkedList<Plane>();
-		this.width = settings.screenSize().width();
-		this.height = settings.screenSize().height();
+		this.width = reactor.screenWidth();
+		this.height = reactor.screenHeight();
 		this.closed = false;
 		this.addWindowListener(new WindowAdapter() {
 			@Override
@@ -60,14 +59,13 @@ public class Screen extends JFrame {
 				closed = true;
 			}
 		});
-		this.setSize(settings.screenSize().width(), settings.screenSize()
-				.height());
+		this.setSize(reactor.screenWidth(), reactor.screenHeight());
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		if (isFullScreen ) {
-			this.setUndecorated(true);
+		if (reactor.fullScreenEnabled()) {
 			GraphicsDevice gd = ge.getDefaultScreenDevice(); 
 			gd.setFullScreenWindow(this);
-			gd.setDisplayMode(new DisplayMode(1024, 768, 32, 0));
+			gd.setDisplayMode(new DisplayMode(reactor.screenWidth(), reactor.screenHeight(), reactor.screenColorDepth(), reactor.screenRefreshRate()));
+			this.setUndecorated(true);
 		}
 		this.setVisible(true);
 		this.createBufferStrategy(2);

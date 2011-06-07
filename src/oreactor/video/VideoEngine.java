@@ -4,7 +4,7 @@ import java.awt.event.KeyListener;
 
 import oreactor.core.BaseEngine;
 import oreactor.core.Context;
-import oreactor.core.Settings;
+import oreactor.core.Reactor;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.InputDevice;
@@ -12,9 +12,9 @@ import oreactor.joystick.InputDevice;
 public class VideoEngine extends BaseEngine {
 	private Screen screen;
 
-	public VideoEngine(Settings settings) {
-		super(settings);
-		this.screen = new Screen(settings);
+	public VideoEngine(Reactor reactor) {
+		super(reactor);
+		this.screen = new Screen(reactor);
 		this.screen.setVisible(true);
 	}
 	

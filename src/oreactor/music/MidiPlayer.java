@@ -18,10 +18,22 @@ public class MidiPlayer {
 	 */
 	private static final int END_OF_TRACK_MESSAGE = 47;
 	
-	/**
-	 * A data object to hold a midi sequence to play.
-	 */
-	MidiData midi = null;
+	static final MidiPlayer NULL_PLAYER = new MidiPlayer() {
+		@Override
+		public void pause() {
+		}
+		@Override
+		public void play() throws OpenReactorException {
+		}
+		@Override
+		public void resume() throws OpenReactorException {
+		}
+		@Override
+		public void stop() {
+		}
+	};
+	
+	private MidiEngine manager;
 
 	/**
 	 * A sequencer object.
@@ -33,11 +45,14 @@ public class MidiPlayer {
 	 */
 	private long stoppedPosition = -1;
 
-	private MidiEngine manager;
+	/**
+	 * A data object to hold a midi sequence to play.
+	 */
+	MidiData midi = null;
 
 	/**
 	 * Create an object of this class.
-	 * @param data A data object to hold the midi sequence to playback.
+	 * @param data A data object to hold the midi sequence to play back.
 	 * @param repeatTick The position to repeat the sequence. If negative number is specified, the sequence is not repeated.
 	 * @param manager A manager object which holds midi sequencer.
 	 */
@@ -69,7 +84,20 @@ public class MidiPlayer {
 			});
 		}
 	}
+	
+	/**
+	 * A constructor for a 'null' object
+	 */
+	private MidiPlayer() {
+	}
 
+	public void pause() {
+		if (this.sequencer.isRunning()) {
+			this.stoppedPosition = sequencer.getTickPosition();
+			this.sequencer.stop();
+		}
+	}
+	
 	public void play() throws OpenReactorException {
 		pause();
 		try {
@@ -82,21 +110,6 @@ public class MidiPlayer {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	public void pause() {
-		if (this.sequencer.isRunning()) {
-			this.stoppedPosition = sequencer.getTickPosition();
-			this.sequencer.stop();
-		}
-	}
-	
-	public void stop() {
-		if (this.sequencer.isRunning()) {
-			this.stoppedPosition = -1;
-			this.sequencer.stop();
-		}
-		manager.playerStopped(this);
 	}
 	
 	public void resume() throws OpenReactorException {
@@ -112,5 +125,13 @@ public class MidiPlayer {
 				ExceptionThrower.throwResourceException("Invalid midi resource was given:" + e.getMessage(), e);
 			}
 		}
+	}
+	
+	public void stop() {
+		if (this.sequencer.isRunning()) {
+			this.stoppedPosition = -1;
+			this.sequencer.stop();
+		}
+		manager.playerStopped(this);
 	}
 }

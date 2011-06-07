@@ -59,6 +59,7 @@ public class SoundPlayer {
 			return this == Playing;
 		}
 	}
+	protected static final SoundPlayer NULL_PLAYER = new SoundPlayer(null, null);
 	private int cur = 0;
 	SoundData data = null;
 	SourceDataLine line = null;
@@ -66,7 +67,7 @@ public class SoundPlayer {
 	
 	SoundPlayer(SoundData data, SoundEngine manager) {
 		this.data = data;
-		this.line = manager.getLine();
+		this.line = manager != null ? manager.getLine() : null;
 		this.state = this.line != null ? State.Prepared : State.NOP;
 	}
 	

@@ -6,7 +6,7 @@ import java.util.List;
 
 import oreactor.core.BaseEngine;
 import oreactor.core.Context;
-import oreactor.core.Settings;
+import oreactor.core.Reactor;
 import oreactor.exceptions.OpenReactorException;
 
 public class JoystickEngine  extends BaseEngine {
@@ -146,8 +146,8 @@ public class JoystickEngine  extends BaseEngine {
 	
 	List<InputDevice> devices = new LinkedList<InputDevice>();
 	
-	public JoystickEngine(Settings settings) {
-		super(settings);
+	public JoystickEngine(Reactor reactor) {
+		super(reactor);
 	}
 
 	@Override 

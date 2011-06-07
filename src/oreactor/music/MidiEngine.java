@@ -8,18 +8,48 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequencer;
 
 import oreactor.core.BaseEngine;
+import oreactor.core.Context;
+import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.io.ResourceLoader.MidiData;
 
 public class MidiEngine  extends BaseEngine {
-
-	private MidiPlayer activePlayer;
-	private Map<String, MidiData> midiClips = new HashMap<String, MidiData>();
+	static enum Mode {
+		ENABLED,
+		DISABLED
+	}
 	
-	public MidiEngine(Settings settings) {
-		super(settings);
+	private Mode mode = Mode.DISABLED;
+	private MidiPlayer activePlayer;
+	
+	private Map<String, MidiData> midiClips = new HashMap<String, MidiData>();
+	private Throwable lastException;
+	
+	public MidiEngine(Reactor reactor) {
+		super(reactor);
+	}
+
+	@Override
+	public void initialize(Context c) throws OpenReactorException {
+		super.initialize(c);
+		this.mode = Mode.DISABLED;
+		if (Settings.BgmMode.ENABLED.equals(settings().bgmMode()) || 
+				Settings.BgmMode.ENABLED_FALLBACK.equals(settings().bgmMode()) 
+				) {
+			Sequencer seq = getSequencer(); 
+			if (seq == null) {
+				if (Settings.BgmMode.ENABLED.equals(settings().bgmMode())) {
+					ExceptionThrower.throwMidiUnavailableException("Midi audio device is unavailable", lastException);
+				} else {
+					logger().info("Failed to get midi audio device: Falling back");
+				}
+			} else {
+				seq.close();
+				this.mode = Mode.ENABLED;
+			}
+		}
 	}
 
 	@Override
@@ -32,8 +62,7 @@ public class MidiEngine  extends BaseEngine {
 		try {
 			ret = MidiSystem.getSequencer();
 		} catch (MidiUnavailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			this.lastException = e;
 		}
 		return ret;
 	}
@@ -50,13 +79,17 @@ public class MidiEngine  extends BaseEngine {
 	}
 
 	public MidiPlayer player(String name) throws OpenReactorException {
-		if (this.activePlayer == null) {
-			MidiData data = midiClips.get(name);
-			if (data == null) {
-				ExceptionThrower.throwResourceException("Specified midi resource:<" + name + "> is not found.");
+		if (mode == Mode.ENABLED) {
+			if (this.activePlayer == null) {
+				MidiData data = midiClips.get(name);
+				if (data == null) {
+					ExceptionThrower.throwResourceException("Specified midi resource:<" + name + "> is not found.");
+				}
+				this.activePlayer = new MidiPlayer(data, 0, this);
 			}
-			this.activePlayer = new MidiPlayer(data, 0, this);
+			return activePlayer;
+		} else {
+			return MidiPlayer.NULL_PLAYER;
 		}
-		return activePlayer; 
 	}
 }

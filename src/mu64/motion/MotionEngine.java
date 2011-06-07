@@ -2,13 +2,13 @@ package mu64.motion;
 
 import mu64.motion.MotionProvider.InteractionMode;
 import oreactor.core.BaseEngine;
-import oreactor.core.Settings;
+import oreactor.core.Reactor;
 
 public class MotionEngine extends BaseEngine {
 	MotionProvider provider = null;
 
-	public MotionEngine(Settings settings) {
-		super(settings);
+	public MotionEngine(Reactor reactor) {
+		super(reactor);
 	}
 
 	public void setProvider(MotionProvider provider) {

@@ -89,28 +89,19 @@ public class ArgParser {
 		}
 		return ret;
 	}
-	Settings.JoystickMode chooseJoyStickMode() throws ArgumentException {
-		Settings.JoystickMode ret = (Settings.JoystickMode) this.parseEnum("joystick", Settings.JoystickMode.class, Settings.JoystickMode.DISABLED); ;
-		return ret;
-	}
-	
-	Settings.FrameMode chooseFrameMode() throws ArgumentException {
-		Settings.FrameMode ret = (Settings.FrameMode) this.parseEnum("joystick", Settings.FrameMode.class, Settings.FrameMode.NONDROP); ;
-		return ret;
-	}
-	
-	Settings.ScreenSize chooseScreenSize() throws ArgumentException {
-		Settings.ScreenSize ret = (Settings.ScreenSize) this.parseEnum("screensize", Settings.ScreenSize.class, Settings.ScreenSize.XGA); ;
-		return ret;
-	}
-	
+
 	Settings.VideoMode chooseVideoMode() throws ArgumentException {
 		Settings.VideoMode ret = (Settings.VideoMode) this.parseEnum("video", Settings.VideoMode.class, Settings.VideoMode.NORMAL);
 		return ret;
 	}
 	
 	Settings.SoundMode chooseSoundMode() throws ArgumentException {
-		Settings.SoundMode ret = (Settings.SoundMode) this.parseEnum("sound", Settings.SoundMode.class, Settings.SoundMode.ENABLED);
+		Settings.SoundMode ret = (Settings.SoundMode) this.parseEnum("sound", Settings.SoundMode.class, Settings.SoundMode.ENABLED_FALLBACK);
+		return ret;
+	}
+
+	Settings.BgmMode chooseBgmMode() throws ArgumentException {
+		Settings.BgmMode ret = (Settings.BgmMode) this.parseEnum("bgm", Settings.BgmMode.class, Settings.BgmMode.ENABLED_FALLBACK);
 		return ret;
 	}
 
