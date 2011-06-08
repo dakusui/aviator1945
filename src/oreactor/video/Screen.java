@@ -19,6 +19,8 @@ import javax.swing.JFrame;
 import oreactor.core.Logger;
 import oreactor.core.Reactor;
 import oreactor.core.Settings;
+import oreactor.core.Settings.VideoMode;
+import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 
 public class Screen extends JFrame {
@@ -47,8 +49,12 @@ public class Screen extends JFrame {
 
 	private boolean bsEnabled = true;
 
-	public Screen(Reactor reactor) {
-		this.settings = reactor.getSettings();
+	private DisplayMode originalDisplayMode = null;
+
+	private GraphicsDevice gd;
+
+	public Screen(Reactor reactor) throws OpenReactorException {
+		this.settings = reactor.settings();
 		this.planes = new LinkedList<Plane>();
 		this.width = reactor.screenWidth();
 		this.height = reactor.screenHeight();
@@ -61,11 +67,35 @@ public class Screen extends JFrame {
 		});
 		this.setSize(reactor.screenWidth(), reactor.screenHeight());
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		if (reactor.fullScreenEnabled()) {
-			GraphicsDevice gd = ge.getDefaultScreenDevice(); 
-			gd.setFullScreenWindow(this);
-			gd.setDisplayMode(new DisplayMode(reactor.screenWidth(), reactor.screenHeight(), reactor.screenColorDepth(), reactor.screenRefreshRate()));
-			this.setUndecorated(true);
+		VideoMode vm = reactor.settings().videoMode();
+		if (VideoMode.FULL.equals(vm) || VideoMode.FULL_FALLBACK.equals(vm)) {
+			boolean succeeded = false;
+			this.originalDisplayMode = null;
+			this.gd = ge.getDefaultScreenDevice();
+			try {
+				this.originalDisplayMode = gd.getDisplayMode();
+				gd.setFullScreenWindow(this);
+				gd.setDisplayMode(new DisplayMode(reactor.screenWidth(), reactor.screenHeight(), reactor.screenColorDepth(), reactor.screenRefreshRate()));
+				this.setUndecorated(true);
+				succeeded = true;
+			} catch (UnsupportedOperationException e) {
+				if (VideoMode.FULL.equals(vm)) {
+					String msg = "Failed to go to full screen mode: Quitting.";
+					logger.info(msg);
+					ExceptionThrower.throwVideoException(msg, e);
+				} else if (VideoMode.FULL.equals(vm)) {
+					logger.info("Failed to go to full screen mode: Falling back.");
+				} else {
+				}
+			} finally {
+				if (!succeeded) {
+					gd.setFullScreenWindow(null);
+					// iff. this object succeeds to go to full screen mode, 
+					// this.originalDisplayMode is set to non-null.
+					this.originalDisplayMode = null;
+					this.gd = null;
+				}
+			}
 		}
 		this.setVisible(true);
 		this.createBufferStrategy(2);
@@ -125,7 +155,7 @@ public class Screen extends JFrame {
 
 	public void createPlane(PlaneDesc desc) {
 		Plane p = desc.createPlane(this, new Viewport(this.width, this.height));
-		System.err.println("Created plane is:" + p);
+		logger.debug("Created plane is:<" + p + ">");
 		this.planes.add(p);
 	}
 
@@ -199,6 +229,18 @@ public class Screen extends JFrame {
 
 	public List<Plane> planes() {
 		return this.planes;
+	}
+
+	public void terminate() {
+		// iff. this object succeeds to go to full screen mode, 
+		// this.originalDisplayMode is set to non-null.
+		if (originalDisplayMode != null) {
+			gd.setDisplayMode(originalDisplayMode);
+			gd.setFullScreenWindow(null);
+			this.setUndecorated(false);
+			this.originalDisplayMode = null;
+			this.gd = null;
+		}
 	}
 
 }

@@ -91,7 +91,7 @@ public class ArgParser {
 	}
 
 	Settings.VideoMode chooseVideoMode() throws ArgumentException {
-		Settings.VideoMode ret = (Settings.VideoMode) this.parseEnum("video", Settings.VideoMode.class, Settings.VideoMode.NORMAL);
+		Settings.VideoMode ret = (Settings.VideoMode) this.parseEnum("video", Settings.VideoMode.class, Settings.VideoMode.FULL_FALLBACK);
 		return ret;
 	}
 	

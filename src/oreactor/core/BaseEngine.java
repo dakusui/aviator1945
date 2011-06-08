@@ -60,7 +60,8 @@ public abstract class BaseEngine  implements ResourceMonitor {
 	@Override
 	public void spriteSpecLoaded(SpriteSpec spriteSpec) {
 	}
-
+	
+	
 	public void terminate(Context c) throws OpenReactorException {
 	}
 
@@ -69,11 +70,15 @@ public abstract class BaseEngine  implements ResourceMonitor {
 	}
 
 	protected Settings settings() {
-		return this.reactor.getSettings();
+		return this.reactor().settings();
 	}
 
 	protected Logger logger() {
 		return logger;
+	}
+
+	public Reactor reactor() {
+		return reactor;
 	}
 	
 }

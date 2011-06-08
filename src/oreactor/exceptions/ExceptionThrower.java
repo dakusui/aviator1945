@@ -99,4 +99,8 @@ public class ExceptionThrower {
 	public static void throwMidiUnavailableException(String msg, Throwable t) throws OpenReactorException {
 		throw new OpenReactorException(msg, t);
 	}
+
+	public static void throwVideoException(String msg, Throwable t) throws OpenReactorException {
+		throw new OpenReactorException(msg, t);
+	}
 }

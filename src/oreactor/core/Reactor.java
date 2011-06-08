@@ -169,12 +169,7 @@ public abstract class Reactor {
 		}
 	}
 	
-	@ExtensionPoint
-	public boolean fullScreenEnabled() {
-		return false;
-	}
-
-	public Settings getSettings() {
+	public Settings settings() {
 		return this.settings;
 	}
 
