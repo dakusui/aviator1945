@@ -8,7 +8,6 @@ import mu64.motion.MMachine;
 import mu64.motion.MMachineSpec;
 import mu64.motion.Motion;
 import mu64.motion.MotionProvider;
-import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.video.sprite.Sprite;
 
@@ -148,10 +147,6 @@ public class ExampleReactor2  extends Mu64Reactor {
 				);
 			}
 		}
-	}
-	@Override
-	public boolean fullScreenEnabled() {
-		return false;
 	}
 	@Override
 	public ScreenSize screenSize() {

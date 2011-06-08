@@ -82,9 +82,12 @@ public class Screen extends JFrame {
 				if (VideoMode.FULL.equals(vm)) {
 					String msg = "Failed to go to full screen mode: Quitting.";
 					logger.info(msg);
+					logger.debug(msg, e);
 					ExceptionThrower.throwVideoException(msg, e);
-				} else if (VideoMode.FULL.equals(vm)) {
-					logger.info("Failed to go to full screen mode: Falling back.");
+				} else if (VideoMode.FULL_FALLBACK.equals(vm)) {
+					String msg = "Failed to go to full screen mode: Falling back.";
+					logger.info(msg);
+					logger.debug(msg, e);
 				} else {
 				}
 			} finally {
@@ -96,6 +99,8 @@ public class Screen extends JFrame {
 					this.gd = null;
 				}
 			}
+		} else {
+			logger.debug("Normal screen mode is selected.");
 		}
 		this.setVisible(true);
 		this.createBufferStrategy(2);

@@ -71,5 +71,4 @@ public final class Pattern {
 			ExceptionThrower.throwMalformatJsonException(e.getMessage(), e);
 		}
 	}
-	
 }

@@ -111,7 +111,9 @@ public class SoundEngine extends BaseEngine {
 				if (SoundMode.ENABLED.equals(settings().soundMode())) {
 				    ExceptionThrower.throwAudioLineWasUnavailable(format, e);
 				} else {
-					logger().info("Failed to get wave audio device: Falling back.");
+					String msg = "Failed to get wave audio device: Falling back.";
+					logger().info(msg);
+					logger().debug(msg, e);
 				}
 			} finally {
 				if (succeeded) {

@@ -42,30 +42,102 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 		public abstract void perform() throws OpenReactorException;
 	}
-	protected Action action = null;
-	
 	private Context context;
-	private Map<Integer, Pattern> patterns = new HashMap<Integer, Pattern>();
-	private Map<String, SpriteSpec> spriteSpecs = new HashMap<String, SpriteSpec>();
+	
 	private boolean firstTime = true;
+	private MotionEngine motionEngine;
+	private Map<Integer, Pattern> patterns = new HashMap<Integer, Pattern>();
+	private boolean running = true;
+	private Map<String, SpriteSpec> spriteSpecs = new HashMap<String, SpriteSpec>();
+
 	private int ticks = 0;
 
-	private boolean running = true;
+	protected Action action = null;
+	
+	@Override
+	public void midiClipLoaded(String name, MidiData midiData) {
+	}
 
-	private MotionEngine motionEngine;
+	@Override
+	public void numMidiClips(int numClips) {
+	}
+
+	@Override
+	public void numPatterns(int numPatterns) {
+		logger().debug("Loading " + numPatterns + " patterns.");
+	}
+	@Override
+	public void numSoundClips(int numSoundClips) {
+		logger().debug("Loading " + numSoundClips + " soud clips.");
+	}
+	
+	@Override
+	public void numSpriteSpecs(int numSpriteSpecs) {
+		logger().debug("Loading " + numSpriteSpecs + " sprite specs.");
+	}
+	
+	@ExtensionPoint
+	public int patternHeight() {
+		return 32;
+	}
+
+	@Override
+	public void patternLoaded(Pattern pattern) {
+		try {
+			patternplane().bind(pattern);
+			patterns.put(pattern.num(), pattern);
+		} catch (OpenReactorException e) {
+			logger().warn("Failed to bind a pattern:<" + pattern + ">");
+		}
+		logger().debug("  Pattern:<" + pattern.num() + "> is loaded.");
+	}
+
+	@ExtensionPoint
+	public int patternWidth() {
+		return 32;
+	}
+	
+	public void playmidi(String midiclipName) throws OpenReactorException {
+		context.getMusicEngine().player(midiclipName).play();
+	}
+	
+	public void playwave(String soundclipName) throws OpenReactorException {
+		context.getSoundEngine().player(soundclipName).start();
+	}
+	
+	@Override
+	public void soundClipLoaded(String name, SoundData soundData) {
+		logger().debug("  Sound data:<" + soundData.resourceUrl() + "> is loaded as '" + name + "'.");
+	}
+	
+	public SpritePlane spriteplane() {
+		return spriteplane("sprite");
+	}
+	public SpriteSpec spritespec(String name) {
+		return spriteSpecs.get(name);
+		
+	}
+	@Override
+	public void spriteSpecLoaded(SpriteSpec spriteSpec) {
+		spriteSpecs.put(spriteSpec.name(), spriteSpec);
+		logger().debug("  SpriteSpec:<" + spriteSpec.name() + "> is loaded.");
+	}
+	private void currentContext(Context context) {
+		this.context = context;
+	}
+	private InputDevice joystick() {
+		return context.getJoystickEngine().devices().get(0);
+	}
 	
 	@ExtensionPoint
 	protected Action action() {
 		return Action.NullAction;
 	}
-
+	
 	protected Context context() {
 		return context;
 	}
-
-	private void currentContext(Context context) {
-		this.context = context;
-	}
+	
 	protected GraphicsPlane graphicsplane() {
 		return graphicsplane("graphics");
 	}
@@ -82,7 +154,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 		return ret;
 	}
-	
+
 	@Override 
 	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context ret = super.initialize(settings);
@@ -96,18 +168,8 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		return ret;
 	}
 
-	@Override
-	protected void terminate(Context c) throws OpenReactorException {
-		this.motionEngine.terminate(c);
-		super.terminate(c);
-	}
-
 	protected final boolean isFirstTime() {
 		return this.firstTime;
-	}
-	
-	private InputDevice joystick() {
-		return context.getJoystickEngine().devices().get(0);
 	}
 	
 	protected void loadConfig(String url) throws OpenReactorException {
@@ -118,76 +180,55 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	@Override
 	protected Settings loadSettings() throws OpenReactorException {
 		Settings settings = super.loadSettings();
-		double w = 1024;
-		double h = 768;
 		double pw = patternWidth();
 		double ph = patternHeight();
 		{
 			PlaneDesc desc = new PlaneDesc("graphics", PlaneDesc.Type.Graphics);
-			desc.width(w);
-			desc.height(h);
+			desc.width(this.graphicsplaneWidth());
+			desc.height(this.graphicsplaneHeight());
 			this.addPlaneDesc(desc);
 		}
 		{
 			PlaneDesc desc = new PlaneDesc("pattern", PlaneDesc.Type.Pattern);
-			desc.width(w);
-			desc.height(h);
+			desc.width(this.patternplaneWidth());
+			desc.height(this.patternplaneHeight());
 			desc.put(PlaneDesc.PATTERNWIDTH_KEY, pw);
 			desc.put(PlaneDesc.PATTERNHEIGHT_KEY, ph);
 			this.addPlaneDesc(desc);
 		}
 		{
 			PlaneDesc desc = new PlaneDesc("sprite", PlaneDesc.Type.Sprite);
-			desc.width(w);
-			desc.height(h);
+			// Actually, sprite plane does not recognize its width and height.
+			// But I set them to the same values the enclosing screen because
+			// I just felt unconfortable to set them to 0 ;-).
+			desc.width(this.screenWidth());
+			desc.height(this.screenHeight());
 			this.addPlaneDesc(desc);
 		}
 		return settings;
 	}
-	
-	@Override
-	public void midiClipLoaded(String name, MidiData midiData) {
+
+	private int graphicsplaneWidth() {
+		return screenWidth();
 	}
+
+	private double graphicsplaneHeight() {
+		return screenHeight();
+	}
+
+	protected MotionProvider motionProvider() {
+		return this.motionEngine.getMotionProvider();
+	}
+
 	@ExtensionPoint
 	protected MotionProvider newMotionProvider() throws OpenReactorException {
 		return null;
 	}
-	@Override
-	public void numMidiClips(int numClips) {
-	}
-	@Override
-	public void numPatterns(int numPatterns) {
-		logger().debug("Loading " + numPatterns + " patterns.");
-	}
-	@Override
-	public void numSoundClips(int numSoundClips) {
-		logger().debug("Loading " + numSoundClips + " soud clips.");
-	}
 	
-	@Override
-	public void numSpriteSpecs(int numSpriteSpecs) {
-		logger().debug("Loading " + numSpriteSpecs + " sprite specs.");
-	}
-	
+
 	protected void parseConfig(String config) throws OpenReactorException {
 		ResourceLoader loader = context().getResourceLoader();
 		loader.loadConfigFromString(config);
-	}
-	
-	@ExtensionPoint
-	public int patternHeight() {
-		return 32;
-	}
-	
-	@Override
-	public void patternLoaded(Pattern pattern) {
-		try {
-			patternplane().bind(pattern);
-			patterns.put(pattern.num(), pattern);
-		} catch (OpenReactorException e) {
-			logger().warn("Failed to bind a pattern:<" + pattern + ">");
-		}
-		logger().debug("  Pattern:<" + pattern.num() + "> is loaded.");
 	}
 
 	protected PatternPlane patternplane() {
@@ -206,19 +247,6 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 		return ret;
 	}
-	
-	@ExtensionPoint
-	public int patternWidth() {
-		return 32;
-	}
-	
-	public void playmidi(String midiclipName) throws OpenReactorException {
-		context.getMusicEngine().player(midiclipName).play();
-	}
-
-	public void playwave(String soundclipName) throws OpenReactorException {
-		context.getSoundEngine().player(soundclipName).start();
-	}
 
 	@ExtensionPoint
 	protected void run() throws OpenReactorException {
@@ -229,7 +257,6 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 	}
 	
-
 	@Override
 	protected final void run(Context c) throws OpenReactorException {
 		this.currentContext(c);
@@ -251,16 +278,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 			this.ticks ++;
 		}
 	}
-
-	@Override
-	public void soundClipLoaded(String name, SoundData soundData) {
-		logger().debug("  Sound data:<" + soundData.resourceUrl() + "> is loaded as '" + name + "'.");
-	}
-
-	public SpritePlane spriteplane() {
-		return spriteplane("sprite");
-	}
-
+	
 	protected SpritePlane spriteplane(String name) {
 		SpritePlane ret = null; 
 		VideoEngine ve = context.getVideoEngine();
@@ -273,21 +291,16 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 		return ret;
 	}
-	
-	public SpriteSpec spritespec(String name) {
-		return spriteSpecs.get(name);
-		
-	}
-	
-	@Override
-	public void spriteSpecLoaded(SpriteSpec spriteSpec) {
-		spriteSpecs.put(spriteSpec.name(), spriteSpec);
-		logger().debug("  SpriteSpec:<" + spriteSpec.name() + "> is loaded.");
-	}
 
 	protected final Stick stick() {
 		Stick ret = joystick().stick();
 		return ret;
+	}
+	
+	@Override
+	protected void terminate(Context c) throws OpenReactorException {
+		this.motionEngine.terminate(c);
+		super.terminate(c);
 	}
 	
 	protected final int ticks() {
@@ -303,8 +316,11 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		return ret;
 	}
 	
-	protected MotionProvider motionProvider() {
-		return this.motionEngine.getMotionProvider();
+	protected int patternplaneWidth() {
+		return screenWidth();
 	}
 	
+	protected int patternplaneHeight() {
+		return screenHeight();
+	}
 }

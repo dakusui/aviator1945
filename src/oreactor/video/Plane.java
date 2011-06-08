@@ -5,7 +5,7 @@ import java.awt.geom.AffineTransform;
 
 import oreactor.exceptions.OpenReactorException;
 
-public abstract class Plane {
+public abstract class Plane implements ViewportObserver {
 	static enum Type {
 		Graphics,
 		Sprite,
@@ -24,6 +24,7 @@ public abstract class Plane {
 		this.width = width;
 		this.height = height;
 		this.viewport = viewport;
+		this.viewport.addObserver(this);
 	}
 
 	public void prepare() {
@@ -72,6 +73,9 @@ public abstract class Plane {
 	public void disable() {
 		this.enabled = false;
 	}
-
+	
+	@Override
+	public void viewportChanged(Viewport viewport) {
+	}
 }
 

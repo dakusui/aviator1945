@@ -4,7 +4,7 @@ package example;
 import java.awt.Color;
 
 import mu64.Mu64Reactor;
-
+import oreactor.annotations.ExtensionPoint;
 import oreactor.core.ReactorRunner;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.JoystickEngine.Stick;
@@ -39,6 +39,7 @@ public class ExampleReactor extends Mu64Reactor {
 				p.viewport().i((1024-32)/1, (32)/1);
 				p.viewport().j((-32)/1, (768-32)/1);
 				*/
+				//graphicsplane().disable();
 			}
 			public Action next() {
 				return new Action() {
@@ -97,13 +98,16 @@ public class ExampleReactor extends Mu64Reactor {
 	}
 	@Override
 	public int patternWidth() {
-		return 64;
+		return 32;
 	}
 	@Override
 	public int patternHeight() {
-		return 64;
+		return 32;
 	}
-	
+	@ExtensionPoint
+	protected ScreenSize screenSize() {
+		return ScreenSize.SVGA;
+	}	
 	public static void main(String[] args) throws Exception {
 		ReactorRunner.main(new String[]{"--reactor=example.ExampleReactor"});
 	}

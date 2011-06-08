@@ -43,7 +43,9 @@ public class MidiEngine  extends BaseEngine {
 				if (Settings.BgmMode.ENABLED.equals(settings().bgmMode())) {
 					ExceptionThrower.throwMidiUnavailableException("Midi audio device is unavailable", lastException);
 				} else {
-					logger().info("Failed to get midi audio device: Falling back");
+					String msg = "Failed to get midi audio device: Falling back";
+					logger().info(msg);
+					logger().debug(msg, lastException);
 				}
 			} else {
 				seq.close();

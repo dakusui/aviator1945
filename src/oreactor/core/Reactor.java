@@ -128,7 +128,6 @@ public abstract class Reactor {
 				} finally {
 					timeSpentForAction = System.nanoTime() - before;
 				}
-			
 				
 				////
 				// 2. Run the other engines

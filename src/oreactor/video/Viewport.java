@@ -1,6 +1,8 @@
 package oreactor.video;
 
 import java.awt.geom.AffineTransform;
+import java.util.LinkedList;
+import java.util.List;
 
 import oreactor.core.Logger;
 import oreactor.exceptions.ExceptionThrower;
@@ -23,6 +25,13 @@ public class Viewport {
 		public String toString() {
 			return "(" + this.x + "," + this.y + ")"; 
 		}
+
+		public Vector add(Vector j) {
+			Vector ret = new Vector();
+			ret.x = this.x + j.x;
+			ret.y = this.y + j.y;
+			return ret;
+		}
 	}
 	Vector offset;
 	/**
@@ -37,6 +46,7 @@ public class Viewport {
 	private boolean firstTime = true;
 	
 	Logger logger = Logger.getLogger();
+	private List<ViewportObserver> observers = new LinkedList<ViewportObserver>();
 	
 	public Viewport(double screenWidth, double screenHeight) {
 		this.offset = new Vector();
@@ -49,6 +59,9 @@ public class Viewport {
 	public void i(double x, double y) {
 		this.i.x = x;
 		this.i.y = y;
+		for (ViewportObserver o : this.observers) {
+			o.viewportChanged(this);
+		}
 	}
 	
 	public Vector i() {
@@ -58,6 +71,9 @@ public class Viewport {
 	public void j(double x, double y) { 
 		this.j.x = x;
 		this.j.y = y;
+		for (ViewportObserver o : this.observers) {
+			o.viewportChanged(this);
+		}
 	}
 	
 	public Vector j() {
@@ -67,6 +83,9 @@ public class Viewport {
 	public void offset(double x, double y) {
 		this.offset.x = x;
 		this.offset.y = y;
+		for (ViewportObserver o : this.observers) {
+			o.viewportChanged(this);
+		}
 	}
 	
 	public Vector offset() {
@@ -111,5 +130,11 @@ public class Viewport {
 	@Override
 	public String toString() {
 		return "offset=<" + this.offset + ">, i=<" + i + ">, j=<" + j + ">";
+	}
+	
+	public void addObserver(ViewportObserver observer) {
+		if (!this.observers.contains(observer)) {
+			this.observers.add(observer);
+		}
 	}
 }
