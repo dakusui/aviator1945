@@ -70,7 +70,7 @@ public class SoundEngine extends BaseEngine {
 	private Map<String, String> soundClipNames = new HashMap<String, String>();
 	public SoundEngine(Reactor reactor) {
 		super(reactor);
-		this.maxVoices = reactor.getSettings().maxVoices();
+		this.maxVoices = reactor.settings().maxVoices();
 	}
 
 	@Override

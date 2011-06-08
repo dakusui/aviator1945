@@ -1,6 +1,7 @@
 package oreactor.video;
 
 import java.awt.event.KeyListener;
+import java.util.List;
 
 import oreactor.core.BaseEngine;
 import oreactor.core.Context;
@@ -14,17 +15,22 @@ public class VideoEngine extends BaseEngine {
 
 	public VideoEngine(Reactor reactor) {
 		super(reactor);
-		this.screen = new Screen(reactor);
-		this.screen.setVisible(true);
 	}
 	
 	@Override 
 	public void initialize(Context c) throws OpenReactorException {
 		super.initialize(c);
+		this.screen = new Screen(this.reactor());
+		this.screen.setVisible(true);
 		for (InputDevice d : c.getJoystickEngine().devices()) {
 			if (d instanceof KeyListener) {
 				this.screen.addKeyListener((KeyListener) d);
 			}
+		}
+		List<PlaneDesc> planeDescs = reactor().planeInfoItems();
+		logger().debug("List of plane info items:<" + planeDescs + ">");
+		for (PlaneDesc desc : planeDescs) {
+			this.screen.createPlane(desc);
 		}
 	}
 
@@ -45,7 +51,12 @@ public class VideoEngine extends BaseEngine {
 	public void finish() throws OpenReactorException {
 		screen.finish();
 	}
-	
+
+	public void terminate(Context c) throws OpenReactorException {
+		screen.terminate();
+		this.screen = null;
+	}
+
 	public Screen screen() {
 		return this.screen;
 	}

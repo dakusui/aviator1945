@@ -16,7 +16,6 @@ public class VideoUtil {
 				0, 0, img.getWidth(null), img.getHeight(null),
 				null);
 		gg.dispose();
-		System.out.print("*");
 		return ret;
 	}
 
