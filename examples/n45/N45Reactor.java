@@ -12,6 +12,7 @@ import mu64.motion.shootergame.SGGroup;
 import mu64.motion.shootergame.SGMMachineSpec;
 import mu64.motion.shootergame.SGMotion;
 import mu64.motion.shootergame.SGMotionProvider;
+import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.JoystickEngine.Stick;
 import oreactor.joystick.JoystickEngine.Trigger;
@@ -88,7 +89,7 @@ public class N45Reactor extends Mu64Reactor {
 		}
 		@Override
 		protected Sprite createSprite() {
-			return createSprite("zero");
+			return createSprite("p38");
 		}
 		@Override
 		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {
@@ -121,25 +122,46 @@ public class N45Reactor extends Mu64Reactor {
 		}
 		@Override
 		protected Sprite createSprite() {
-			return createSprite("p38");
+			return createSprite("zero");
 		}
 		@Override
 		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {
 			attrs.x(Math.random() * 1024.0);
 			attrs.y(0.0);
-			attrs.direction(Math.PI);
+			attrs.direction(0);
 		}
 	};
 
 	@Override
 	public void run() throws OpenReactorException {
 		if (isFirstTime()) {
-			loadConfig("n45/config.json");
+			loadConfig("n45/config2.json");
 			this.motionProvider().buildMMachine(myplaneSpec);
+			for (int i = 0; i < this.patternplane().columns(); i++) {
+				for (int j = 0; j < this.patternplane().rows(); j++) {
+					int patternno = 0;
+					if (Math.random() > 0.95) {
+						patternno = 1;
+					}
+					this.patternplane().put(i, j, patternno);
+				}
+			}
 		} else {
 			if (Math.random() * 100 > 97) {
 				this.motionProvider().buildMMachine(enemyplaneSpec);
 			}
 		}
+	}
+	@Override
+	public int patternWidth() {
+		return 64;
+	}
+	@Override
+	public int patternHeight() {
+		return 64;
+	}
+	@ExtensionPoint
+	protected ScreenSize screenSize() {
+		return ScreenSize.XGA;
 	}
 }

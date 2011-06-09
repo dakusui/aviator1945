@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import javax.imageio.ImageIO;
 import javax.sound.midi.InvalidMidiDataException;
@@ -24,16 +25,16 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import oreactor.core.Logger;
 import oreactor.core.Reactor;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.video.pattern.Pattern;
 import oreactor.video.sprite.SpriteSpec;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ResourceLoader {
 	public static abstract class Data {
@@ -398,15 +399,17 @@ public class ResourceLoader {
 	 */
 	protected JSONObject loadJsonObjectFromUrl(String resourceUrl) throws OpenReactorException {
 		JSONObject ret = null;
+		String l = null;
+		List<Integer> numChars = new LinkedList<Integer>();
 		try {
+			StringBuffer b = new StringBuffer(1024);
 			Data d = get(resourceUrl, Data.Type.Raw);
 			BufferedReader r = new BufferedReader(new InputStreamReader(d.inputStream()));
 			try {
 				String s = null;
-				String l = null;
-				StringBuffer b = new StringBuffer(1024);
 				while ((l = r.readLine()) != null) {
 					b.append(l);
+					numChars.add(l.length());
 				}
 				s = b.toString();
 				ret = new JSONObject(s);
@@ -414,7 +417,18 @@ public class ResourceLoader {
 				r.close();
 			}
 		} catch (JSONException e) {
-			ExceptionThrower.throwMalformatJsonException("Malformat JSON:<" + "> is given for resource:<" + resourceUrl + "> (" + e.getMessage() + ")", e);
+			System.out.println(e.getMessage());
+			java.util.regex.Pattern p = java.util.regex.Pattern.compile("^[^0-9]+([0-9]+).+$");
+			Matcher m = p.matcher(e.getMessage());
+			int linenum = -1;
+			if (m.matches()) {
+				int charnum = Integer.parseInt(m.group(1));
+				numChars.add(charnum);
+				Collections.sort(numChars);
+				linenum = numChars.indexOf(charnum);
+				System.out.println(numChars);
+			}
+			ExceptionThrower.throwMalformatJsonException("Malformat JSON:Error found around line:" + linenum + ":<" + resourceUrl + "> (" + e.getMessage() + ")", e);
 		} catch (IOException e) {
 			ExceptionThrower.throwIOException("Failed to load resource:<" + resourceUrl + ">", e);
 		}
@@ -504,6 +518,15 @@ public class ResourceLoader {
 			}
 		} catch (JSONException e) {
 			ExceptionThrower.throwMalformedConfigurationException(e.getMessage(), e);
+		}
+	}
+	
+	public static void main(String[] args) {
+		java.util.regex.Pattern p = java.util.regex.Pattern.compile("^[^0-9]+([0-9]+).+$");
+		Matcher m = p.matcher("Missing value at 1187 [character 1188 line 1]");
+		if (m.matches()) {
+			System.out.println(m.groupCount());
+			System.out.println(m.group(1));
 		}
 	}
 }

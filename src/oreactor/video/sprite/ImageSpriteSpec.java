@@ -3,7 +3,9 @@ package oreactor.video.sprite;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
+import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,9 +48,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 			return this.cropEnabled;
 		}
 	}
-
 	protected Image images[] = null;
-	protected VolatileImage vImages[] = null;
 
 	public ImageSpriteSpec(String name) {
 		super(name);
@@ -61,14 +61,31 @@ public class ImageSpriteSpec extends SpriteSpec {
 			int len = resources.length();
 			List<Image> imageList = new LinkedList<Image>();
 			for (int i = 0; i < len; i ++) {
-				String cur;
-				cur = resources.getString(i);
-				Image im = loader.getImage(cur).image();
+				String url = null;
+				Image im = null;
+				try {
+					JSONArray imageparams = resources.getJSONArray(i);
+					try {
+						url = imageparams.getString(0);
+						int ox = imageparams.getInt(1);
+						int oy = imageparams.getInt(2);
+						int w = imageparams.getInt(3);
+						int h = imageparams.getInt(4);
+						im = new BufferedImage(w, h, ColorSpace.TYPE_RGB); 
+						Graphics2D gg = ((Graphics2D)im.getGraphics()); 
+						gg.drawImage(loader.getImage(url).image(), 0, 0, w, h, ox, oy, ox + w, oy + h, null);
+						gg.dispose();
+					} catch (JSONException e) {
+						String msg = "Malformed configuration item : <" + url + ">";
+						ExceptionThrower.throwMalformedConfigurationException(msg, e);
+					}
+				} catch (JSONException e) {
+					url = resources.getString(i);
+					im = loader.getImage(url).image();
+				}
 				imageList.add(im);
 			}
-			images = new Image[0];
-			images = imageList.toArray(images);
-			vImages = new VolatileImage[images.length];
+			images = imageList.toArray(new Image[0]);
 		} catch (JSONException e) {
 			ExceptionThrower.throwMalformedConfigurationException(
 					e.getMessage() + "<json:" + params + ">",
@@ -79,7 +96,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 	
 	@Override
 	public void render(Graphics2D gg, Sprite sprite) {
-		boolean isVCacheEnabled = false;
+		boolean isVCacheEnabled = true;
 		GraphicsConfiguration gConfig = gg.getDeviceConfiguration();
 		AffineTransform backup = gg.getTransform();
 		try {
@@ -106,17 +123,13 @@ public class ImageSpriteSpec extends SpriteSpec {
 				double biasX = sprite.width() / 2;
 				double biasY = sprite.height() / 2;
 				double theta = sprite.theta();
-				VolatileImage vImage = vImages[patternno];
-				if (vImage == null) {
-					vImage = VideoUtil.createVolatileVersion(gConfig, img, (int)width(), (int)height());
-				}
+				VolatileImage vImage = null;
+				vImage = VideoUtil.getVolatileVersion(gConfig, img);
 				do {
 					gg.rotate(theta, x, y);
 					drawImage(gg, vImage, x, y, biasX, biasY, ox, oy, ow, oh);
-					vImages[patternno] = vImage;
 				} while (
-					(vImage = VideoUtil.createVolatileVersionForRetry(gConfig, img, vImage, (int)width(), (int)height())) != null
-					 );
+					(vImage = VideoUtil.getVolatileVersionIfContentsLost(gConfig, img, vImage)) != null);
 			} else {
 				double x = sprite.x();
 				double y = sprite.y();

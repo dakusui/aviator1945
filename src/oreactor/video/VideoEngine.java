@@ -54,6 +54,7 @@ public class VideoEngine extends BaseEngine {
 
 	public void terminate(Context c) throws OpenReactorException {
 		screen.terminate();
+		VideoUtil.flush();
 		this.screen = null;
 	}
 

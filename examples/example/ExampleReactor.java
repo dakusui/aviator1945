@@ -61,8 +61,8 @@ public class ExampleReactor extends Mu64Reactor {
 						if (Math.random() * 100 > 95) {
 							for (int i = 0; i < p.columns(); i++) {
 								for (int j = 0; j < p.rows(); j++) {
-									int no = Math.abs((int)(Math.random() * 20));
-									if (no < 10) {
+									int no = Math.abs((int)(Math.random() * 10));
+									if (no < 20) {
 										p.put(i, j, no);
 									} else {
 										p.reset(i, j);
@@ -98,11 +98,11 @@ public class ExampleReactor extends Mu64Reactor {
 	}
 	@Override
 	public int patternWidth() {
-		return 32;
+		return 64;
 	}
 	@Override
 	public int patternHeight() {
-		return 32;
+		return 64;
 	}
 	@ExtensionPoint
 	protected ScreenSize screenSize() {

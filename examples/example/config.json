@@ -10,6 +10,12 @@
         }
     },
     'patterns':[
+        { 'image':['n45/1945.png', 268,367,32,32],  },
+        { 'image':['n45/1945.png', 236,500,60,60],  },
+        { 'image':['n45/1945.png', 268,367,32,32],  },
+        { 'image':['n45/1945.png', 236,500,60,60],  },
+        { 'image':['n45/1945.png', 268,367,32,32],  },
+        { 'image':['n45/1945.png', 236,500,60,60],  },
         { 'image':'example/images/00.jpg',  },
         { 'image':'example/images/01.jpg',  },
         { 'image':'example/images/02.jpg',  },

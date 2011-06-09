@@ -1,0 +1,46 @@
+{
+    'spritespecs':{
+        'zero':{
+            'class':'oreactor.video.sprite.ImageSpriteSpec',
+            'params':{
+                'images':[
+                    ['n45/1945.png', 4,466,32,32], 
+                    ['n45/1945.png', 37,466,32,32],
+                    ['n45/1945.png', 70,466,32,32],
+                ],
+            },
+            'hresolution':64,
+            'vresolution':64,
+        },
+        'p38':{
+            'class':'oreactor.video.sprite.ImageSpriteSpec',
+            'params':{
+                'images':[
+                    ['n45/1945.png', 305,113,61,49],
+                    ['n45/1945.png', 305,179,61,49],
+                    ['n45/1945.png', 305,245,61,49],
+                ],
+            },
+            'hresolution':64,
+            'vresolution':64,
+        },
+        'shot':{
+            'class':'oreactor.video.sprite.ImageSpriteSpec',
+            'params':{
+                'images':[
+                    ['n45/1945.png', 48,176,9,20],
+                ],
+            },
+            'hresolution':16,
+            'vresolution':16,
+        }
+    },
+    'patterns':[
+        { 'image':['n45/1945.png', 268,367,32,32],  },
+        { 'image':['n45/1945.png', 236,500,60,60],  },
+    ],
+    'midiclips':{
+    },
+    'soundclips':{
+    },
+}
