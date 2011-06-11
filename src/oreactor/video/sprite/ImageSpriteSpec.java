@@ -127,7 +127,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 				vImage = VideoUtil.getVolatileVersion(gConfig, img);
 				do {
 					gg.rotate(theta, x, y);
-					drawImage(gg, vImage, x, y, biasX, biasY, ox, oy, ow, oh);
+					drawImage(gg, vImage, x, y, biasX, biasY, ox, oy, ow, oh, sprite.zoom());
 				} while (
 					(vImage = VideoUtil.getVolatileVersionIfContentsLost(gConfig, img, vImage)) != null);
 			} else {
@@ -137,7 +137,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 				double biasY = sprite.height() / 2;
 				double theta = sprite.theta();
 				gg.rotate(theta, x, y);
-				drawImage(gg, this.images[patternno], x, y, biasX, biasY, ox, oy, ow, oh);
+				drawImage(gg, this.images[patternno], x, y, biasX, biasY, ox, oy, ow, oh, sprite.zoom());
 			}
 		} finally {
 			gg.setTransform(backup);
@@ -147,8 +147,10 @@ public class ImageSpriteSpec extends SpriteSpec {
 	private void drawImage(
 			Graphics2D gg, Image image, 
 			double x, double y, double biasX, double biasY,
-			int ox, int oy, int ow, int oh
+			int ox, int oy, int ow, int oh, double zoom
 			) {
+		biasX *= zoom;
+		biasY *= zoom;
 		gg.drawImage(
 				image,
 				(int)(x - biasX),            

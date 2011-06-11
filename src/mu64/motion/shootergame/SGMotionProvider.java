@@ -10,6 +10,7 @@ import mu64.motion.MMachine;
 import mu64.motion.Motion;
 import mu64.motion.MotionProvider;
 import oreactor.exceptions.OpenReactorException;
+import oreactor.video.sprite.ImageSpriteSpec;
 import oreactor.video.sprite.Sprite;
 
 public class SGMotionProvider extends MotionProvider {
@@ -22,8 +23,8 @@ public class SGMotionProvider extends MotionProvider {
 		SGAttrs m1a = (SGAttrs) m1.attributes();
 		SGAttrs m2a = (SGAttrs) m2.attributes();
 		double ret = 0;
-		double dx = m2a.x - m1a.x;
-		double dy = m2a.y - m1a.y;
+		double dx = m2a.x() - m1a.x();
+		double dy = m2a.y() - m1a.y();
 		ret = Math.sqrt(dx*dx + dy * dy);
 		return ret;
 	}
@@ -56,7 +57,8 @@ public class SGMotionProvider extends MotionProvider {
 	@Override
 	protected void putStrite(Sprite sprite, Attributes attributes) {
 		SGAttrs attrs = (SGAttrs) attributes;
-		sprite.put(attrs.x(), attrs.y(), attrs.direction());
+		sprite.put(attrs.x(), attrs.y(), attrs.direction(), attrs.zoom());
+		((ImageSpriteSpec.RenderingParameters)sprite.renderingParameters()).patternno(attrs.pattern());
 	}
 
 	@Override

@@ -93,9 +93,9 @@ public class PatternPlane extends Plane {
 		if (viewportChanged) {
 			updateViewport(viewport);
 		}
-		for (int r = Math.max(0, figureoutRow(miny)) ; r < Math.min(this.rows, figureoutRow(maxy)); r++) {
+		for (int r = Math.max(0, figureoutRow(miny) - 1) ; r < Math.min(this.rows, figureoutRow(maxy)); r++) {
 			y = this.patternheight * r;
-			for (int c = Math.max(0, figureoutColumn(minx)) ; c < Math.min(this.columns, figureoutColumn(maxx)); c++) {
+			for (int c = Math.max(0, figureoutColumn(minx) - 1) ; c < Math.min(this.columns, figureoutColumn(maxx)); c++) {
 				x = this.patternwidth * c;
 				p = get(c, r);
 				if (p != null) {

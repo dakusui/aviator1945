@@ -16,6 +16,7 @@ import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.JoystickEngine.Stick;
 import oreactor.joystick.JoystickEngine.Trigger;
+import oreactor.video.Viewport;
 import oreactor.video.sprite.Sprite;
 
 public class N45Reactor extends Mu64Reactor {
@@ -29,7 +30,7 @@ public class N45Reactor extends Mu64Reactor {
 		@Override
 		protected Drivant createDrivant() {
 			return new SGBaseDrivant() {
-				int life = 20;
+				int life = 40;
 				@Override
 				public void perform_(SGMotion motion, MMachine owner,
 						MotionProvider provider) throws OpenReactorException {
@@ -134,6 +135,8 @@ public class N45Reactor extends Mu64Reactor {
 		}
 	};
 
+	private int s;
+
 	@Override
 	public void run() throws OpenReactorException {
 		if (isFirstTime()) {
@@ -148,10 +151,14 @@ public class N45Reactor extends Mu64Reactor {
 					this.patternplane().put(i, j, patternno);
 				}
 			}
+			s = 768 * (4-1);
 		} else {
 			if (Math.random() * 100 > 97) {
 				this.motionProvider().buildMMachine(enemyplaneSpec);
 			}
+			Viewport viewport = patternplane().viewport();
+			viewport.offset(0, s);
+			if (s-- < 0) s = 768 * (4-1);
 		}
 	}
 	@Override
@@ -162,12 +169,12 @@ public class N45Reactor extends Mu64Reactor {
 	public int patternHeight() {
 		return 64;
 	}
+	@Override
+	public int patternplaneHeight() {
+		return 768 * 4;
+	}
 	@ExtensionPoint
 	protected ScreenSize screenSize() {
 		return ScreenSize.XGA;
-	}
-	@ExtensionPoint
-	public int screenColorDepth() {
-		return 32;
 	}
 }

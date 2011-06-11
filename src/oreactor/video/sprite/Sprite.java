@@ -11,18 +11,28 @@ public final class Sprite implements Comparable<Sprite> {
 	private double theta;
 	private SpriteSpec.RenderingParameters parameters;
 	private int priority;
+	private double zoom = 1.0;
 	
 	Sprite(SpriteSpec spec, int priority) {
 		this.spec = spec;
 		this.priority = priority >=0 ? priority : defaultPriority++;
 	}
 
+	public void put(double x, double y) {
+		put(x, y, 0, 1.0);
+	}
+	
 	public void put(double x, double y, double theta) {
+		put(x, y, theta, 1.0);
+	}
+
+	public void put(double x, double y, double theta, double zoom) {
 		this.x = x;
 		this.y = y;
 		this.theta = theta;
+		this.zoom = zoom;
 	}
-	
+
 	public SpriteSpec getSpec() {
 		return this.spec;
 	}
@@ -41,6 +51,10 @@ public final class Sprite implements Comparable<Sprite> {
 	
 	public double theta() {
 		return this.theta;
+	}
+	
+	public double zoom() {
+		return this.zoom;
 	}
 	
 	public SpriteSpec.RenderingParameters renderingParameters() {

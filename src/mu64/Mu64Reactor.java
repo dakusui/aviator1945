@@ -323,4 +323,8 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	protected int patternplaneHeight() {
 		return screenHeight();
 	}
+	@Override
+	public int screenColorDepth() {
+		return 32;
+	}	
 }

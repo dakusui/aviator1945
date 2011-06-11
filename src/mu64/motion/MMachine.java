@@ -35,7 +35,7 @@ public final class MMachine {
 	}
 	
 	void performInteractionWith(MMachine another, double distance) {
-		this.drivant.performCollisionWith(this.nextMotion, this, another, distance);
+		this.drivant.performInteractionWith(this.nextMotion, this, another, distance);
 	}
 	
 	void commit() {
