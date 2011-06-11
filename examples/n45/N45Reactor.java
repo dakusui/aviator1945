@@ -53,7 +53,7 @@ public class N45Reactor extends Mu64Reactor {
 		}
 		@Override
 		protected Sprite createSprite() {
-			return createSprite("shot");
+			return createSprite("shot", 100);
 		}
 	};
 	
@@ -89,7 +89,7 @@ public class N45Reactor extends Mu64Reactor {
 		}
 		@Override
 		protected Sprite createSprite() {
-			return createSprite("p38");
+			return createSprite("p38", 10);
 		}
 		@Override
 		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {
@@ -122,7 +122,7 @@ public class N45Reactor extends Mu64Reactor {
 		}
 		@Override
 		protected Sprite createSprite() {
-			return createSprite("zero");
+			return createSprite("zero", 11);
 		}
 		@Override
 		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {

@@ -16,7 +16,11 @@ public abstract class SGMMachineSpec extends MMachineSpec {
 		this.mu64reactor = mu64reactor;
 	}
 	protected Sprite createSprite(String spriteSpecName) {
-		return mu64reactor.spriteplane().createSprite(mu64reactor.spritespec(spriteSpecName));
+		return createSprite(spriteSpecName, -1);
+	}
+
+	protected Sprite createSprite(String spriteSpecName, int priority) {
+		return mu64reactor.spriteplane().createSprite(mu64reactor.spritespec(spriteSpecName), priority);
 	}
 
 	@Override

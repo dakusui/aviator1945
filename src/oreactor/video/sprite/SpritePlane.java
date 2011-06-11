@@ -1,6 +1,7 @@
 package oreactor.video.sprite;
 
 import java.awt.Graphics2D;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,7 +18,10 @@ public class SpritePlane extends Plane {
 	}
 
 	public Sprite createSprite(SpriteSpec spec) {
-		Sprite ret = spec.createSprite();
+		return createSprite(spec, -1);
+	}
+	public Sprite createSprite(SpriteSpec spec, int priority) {
+		Sprite ret = spec.createSprite(priority);
 		this.sprites.add(ret);
 		return ret;
 	}
@@ -28,6 +32,7 @@ public class SpritePlane extends Plane {
 
 	@Override
 	protected void render_Protected(Graphics2D g) {
+		Collections.sort(sprites);
 		for (Sprite s : sprites) {
 			s.render(g);
 		}
@@ -36,4 +41,5 @@ public class SpritePlane extends Plane {
 	public Iterator<Sprite> iterator() {
 		return this.sprites.iterator();
 	}
+	
 }

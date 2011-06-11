@@ -9,6 +9,7 @@ import oreactor.core.Reactor;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.InputDevice;
+import oreactor.video.sprite.Sprite;
 
 public class VideoEngine extends BaseEngine {
 	private Screen screen;
@@ -55,6 +56,7 @@ public class VideoEngine extends BaseEngine {
 	public void terminate(Context c) throws OpenReactorException {
 		screen.terminate();
 		VideoUtil.flush();
+		Sprite.resetDefaultPriorityCounter();
 		this.screen = null;
 	}
 

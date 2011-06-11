@@ -73,8 +73,8 @@ public abstract class SpriteSpec {
 		
 	}
 	
-	public Sprite createSprite() {
-		Sprite ret = new Sprite(this);
+	public Sprite createSprite(int priority) {
+		Sprite ret = new Sprite(this, priority);
 		RenderingParameters p = this.createRenderingParameters();
 		ret.renderingParameters(p);
 		return ret;

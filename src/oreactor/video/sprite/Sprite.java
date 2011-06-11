@@ -2,15 +2,19 @@ package oreactor.video.sprite;
 
 import java.awt.Graphics2D;
 
-public final class Sprite {
+public final class Sprite implements Comparable<Sprite> {
+	private static final int INITIAL_VALUE = 10240;
+	private static int defaultPriority = INITIAL_VALUE;
 	private SpriteSpec spec;
 	private double x;
 	private double y;
 	private double theta;
 	private SpriteSpec.RenderingParameters parameters;
-
-	Sprite(SpriteSpec spec) {
+	private int priority;
+	
+	Sprite(SpriteSpec spec, int priority) {
 		this.spec = spec;
+		this.priority = priority >=0 ? priority : defaultPriority++;
 	}
 
 	public void put(double x, double y, double theta) {
@@ -55,4 +59,15 @@ public final class Sprite {
 		return spec.height();
 	}
 
+	@Override
+	public int compareTo(Sprite o) {
+		if (o == null) {
+			return 1;
+		}
+		return o.priority - this.priority;
+	}
+
+	public static void resetDefaultPriorityCounter() {
+		defaultPriority = INITIAL_VALUE;
+	}
 }
