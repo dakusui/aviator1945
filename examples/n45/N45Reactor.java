@@ -80,6 +80,7 @@ public class N45Reactor extends Mu64Reactor {
 					if (counter > 0) {
 						counter--;
 					}
+					motion.pattern(ticks() % 3);
 				}
 			};
 		}
@@ -113,6 +114,7 @@ public class N45Reactor extends Mu64Reactor {
 					if (((SGAttrs)owner.attributes()).y() > 768) {
 						motion.destroy();
 					}
+					motion.pattern(ticks() % 3);
 				}
 			};
 		}
@@ -163,5 +165,9 @@ public class N45Reactor extends Mu64Reactor {
 	@ExtensionPoint
 	protected ScreenSize screenSize() {
 		return ScreenSize.XGA;
+	}
+	@ExtensionPoint
+	public int screenColorDepth() {
+		return 32;
 	}
 }
