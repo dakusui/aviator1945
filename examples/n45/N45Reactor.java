@@ -12,7 +12,6 @@ import mu64.motion.shootergame.SGGroup;
 import mu64.motion.shootergame.SGMMachineSpec;
 import mu64.motion.shootergame.SGMotion;
 import mu64.motion.shootergame.SGMotionProvider;
-import oreactor.annotations.ExtensionPoint;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.joystick.JoystickEngine.Stick;
 import oreactor.joystick.JoystickEngine.Trigger;
@@ -20,12 +19,6 @@ import oreactor.video.Viewport;
 import oreactor.video.sprite.Sprite;
 
 public class N45Reactor extends Mu64Reactor {
-	@Override
-	public MotionProvider newMotionProvider() throws OpenReactorException {
-		MotionProvider ret = new SGMotionProvider();
-		return ret;
-	}
-	
 	MMachineSpec myshotSpec = new SGMMachineSpec(this) {
 		@Override
 		protected Drivant createDrivant() {
@@ -99,7 +92,6 @@ public class N45Reactor extends Mu64Reactor {
 			attrs.y(384.0);
 		}
 	};
-
 	MMachineSpec enemyplaneSpec =new SGMMachineSpec(this) {
 		@Override
 		protected Drivant createDrivant() {
@@ -134,9 +126,7 @@ public class N45Reactor extends Mu64Reactor {
 			attrs.direction(0);
 		}
 	};
-
-	private int s;
-
+	private int s = patternplaneHeight() - screenHeight();
 	@Override
 	public void run() throws OpenReactorException {
 		if (isFirstTime()) {
@@ -158,23 +148,16 @@ public class N45Reactor extends Mu64Reactor {
 			}
 			Viewport viewport = patternplane().viewport();
 			viewport.offset(0, s);
-			if (s-- < 0) s = 768 * (4-1);
+			if (s-- < 0) s = patternplaneHeight() - screenHeight();
 		}
 	}
 	@Override
-	public int patternWidth() {
-		return 64;
-	}
-	@Override
-	public int patternHeight() {
-		return 64;
-	}
-	@Override
-	public int patternplaneHeight() {
+	protected int patternplaneHeight() {
 		return 768 * 4;
 	}
-	@ExtensionPoint
-	protected ScreenSize screenSize() {
-		return ScreenSize.XGA;
+	@Override
+	public MotionProvider newMotionProvider() throws OpenReactorException {
+		MotionProvider ret = new SGMotionProvider();
+		return ret;
 	}
 }
