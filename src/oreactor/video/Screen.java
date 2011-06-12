@@ -165,15 +165,20 @@ public class Screen extends JFrame {
 	}
 
 	public void prepare() {
+		Collections.sort(this.planes);
 		for (Plane p : this.planes) {
-			p.prepare();
+			if (p.isEnabled()) {
+				p.prepare();
+			}
 		}
 	}
 
 	protected void renderPlanes(Graphics2D graphics)
 			throws OpenReactorException {
 		for (Plane p : this.planes()) {
-			p.render(graphics, width, height);
+			if (p.isEnabled()) {
+				p.render(graphics, width, height);
+			}
 		}
 	}
 
@@ -224,7 +229,9 @@ public class Screen extends JFrame {
 		rev.addAll(this.planes);
 		Collections.reverse(rev);
 		for (Plane p : rev) {
-			p.finish();
+			if (p.isEnabled()) {
+				p.finish();
+			}
 		}
 	}
 

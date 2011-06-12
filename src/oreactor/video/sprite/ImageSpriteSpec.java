@@ -3,7 +3,6 @@ package oreactor.video.sprite;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
-import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
@@ -71,7 +70,7 @@ public class ImageSpriteSpec extends SpriteSpec {
 						int oy = imageparams.getInt(2);
 						int w = imageparams.getInt(3);
 						int h = imageparams.getInt(4);
-						im = new BufferedImage(w, h, ColorSpace.TYPE_RGB); 
+						im = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB); 
 						Graphics2D gg = ((Graphics2D)im.getGraphics()); 
 						gg.drawImage(loader.getImage(url).image(), 0, 0, w, h, ox, oy, ox + w, oy + h, null);
 						gg.dispose();
@@ -95,8 +94,8 @@ public class ImageSpriteSpec extends SpriteSpec {
 	}
 	
 	@Override
-	public void render(Graphics2D gg, Sprite sprite) {
-		boolean isVCacheEnabled = true;
+	public void render(Graphics2D gg, Sprite sprite, boolean accelerationEnabled) throws OpenReactorException {
+		boolean isVCacheEnabled = accelerationEnabled;
 		GraphicsConfiguration gConfig = gg.getDeviceConfiguration();
 		AffineTransform backup = gg.getTransform();
 		try {

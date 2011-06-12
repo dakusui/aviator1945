@@ -3,7 +3,6 @@ package oreactor.video.pattern;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 
@@ -40,7 +39,7 @@ public final class Pattern {
 				int oy = imageparams.getInt(2);
 				int w = imageparams.getInt(3);
 				int h = imageparams.getInt(4);
-				Image im = new BufferedImage(this.w, this.h, ColorSpace.TYPE_RGB); 
+				Image im = new BufferedImage(this.w, this.h, BufferedImage.TYPE_INT_ARGB); 
 				Graphics2D gg = ((Graphics2D)im.getGraphics()); 
 				gg.drawImage(loader.getImage(url).image(), 0, 0, this.w, this.h, ox, oy, ox + w, oy + h, null);
 				gg.dispose();
@@ -65,22 +64,19 @@ public final class Pattern {
 		return this.num;
 	}
 	
-	public void render(Graphics2D g, double x, double y) {
-		boolean isVCacheEnabled = true;
+	public void render(Graphics2D g, double x, double y, boolean accelerationEnabled) throws OpenReactorException {
 		GraphicsConfiguration gConfig = g.getDeviceConfiguration();
-		if (isVCacheEnabled) {
+		if (accelerationEnabled) {
 			VolatileImage vTmp = this.vImage;
 			if (vTmp == null) {
 				vTmp = VideoUtil.getVolatileVersion(gConfig, this.image);
 			}
-			int i = 0;
 			do {
 				g.drawImage(
 						vTmp,
 						(int)x, (int)y, (int)(x + w), (int)(y + h), 
 						0,      0,      (int)w,       (int)h, 
 						null);
-				i++;
 				this.vImage = vTmp;
 			} while ((vTmp = VideoUtil.getVolatileVersionIfContentsLost(gConfig, this.image, vImage)) != null);
 		} else {

@@ -2,6 +2,8 @@ package oreactor.video.sprite;
 
 import java.awt.Graphics2D;
 
+import oreactor.exceptions.OpenReactorException;
+
 public final class Sprite implements Comparable<Sprite> {
 	private static final int INITIAL_VALUE = 10240;
 	private static int defaultPriority = INITIAL_VALUE;
@@ -37,8 +39,8 @@ public final class Sprite implements Comparable<Sprite> {
 		return this.spec;
 	}
 
-	public void render(Graphics2D g) {
-		this.spec.render(g, this);
+	public void render(Graphics2D g, boolean accelerationEnabled) throws OpenReactorException {
+		this.spec.render(g, this, accelerationEnabled);
 	}
 	
 	public double x() {

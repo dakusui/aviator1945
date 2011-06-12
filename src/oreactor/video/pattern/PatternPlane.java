@@ -100,7 +100,7 @@ public class PatternPlane extends Plane {
 				p = get(c, r);
 				if (p != null) {
 					if (viewportPolygon.intersects(x, y, patternwidth, patternheight)) {
-						p.render(g, x, y);
+						p.render(g, x, y, isAcclerationEnabled());
 					}
 				}
 			}

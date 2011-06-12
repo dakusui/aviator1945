@@ -5,18 +5,20 @@ import java.awt.geom.AffineTransform;
 
 import oreactor.exceptions.OpenReactorException;
 
-public abstract class Plane implements ViewportObserver {
+public abstract class Plane implements ViewportObserver, Comparable<Plane> {
 	static enum Type {
 		Graphics,
-		Sprite,
-		Pattern;
+		Pattern,
+		Sprite;
 	}
-	protected Viewport viewport;
-	protected String name;
-	protected double width;
-	protected double height;
-	protected VideoUtil util;
 	private boolean enabled = true;
+	private int priority = 100;
+	protected double height;
+	protected String name;
+	protected VideoUtil util;
+	protected Viewport viewport;
+	protected double width;
+	private boolean accelerationEnabled;
 	
 	protected Plane(String name, double width, double height, Viewport viewport) {
 		super();
@@ -25,57 +27,89 @@ public abstract class Plane implements ViewportObserver {
 		this.height = height;
 		this.viewport = viewport;
 		this.viewport.addObserver(this);
+		this.enableAcceleration();
 	}
 
-	public void prepare() {
-		
+	@Override
+	public int compareTo(Plane another) {
+		if (another == null) {
+			return 1;
+		}
+		return another.priority - this.priority;
 	}
 	
-	public void render(Graphics2D g, double screenWidth, double screenHeight) throws OpenReactorException {
-		if (this.enabled) {
-			AffineTransform tx = g.getTransform();
-			g.setTransform(this.viewport().affineTransform(screenWidth, screenHeight));
-			try {
-				this.render_Protected(g);
-			} finally {
-				g.setTransform(tx);
-			}
-		}
+	public void disable() {
+		this.enabled = false;
 	}
 
+	public void enable() {
+		this.enabled = true;
+	}
+	
 	public void finish() {
 		
 	}
-	
-	public Viewport viewport() {
-		return this.viewport;
-	}
 
+	public double height() {
+		return height;
+	}
+	
 	public String name() {
 		return this.name;
 	}
 	
-	protected abstract void render_Protected(Graphics2D g) throws OpenReactorException;
+	public void prepare() {
+		
+	}
 	
-	protected VideoUtil util() {
-		return this.util;
+	public int priority() {
+		return this.priority;
+	}
+	
+	public void priority(int priority) {
+		this.priority = priority;
+	}
+	
+	public void render(Graphics2D g, double screenWidth, double screenHeight) throws OpenReactorException {
+		AffineTransform tx = g.getTransform();
+		g.setTransform(this.viewport().affineTransform(screenWidth, screenHeight));
+		try {
+			this.render_Protected(g);
+		} finally {
+			g.setTransform(tx);
+		}
+	}
+	
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 	
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + "(" +  System.identityHashCode(this) + ")";
 	}
-	
-	public void enable() {
-		this.enabled = true;
+	public Viewport viewport() {
+		return this.viewport;
 	}
-	
-	public void disable() {
-		this.enabled = false;
-	}
-	
 	@Override
 	public void viewportChanged(Viewport viewport) {
+	}
+	public double width() {
+		return width;
+	}
+	protected abstract void render_Protected(Graphics2D g) throws OpenReactorException;
+	protected VideoUtil util() {
+		return this.util;
+	}
+	
+	public void enableAcceleration() {
+		this.accelerationEnabled = true;
+	}
+	public void disableAcceleration() {
+		this.accelerationEnabled = false;
+	}
+	public boolean isAcclerationEnabled() {
+		return this.accelerationEnabled;
 	}
 }
 

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import oreactor.exceptions.OpenReactorException;
 import oreactor.video.Plane;
 import oreactor.video.Viewport;
 
@@ -25,16 +26,19 @@ public class SpritePlane extends Plane {
 		this.sprites.add(ret);
 		return ret;
 	}
-	
+	@Override
+	public void prepare() {
+		Collections.sort(sprites);
+	}
+
 	public boolean removeSprite(Sprite s) {
 		return this.sprites.remove(s);
 	}
 
 	@Override
-	protected void render_Protected(Graphics2D g) {
-		Collections.sort(sprites);
+	protected void render_Protected(Graphics2D g) throws OpenReactorException {
 		for (Sprite s : sprites) {
-			s.render(g);
+			s.render(g, isAcclerationEnabled());
 		}
 	}	
 	

@@ -21,7 +21,7 @@ public abstract class SpriteSpec {
 		this.name = name;
 	}
 
-	public abstract void render(Graphics2D gg, Sprite sprite);
+	public abstract void render(Graphics2D gg, Sprite sprite, boolean accelerationEnabled) throws OpenReactorException;
 	
 
 	public void width(double w) {
