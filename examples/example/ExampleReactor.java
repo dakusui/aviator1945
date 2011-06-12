@@ -31,15 +31,6 @@ public class ExampleReactor extends Mu64Reactor {
 				ss = s.createSprite(spritespec("spr00"));
 				tt = s.createSprite(spritespec("spr00"));
 				uu = s.createSprite(spritespec("spr00"));
-
-				/*
-				p.viewport().offset(100, 100);
-				p.viewport().i(2048,0);
-				p.viewport().j(0, 1536);
-				p.viewport().i((1024-32)/1, (32)/1);
-				p.viewport().j((-32)/1, (768-32)/1);
-				*/
-				//graphicsplane().disable();
 			}
 			public Action next() {
 				return new Action() {

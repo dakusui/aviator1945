@@ -1,8 +1,9 @@
 package example;
 
 import java.awt.Color;
-import oreactor.exceptions.OpenReactorException;
+
 import mu64.Mu64Reactor;
+import oreactor.exceptions.OpenReactorException;
 
 public class DrawLine extends Mu64Reactor {
 	public void run() throws OpenReactorException {
