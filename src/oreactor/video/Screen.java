@@ -79,17 +79,9 @@ public class Screen extends JFrame {
 				this.setUndecorated(true);
 				succeeded = true;
 			} catch (UnsupportedOperationException e) {
-				if (VideoMode.FULL.equals(vm)) {
-					String msg = "Failed to go to full screen mode: Quitting.";
-					logger.info(msg);
-					logger.debug(msg, e);
-					ExceptionThrower.throwVideoException(msg, e);
-				} else if (VideoMode.FULL_FALLBACK.equals(vm)) {
-					String msg = "Failed to go to full screen mode: Falling back.";
-					logger.info(msg);
-					logger.debug(msg, e);
-				} else {
-				}
+				handleException(vm, e);
+			} catch (RuntimeException e) {
+				handleException(vm, e);
 			} finally {
 				if (!succeeded) {
 					gd.setFullScreenWindow(null);
@@ -144,6 +136,21 @@ public class Screen extends JFrame {
 			for (DisplayMode dm : gd.getDisplayModes()) {
 				logger.debug("    (w,h,d,rr)=(" + dm.getWidth() + "," + dm.getHeight() + "," + dm.getBitDepth() + "," + dm.getRefreshRate() + ")");
 			}
+		}
+	}
+
+	private void handleException(VideoMode vm, Exception e)
+			throws OpenReactorException {
+		if (VideoMode.FULL.equals(vm)) {
+			String msg = "Failed to go to full screen mode: Quitting.";
+			logger.info(msg);
+			logger.debug(msg, e);
+			ExceptionThrower.throwVideoException(msg, e);
+		} else if (VideoMode.FULL_FALLBACK.equals(vm)) {
+			String msg = "Failed to go to full screen mode: Falling back.";
+			logger.info(msg);
+			logger.debug(msg, e);
+		} else {
 		}
 	}
 	
