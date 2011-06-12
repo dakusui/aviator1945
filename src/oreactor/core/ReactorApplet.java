@@ -23,8 +23,7 @@ public class ReactorApplet extends JApplet {
 
 	@Override
 	public void init() {
-		//String reactorClassName = getParameter("reactor");
-		String reactorClassName = "example.ExampleReactor";
+		String reactorClassName = getParameter("reactor");
 		try {
 			this.reactor = Reactor.loadReactor(reactorClassName);
 			this.settings = loadSettings();
