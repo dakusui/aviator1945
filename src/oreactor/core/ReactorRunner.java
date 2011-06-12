@@ -13,10 +13,11 @@ public class ReactorRunner {
 		int ret = 255;
 		try {
 			ArgParser argParser = ArgParser.createArgParser(args);
-			Reactor reactor = argParser.chooseReactor();
-			reactor.argParser(argParser);
+			String reactorClassName = argParser.chooseReactorClassName();
+			Reactor reactor = Reactor.loadReactor(reactorClassName);
+			
 			logger.debug("reactor=<" + reactor + ">");
-			Settings settings = reactor.loadSettings(); 
+			Settings settings = argParser.loadSettings(); 
 			logger.debug("settings are loaded.");
 			reactor.execute(settings);
 		} catch (OpenReactorWindowClosedException e) {

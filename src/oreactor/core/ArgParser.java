@@ -29,7 +29,18 @@ public class ArgParser {
 		this.tuples = tuples;
 		this.rest = rest;
 	}
-
+	protected
+	Settings loadSettings() throws OpenReactorException {
+		Settings ret = null;
+		ret = new Settings();
+		ret.loggingMode(this.chooseLoggingMode());
+		ret.executionMode(this.chooseExecutionMode());
+		ret.soundMode(this.chooseSoundMode());
+		ret.bgmMode(this.chooseBgmMode());
+		ret.videoMode(this.chooseVideoMode());
+		return ret;
+	}
+	
 	public List<Tuple> getRemainingTuples() {
 		return tuples;
 	}
@@ -105,8 +116,8 @@ public class ArgParser {
 		return ret;
 	}
 
-	Settings.RunningMode chooseRunningMode() throws ArgumentException {
-		Settings.RunningMode ret = (Settings.RunningMode) this.parseEnum("running", Settings.RunningMode.class, Settings.RunningMode.NORMAL);
+	Settings.ExecutionMode chooseExecutionMode() throws ArgumentException {
+		Settings.ExecutionMode ret = (Settings.ExecutionMode) this.parseEnum("exec", Settings.ExecutionMode.class, Settings.ExecutionMode.NORMAL);
 		return ret;
 	}
 	
@@ -120,32 +131,11 @@ public class ArgParser {
 		return new Font(fontName, Font.PLAIN, 12);
 	}
 	
-	Reactor chooseReactor() throws OpenReactorException {
-		Reactor ret = null;
+	String chooseReactorClassName() throws OpenReactorException {
 		String reactorClassName = this.pickUpValue("reactor", null);
-		if (reactorClassName == null) {
-			ExceptionThrower.throwReactorIsNotSpecified();
-		}
-		try {
-			Class<? extends Object> reactorClass = Class.forName(reactorClassName);
-			try {
-				Object o = reactorClass.newInstance();
-				if (o instanceof Reactor) {
-					ret = (Reactor)o;
-				} else {
-					ExceptionThrower.throwGivenClassIsNotReactorClass(reactorClass);
-				}
-			} catch (InstantiationException e) {
-				ExceptionThrower.throwFailedToInstanciateReactor(reactorClassName, e);
-			} catch (IllegalAccessException e) {
-				ExceptionThrower.throwFailedToInstanciateReactor(reactorClassName, e);
-			}
-		} catch (ClassNotFoundException e) {
-			ExceptionThrower.throwReactorClassNotFoundException(reactorClassName, e);
-		}
-		return ret;
+		return reactorClassName;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		List<Tuple> tuples = new LinkedList<Tuple>();
 		List<String> rest = new LinkedList<String>();

@@ -36,4 +36,12 @@ public class Logger {
 		return instance;
 	}
 
+	public void error(String message) {
+		System.err.println("ERROR:" + message);
+	}
+	public void error(String message, Throwable t) {
+		System.err.println("ERROR:" + message);
+		t.printStackTrace(System.err);
+	}
+
 }

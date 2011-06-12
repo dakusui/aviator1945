@@ -139,26 +139,6 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	}
 	@Override 
 	protected Context initialize(Settings settings) throws OpenReactorException {
-		Context ret = super.initialize(settings);
-		this.action = action();
-		this.motionEngine = new MotionEngine(this);
-		this.motionEngine.initialize(ret);
-		this.motionEngine.setProvider(newMotionProvider());
-		ret.getResourceLoader().addMonitor(this);
-		ret.getResourceLoader().addMonitor(ret.getSoundEngine());
-		ret.getResourceLoader().addMonitor(ret.getMusicEngine());
-		return ret;
-	}
-	protected final boolean isFirstTime() {
-		return this.firstTime;
-	}
-	protected void loadConfig(String url) throws OpenReactorException {
-		ResourceLoader loader = context().getResourceLoader();
-		loader.loadConfigFromUrl(url);
-	}
-	@Override
-	protected Settings loadSettings() throws OpenReactorException {
-		Settings settings = super.loadSettings();
 		double pw = patternWidth();
 		double ph = patternHeight();
 		{
@@ -184,8 +164,25 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 			desc.height(this.screenHeight());
 			this.addPlaneDesc(desc);
 		}
-		return settings;
+		Context ret = super.initialize(settings);
+		this.action = action();
+		this.motionEngine = new MotionEngine(this);
+		this.motionEngine.initialize(ret);
+		this.motionEngine.setProvider(newMotionProvider());
+		ret.getResourceLoader().addMonitor(this);
+		ret.getResourceLoader().addMonitor(ret.getSoundEngine());
+		ret.getResourceLoader().addMonitor(ret.getMusicEngine());
+		return ret;
 	}
+	
+	protected final boolean isFirstTime() {
+		return this.firstTime;
+	}
+	protected void loadConfig(String url) throws OpenReactorException {
+		ResourceLoader loader = context().getResourceLoader();
+		loader.loadConfigFromUrl(url);
+	}
+
 	private int graphicsplaneWidth() {
 		return screenWidth();
 	}

@@ -94,4 +94,11 @@ public class MidiEngine  extends BaseEngine {
 			return MidiPlayer.NULL_PLAYER;
 		}
 	}
+	
+	@Override
+	public void terminate(Context c) {
+		if (this.activePlayer != null) {
+			this.activePlayer.stop();
+		}
+	}
 }

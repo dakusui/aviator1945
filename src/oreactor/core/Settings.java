@@ -9,7 +9,7 @@ public class Settings {
 	public static enum LoggingMode {
 		ERROR, INFO, STATISTICS, TRACE
 	}
-	public static enum RunningMode {
+	public static enum ExecutionMode {
 		DEBUG, NORMAL
 	}
 	public static enum SoundMode {
@@ -23,11 +23,10 @@ public class Settings {
 	}
 	private Font font;
 	private LoggingMode loggingMode;
-	private RunningMode runningMode;
+	private ExecutionMode executionMode;
 	private SoundMode soundMode;
 	private VideoMode videoMode;
 	private BgmMode bgmMode;
-
 
 	public Font font() {
 		return this.font;
@@ -49,12 +48,12 @@ public class Settings {
 		return 8;
 	}
 
-	public RunningMode runningMode() {
-		return this.runningMode;
+	public ExecutionMode runningMode() {
+		return this.executionMode;
 	}
 	
-	public void runningMode(RunningMode runningMode) {
-		this.runningMode = runningMode;
+	public void executionMode(ExecutionMode runningMode) {
+		this.executionMode = runningMode;
 		
 	}
 

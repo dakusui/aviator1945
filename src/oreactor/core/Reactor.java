@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import oreactor.annotations.ExtensionPoint;
+import oreactor.exceptions.ArgumentException;
+import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
 import oreactor.exceptions.OpenReactorQuitException;
@@ -66,6 +68,13 @@ public abstract class Reactor {
 		abstract protected  int[] size();
 	}
 	enum State {
+		Scramed {
+			@Override
+			public void run(Reactor reactor, Context c) throws OpenReactorException {
+				ExceptionThrower.throwReactorScrammedException();
+			}
+			
+		},
 		Exitted {
 			@Override
 			public void run(Reactor reactor, Context c) throws OpenReactorException {
@@ -84,11 +93,11 @@ public abstract class Reactor {
 	private Settings settings;
 	private Statistics statistcs;
 
-	protected ArgParser argParser;
 	/**
 	 * (1/60Hz) to wait.
 	 */
 	protected long interval = (1000 * 1000* 1000) / fps();
+	private State nextState;
 
 	public Reactor() {
 		this.statistcs = new Statistics();
@@ -97,16 +106,14 @@ public abstract class Reactor {
 	public void addPlaneDesc(PlaneDesc desc) {
 		this.planeDescs.add(desc);
 	}
-	public void argParser(ArgParser argParser) {
-		this.argParser = argParser;
-	}
+
 	public final void execute(Settings settings) throws OpenReactorException {
 		logger.info("START:perform");
 		logger.info("START:initialization");
 		Context c = initialize(settings);
 		logger.info("END:initialization");
 		State state = State.Running;
-		State nextState = null;
+		nextState = null;
 		try {
 			while (true) {
 				long timeSpentForAction = 0;
@@ -124,7 +131,7 @@ public abstract class Reactor {
 					} else {
 						logger.info("Message is not given.");
 					}
-					nextState = State.Exitted;
+					nextState(State.Exitted);
 				} finally {
 					timeSpentForAction = System.nanoTime() - before;
 				}
@@ -154,6 +161,7 @@ public abstract class Reactor {
 				
 				////
 				// 4. Determine the next action to be performed.
+				State nextState = nextState();
 				if (nextState != null) {
 					state = nextState;
 				}
@@ -168,6 +176,15 @@ public abstract class Reactor {
 		}
 	}
 	
+	private State nextState() {
+		return nextState;
+	}
+	private void nextState(State nextState) {
+		this.nextState = nextState;
+	}
+	public void scram() {
+		this.nextState(State.Scramed);
+	}
 	public Settings settings() {
 		return this.settings;
 	}
@@ -259,19 +276,6 @@ public abstract class Reactor {
 		return c;
 	}
 	
-	@ExtensionPoint
-	protected
-	Settings loadSettings() throws OpenReactorException {
-		Settings ret = null;
-		ret = new Settings();
-		ret.loggingMode(argParser.chooseLoggingMode());
-		ret.runningMode(argParser.chooseRunningMode());
-		ret.soundMode(argParser.chooseSoundMode());
-		ret.bgmMode(argParser.chooseBgmMode());
-		ret.videoMode(argParser.chooseVideoMode());
-		return ret;
-	}
-	
 	protected Logger logger() {
 		return this.logger;
 	}
@@ -300,6 +304,32 @@ public abstract class Reactor {
 		c.getMusicEngine().terminate(c);
 		c.getKeyboardEngine().terminate(c);
 		c.getJoystickEngine().terminate(c);
+	}
+
+	static Reactor loadReactor(String reactorClassName) throws ArgumentException,
+	OpenReactorException {
+		Reactor ret = null;
+		if (reactorClassName == null) {
+			ExceptionThrower.throwReactorIsNotSpecified();
+		}
+		try {
+			Class<? extends Object> reactorClass = Class.forName(reactorClassName);
+			try {
+				Object o = reactorClass.newInstance();
+				if (o instanceof Reactor) {
+					ret = (Reactor)o;
+				} else {
+					ExceptionThrower.throwGivenClassIsNotReactorClass(reactorClass);
+				}
+			} catch (InstantiationException e) {
+				ExceptionThrower.throwFailedToInstanciateReactor(reactorClassName, e);
+			} catch (IllegalAccessException e) {
+				ExceptionThrower.throwFailedToInstanciateReactor(reactorClassName, e);
+			}
+		} catch (ClassNotFoundException e) {
+			ExceptionThrower.throwReactorClassNotFoundException(reactorClassName, e);
+		}
+		return ret;
 	}
 }
 
