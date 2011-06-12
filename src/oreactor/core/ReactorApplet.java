@@ -29,11 +29,11 @@ public class ReactorApplet extends JApplet {
 			this.reactor = Reactor.loadReactor(reactorClassName);
 			this.settings = loadSettings();
 		} catch (ArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			throw new RuntimeException(e.getMessage(), e);
 		} catch (OpenReactorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
+			throw new RuntimeException(e.getMessage(), e);
 		}
 	}
 	
@@ -67,6 +67,7 @@ public class ReactorApplet extends JApplet {
 		this.reactor = null;
 		this.settings = null;
 	}
+
 	protected
 	Settings loadSettings() throws OpenReactorException {
 		Settings ret = null;
