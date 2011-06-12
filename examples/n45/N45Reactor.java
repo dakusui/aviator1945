@@ -19,44 +19,50 @@ import oreactor.video.Viewport;
 import oreactor.video.sprite.Sprite;
 
 public class N45Reactor extends Mu64Reactor {
-	MMachineSpec myshotSpec = new SGMMachineSpec(this) {
+	private int s = patternplaneHeight() - screenHeight();
+	MMachineSpec enemyplaneSpec =new SGMMachineSpec(this) {
+		@Override
+		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {
+			attrs.x(Math.random() * 1024.0);
+			attrs.y(0.0);
+			attrs.direction(0);
+		}
 		@Override
 		protected Drivant createDrivant() {
 			return new SGBaseDrivant() {
-				int life = 40;
+				double dx = Math.random() * 2 - 1;
+				double dy =  4;
 				@Override
-				public void perform_(SGMotion motion, MMachine owner,
-						MotionProvider provider) throws OpenReactorException {
-					motion.dy(-8);
-					life--;
-					if (life <=0) {
+				protected void perform_(SGMotion motion,
+						MMachine owner, MotionProvider provider) throws OpenReactorException {
+					motion.dx(dx);
+					motion.dy(dy);
+					if (((SGAttrs)owner.attributes()).y() > 768) {
 						motion.destroy();
 					}
+					motion.pattern(ticks() % 3);
 				}
 			};
 		}
 		@Override
-		protected Group getGroup() {
-			return SGGroup.FRIEND;
-		}
-		@Override
-		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {
-			SGAttrs pattrs = (SGAttrs) parent.attributes();
-			attrs.x(pattrs.x());
-			attrs.y(pattrs.y());
-		}
-		@Override
 		protected Sprite createSprite() {
-			return createSprite("shot", 100);
+			return createSprite("zero", 11);
+		}
+		@Override
+		protected Group getGroup() {
+			return SGGroup.ENEMY;
 		}
 	};
-	
 	MMachineSpec myplaneSpec =new SGMMachineSpec(this) {
+		@Override
+		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {
+			attrs.x(512.0);
+			attrs.y(384.0);
+		}
 		@Override
 		protected Drivant createDrivant() {
 			return new SGBaseDrivant() {
 				private int counter;
-				
 				@Override
 				protected void perform_(SGMotion motion,
 						MMachine owner, MotionProvider provider) throws OpenReactorException {
@@ -79,54 +85,50 @@ public class N45Reactor extends Mu64Reactor {
 			};
 		}
 		@Override
-		protected Group getGroup() {
-			return SGGroup.FRIEND;
-		}
-		@Override
 		protected Sprite createSprite() {
 			return createSprite("p38", 10);
 		}
 		@Override
-		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {
-			attrs.x(512.0);
-			attrs.y(384.0);
+		protected Group getGroup() {
+			return SGGroup.FRIEND;
 		}
 	};
-	MMachineSpec enemyplaneSpec =new SGMMachineSpec(this) {
+	MMachineSpec myshotSpec = new SGMMachineSpec(this) {
+		@Override
+		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {
+			SGAttrs pattrs = (SGAttrs) parent.attributes();
+			attrs.x(pattrs.x());
+			attrs.y(pattrs.y());
+		}
 		@Override
 		protected Drivant createDrivant() {
 			return new SGBaseDrivant() {
-				double dx = Math.random() * 2 - 1;
-				double dy =  4;
-				
+				int life = 40;
 				@Override
-				protected void perform_(SGMotion motion,
-						MMachine owner, MotionProvider provider) throws OpenReactorException {
-					motion.dx(dx);
-					motion.dy(dy);
-					if (((SGAttrs)owner.attributes()).y() > 768) {
+				public void perform_(SGMotion motion, MMachine owner,
+						MotionProvider provider) throws OpenReactorException {
+					motion.dy(-8);
+					life--;
+					if (life <=0) {
 						motion.destroy();
 					}
-					motion.pattern(ticks() % 3);
 				}
 			};
 		}
 		@Override
-		protected Group getGroup() {
-			return SGGroup.ENEMY;
-		}
-		@Override
 		protected Sprite createSprite() {
-			return createSprite("zero", 11);
+			return createSprite("shot", 100);
 		}
 		@Override
-		public void fillInAttrs_(SGAttrs attrs, MMachine parent) {
-			attrs.x(Math.random() * 1024.0);
-			attrs.y(0.0);
-			attrs.direction(0);
+		protected Group getGroup() {
+			return SGGroup.FRIEND;
 		}
 	};
-	private int s = patternplaneHeight() - screenHeight();
+	@Override
+	public MotionProvider newMotionProvider() throws OpenReactorException {
+		MotionProvider ret = new SGMotionProvider();
+		return ret;
+	}
 	@Override
 	public void run() throws OpenReactorException {
 		if (isFirstTime()) {
@@ -154,10 +156,5 @@ public class N45Reactor extends Mu64Reactor {
 	@Override
 	protected int patternplaneHeight() {
 		return 768 * 4;
-	}
-	@Override
-	public MotionProvider newMotionProvider() throws OpenReactorException {
-		MotionProvider ret = new SGMotionProvider();
-		return ret;
 	}
 }
