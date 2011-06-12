@@ -5,6 +5,7 @@ import java.awt.Color;
 import mu64.Mu64Reactor;
 
 import oreactor.exceptions.OpenReactorException;
+import oreactor.video.graphics.GraphicsPlane.Mode;
 import oreactor.video.sprite.ImageSpriteSpec;
 import oreactor.video.sprite.ImageSpriteSpec.RenderingParameters;
 import oreactor.video.sprite.Sprite;
@@ -27,6 +28,7 @@ public class SplashReactor extends Mu64Reactor {
 				factors[i] = Math.random() * 10 + 1;
 			}
 			patternplane().disable();
+			graphicsplane().mode(Mode.Sticky);
 		}
 		if (ticks() <= frames) {
 			for (int i = 0; i < lines.length; i ++) {

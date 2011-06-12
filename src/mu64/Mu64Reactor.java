@@ -43,25 +43,20 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		public abstract void perform() throws OpenReactorException;
 	}
 	private Context context;
-	
 	private boolean firstTime = true;
 	private MotionEngine motionEngine;
 	private Map<Integer, Pattern> patterns = new HashMap<Integer, Pattern>();
 	private boolean running = true;
 	private Map<String, SpriteSpec> spriteSpecs = new HashMap<String, SpriteSpec>();
-
 	private int ticks = 0;
-
 	protected Action action = null;
 	
 	@Override
 	public void midiClipLoaded(String name, MidiData midiData) {
 	}
-
 	@Override
 	public void numMidiClips(int numClips) {
 	}
-
 	@Override
 	public void numPatterns(int numPatterns) {
 		logger().debug("Loading " + numPatterns + " patterns.");
@@ -70,17 +65,14 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	public void numSoundClips(int numSoundClips) {
 		logger().debug("Loading " + numSoundClips + " soud clips.");
 	}
-	
 	@Override
 	public void numSpriteSpecs(int numSpriteSpecs) {
 		logger().debug("Loading " + numSpriteSpecs + " sprite specs.");
 	}
-	
 	@ExtensionPoint
 	public int patternHeight() {
 		return 32;
 	}
-
 	@Override
 	public void patternLoaded(Pattern pattern) {
 		try {
@@ -91,25 +83,20 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 		logger().debug("  Pattern:<" + pattern.num() + "> is loaded.");
 	}
-
 	@ExtensionPoint
 	public int patternWidth() {
 		return 32;
 	}
-	
 	public void playmidi(String midiclipName) throws OpenReactorException {
 		context.getMusicEngine().player(midiclipName).play();
 	}
-	
 	public void playwave(String soundclipName) throws OpenReactorException {
 		context.getSoundEngine().player(soundclipName).start();
 	}
-	
 	@Override
 	public void soundClipLoaded(String name, SoundData soundData) {
 		logger().debug("  Sound data:<" + soundData.resourceUrl() + "> is loaded as '" + name + "'.");
 	}
-	
 	public SpritePlane spriteplane() {
 		return spriteplane("sprite");
 	}
@@ -128,20 +115,16 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	private InputDevice joystick() {
 		return context.getJoystickEngine().devices().get(0);
 	}
-	
 	@ExtensionPoint
 	protected Action action() {
 		return Action.NullAction;
 	}
-	
 	protected Context context() {
 		return context;
 	}
-	
 	protected GraphicsPlane graphicsplane() {
 		return graphicsplane("graphics");
 	}
-	
 	protected GraphicsPlane graphicsplane(String name) {
 		GraphicsPlane ret = null; 
 		VideoEngine ve = context.getVideoEngine();
@@ -154,7 +137,6 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 		return ret;
 	}
-
 	@Override 
 	protected Context initialize(Settings settings) throws OpenReactorException {
 		Context ret = super.initialize(settings);
@@ -165,18 +147,16 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		ret.getResourceLoader().addMonitor(this);
 		ret.getResourceLoader().addMonitor(ret.getSoundEngine());
 		ret.getResourceLoader().addMonitor(ret.getMusicEngine());
+		graphicsplane().disableAcceleration();
 		return ret;
 	}
-
 	protected final boolean isFirstTime() {
 		return this.firstTime;
 	}
-	
 	protected void loadConfig(String url) throws OpenReactorException {
 		ResourceLoader loader = context().getResourceLoader();
 		loader.loadConfigFromUrl(url);
 	}
-	
 	@Override
 	protected Settings loadSettings() throws OpenReactorException {
 		Settings settings = super.loadSettings();
@@ -207,34 +187,26 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 		return settings;
 	}
-
 	private int graphicsplaneWidth() {
 		return screenWidth();
 	}
-
 	private double graphicsplaneHeight() {
 		return screenHeight();
 	}
-
 	protected MotionProvider motionProvider() {
 		return this.motionEngine.getMotionProvider();
 	}
-
 	@ExtensionPoint
 	protected MotionProvider newMotionProvider() throws OpenReactorException {
 		return null;
 	}
-	
-
 	protected void parseConfig(String config) throws OpenReactorException {
 		ResourceLoader loader = context().getResourceLoader();
 		loader.loadConfigFromString(config);
 	}
-
 	protected PatternPlane patternplane() {
 		return patternplane("pattern");
 	}
-
 	protected PatternPlane patternplane(String name) {
 		PatternPlane ret = null; 
 		VideoEngine ve = context.getVideoEngine();
@@ -247,7 +219,6 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 		return ret;
 	}
-
 	@ExtensionPoint
 	protected void run() throws OpenReactorException {
 		this.action.perform();
@@ -256,7 +227,6 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 			exit();
 		}
 	}
-	
 	@Override
 	protected final void run(Context c) throws OpenReactorException {
 		this.currentContext(c);
@@ -278,7 +248,6 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 			this.ticks ++;
 		}
 	}
-	
 	protected SpritePlane spriteplane(String name) {
 		SpritePlane ret = null; 
 		VideoEngine ve = context.getVideoEngine();
@@ -291,35 +260,28 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		}
 		return ret;
 	}
-
 	protected final Stick stick() {
 		Stick ret = joystick().stick();
 		return ret;
 	}
-	
 	@Override
 	protected void terminate(Context c) throws OpenReactorException {
 		this.motionEngine.terminate(c);
 		super.terminate(c);
 	}
-	
 	protected final int ticks() {
 		return this.ticks;
 	}
-	
 	protected final boolean trigger() {
 		return trigger(Trigger.ANY);
 	}
-	
 	protected final boolean trigger(Trigger t) {
 		boolean ret = joystick().trigger(t);
 		return ret;
 	}
-	
 	protected int patternplaneWidth() {
 		return screenWidth();
 	}
-	
 	protected int patternplaneHeight() {
 		return screenHeight();
 	}

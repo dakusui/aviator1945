@@ -16,25 +16,20 @@ public abstract class MMachineSpec {
 
 	public MMachine buildMMachine(MotionProvider provider, MMachine parent) throws OpenReactorException {
 		MMachine ret = new MMachine(provider);
-
 		Attributes attr = provider.createAttributes();
 		if (!provider.isAcceptable(attr)) {
 			ExceptionThrower.throwException("Given object is not valid for this application:<" + attr + ">");
 		}
 		fillInAttributes(attr, parent);
 		ret.setAttributes(attr);
-
 		Drivant drivant = createDrivant();
 		if (!provider.isAcceptable(drivant)) {
 			ExceptionThrower.throwException("Given object is not valid for this application:<" + drivant + ">");
 		}
 		ret.setDrivant(drivant);
-
 		ret.bind(this.getGroup());
-
 		Sprite sprite = createSprite();
 		ret.setSprite(sprite);
-		
 		ret.setSpec(this);
 		return ret;
 	}
