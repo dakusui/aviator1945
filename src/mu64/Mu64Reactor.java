@@ -147,7 +147,6 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		ret.getResourceLoader().addMonitor(this);
 		ret.getResourceLoader().addMonitor(ret.getSoundEngine());
 		ret.getResourceLoader().addMonitor(ret.getMusicEngine());
-		graphicsplane().disableAcceleration();
 		return ret;
 	}
 	protected final boolean isFirstTime() {
