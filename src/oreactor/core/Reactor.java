@@ -280,11 +280,11 @@ public abstract class Reactor {
 		return this.logger;
 	}
 
-	protected final void quit() throws OpenReactorException {
+	protected void quit() throws OpenReactorException {
 		throw new OpenReactorQuitException(null);
 	}
 	
-	protected final void quit(String msg) throws OpenReactorException {
+	protected void quit(String msg) throws OpenReactorException {
 		throw new OpenReactorQuitException(msg);
 	}
 

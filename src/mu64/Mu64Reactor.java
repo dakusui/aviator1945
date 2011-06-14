@@ -1,5 +1,6 @@
 package mu64;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import oreactor.core.Reactor;
 import oreactor.core.Settings;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorExitException;
+import oreactor.exceptions.OpenReactorQuitException;
 import oreactor.io.ResourceLoader;
 import oreactor.io.ResourceMonitor;
 import oreactor.io.ResourceLoader.MidiData;
@@ -21,7 +23,7 @@ import oreactor.joystick.JoystickEngine.Stick;
 import oreactor.joystick.JoystickEngine.Trigger;
 import oreactor.video.Plane;
 import oreactor.video.PlaneDesc;
-import oreactor.video.Screen;
+import oreactor.video.VideoDevice;
 import oreactor.video.VideoEngine;
 import oreactor.video.graphics.GraphicsPlane;
 import oreactor.video.pattern.Pattern;
@@ -41,6 +43,24 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 			return next ;
 		}
 		public abstract void perform() throws OpenReactorException;
+	}
+	public static class Pallette {
+		public static final Color TRANSPARENT = new Color(0,0,0,0);
+		public static final Color BLACK = Color.black; 
+		public static final Color GREEN = Color.green; 
+		public static final Color LIGHTGREEN = new Color(127, 255,127); 
+		public static final Color BLUE = Color.black; 
+		public static final Color LIGHTBLUE = new Color(127, 127, 255);
+		public static final Color DARKRED = new Color(127,0,0);
+		public static final Color CYAN = Color.cyan; 
+		public static final Color RED = Color.red;
+		public static final Color LIGHTRED = new Color(255,127,127);
+		public static final Color DARKYELLOW = Color.yellow; 
+		public static final Color LIGHTYELLOW = new Color(255,255,127);
+		public static final Color DARKGREEN = Color.black; 
+		public static final Color MAGENTA = Color.magenta; 
+		public static final Color GRAY  = Color.gray; 
+		public static final Color WHITE = Color.white; 
 	}
 	private Context context;
 	private boolean firstTime = true;
@@ -128,7 +148,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	protected GraphicsPlane graphicsplane(String name) {
 		GraphicsPlane ret = null; 
 		VideoEngine ve = context.getVideoEngine();
-		Screen s = ve.screen();
+		VideoDevice s = ve.device();
 		List<Plane> planes = s.planes();
 		for (Plane p : planes) {
 			if (p instanceof GraphicsPlane && p.name().equals(name)) {
@@ -206,7 +226,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	protected PatternPlane patternplane(String name) {
 		PatternPlane ret = null; 
 		VideoEngine ve = context.getVideoEngine();
-		Screen s = ve.screen();
+		VideoDevice s = ve.device();
 		List<Plane> planes = s.planes();
 		for (Plane p : planes) {
 			if (p instanceof PatternPlane && p.name().equals(name)) {
@@ -247,7 +267,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	protected SpritePlane spriteplane(String name) {
 		SpritePlane ret = null; 
 		VideoEngine ve = context.getVideoEngine();
-		Screen s = ve.screen();
+		VideoDevice s = ve.device();
 		List<Plane> planes = s.planes();
 		for (Plane p : planes) {
 			if (p instanceof SpritePlane && p.name().equals(name)) {
@@ -285,4 +305,40 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 	public int screenColorDepth() {
 		return 32;
 	}	
+	protected void exit() throws ExitMu64 {
+		throw new ExitMu64(null);
+	}
+
+	protected void exit(String msg) throws ExitMu64 {
+		throw new ExitMu64(msg);
+	}
+
+	protected final void quit() throws QuitMu64 {
+		throw new QuitMu64("Quitting Mu=64.");
+	}
+	
+	protected final void quit(String msg) throws QuitMu64 {
+		throw new QuitMu64("Quitting Mu=64.:" + msg);
+	}
+	
+	public static class ExitMu64 extends OpenReactorExitException {
+		/**
+		 * Serial version UID.
+		 */
+		private static final long serialVersionUID = 5360821785516014143L;
+
+		public ExitMu64(String msg) {
+			super(msg);
+		}
+	}
+	
+	public static class QuitMu64 extends OpenReactorQuitException {
+		/**
+		 * Serial version UID. 
+		 */
+		private static final long serialVersionUID = -460517875066816118L;
+		public QuitMu64(String message) {
+			super(message);
+		}
+	}
 }

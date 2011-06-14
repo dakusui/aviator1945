@@ -88,7 +88,7 @@ public class PlaneDesc {
 		return "Plane:" + this.name + "(" + this.type() + ")";
 	}
 
-	public Plane createPlane(Screen screen, Viewport viewport) {
+	public Plane createPlane(Viewport viewport) {
 		return this.type.createPlane(this, viewport);
 	}
 }

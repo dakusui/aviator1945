@@ -7,6 +7,7 @@ import oreactor.core.Settings.ExecutionMode;
 import oreactor.core.Settings.LoggingMode;
 import oreactor.core.Settings.SoundMode;
 import oreactor.core.Settings.VideoMode;
+import oreactor.core.Settings.WindowMode;
 import oreactor.exceptions.ArgumentException;
 import oreactor.exceptions.OpenReactorException;
 
@@ -76,6 +77,8 @@ public class ReactorApplet extends JApplet {
 		ret.soundMode(SoundMode.valueOf(getParameter("sound", "ENABLED_FALLBACK")));
 		ret.bgmMode(BgmMode.valueOf(getParameter("bgm", "ENABLED_FALLBACK")));
 		ret.videoMode(VideoMode.valueOf(getParameter("video", "FULL_FALLBACK")));
+		ret.applet(this);
+		ret.windowMode(WindowMode.Applet);
 		return ret;
 	}
 

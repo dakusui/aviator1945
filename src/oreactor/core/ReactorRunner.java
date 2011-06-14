@@ -1,5 +1,6 @@
 package oreactor.core;
 
+import oreactor.core.Settings.WindowMode;
 import oreactor.exceptions.OpenReactorException;
 import oreactor.exceptions.OpenReactorQuitException;
 import oreactor.exceptions.OpenReactorWindowClosedException;
@@ -18,6 +19,7 @@ public class ReactorRunner {
 			
 			logger.debug("reactor=<" + reactor + ">");
 			Settings settings = argParser.loadSettings(); 
+			settings.windowMode(WindowMode.Frame);
 			logger.debug("settings are loaded.");
 			reactor.execute(settings);
 		} catch (OpenReactorWindowClosedException e) {

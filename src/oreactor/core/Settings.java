@@ -2,6 +2,8 @@ package oreactor.core;
 
 import java.awt.Font;
 
+import javax.swing.JApplet;
+
 public class Settings {
 	public static enum BgmMode {
 		DISABLED, ENABLED, ENABLED_FALLBACK;
@@ -18,6 +20,9 @@ public class Settings {
 	public static enum VideoMode {
 		NORMAL, FULL, FULL_FALLBACK
 	}
+	public static enum WindowMode {
+		Applet, Frame
+	}
 	public static Settings instance() {
 		return new Settings();
 	}
@@ -27,6 +32,8 @@ public class Settings {
 	private SoundMode soundMode;
 	private VideoMode videoMode;
 	private BgmMode bgmMode;
+	private WindowMode windowMode;
+	private JApplet applet;
 
 	public Font font() {
 		return this.font;
@@ -80,5 +87,20 @@ public class Settings {
 	
 	public BgmMode bgmMode() {
 		return this.bgmMode;
+	}
+
+	public void windowMode(WindowMode windowMode) {
+		this.windowMode = windowMode;
+	}
+	
+	public WindowMode windowMode() {
+		return this.windowMode;
+	}
+
+	public void applet(JApplet applet) {
+		this.applet = applet;
+	}
+	public JApplet applet() {
+		return this.applet;
 	}
 }
