@@ -83,6 +83,8 @@ public abstract class VideoDevice {
 						close();
 					}
 				});
+				this.frame.setVisible(false);
+				this.frame.setUndecorated(true);
 				this.frame.setSize(reactor.screenWidth(), reactor
 						.screenHeight());
 				GraphicsEnvironment ge = GraphicsEnvironment
@@ -104,7 +106,6 @@ public abstract class VideoDevice {
 								if (!dm.equals(gd.getDisplayMode())) {
 									if (gd.isDisplayChangeSupported()) {
 										gd.setDisplayMode(dm);
-										this.frame.setUndecorated(true);
 										succeeded = true;
 									} else {
 										throw new UnsupportedOperationException();
