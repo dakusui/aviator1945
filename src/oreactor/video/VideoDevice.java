@@ -22,7 +22,7 @@ import oreactor.core.Settings.VideoMode;
 import oreactor.exceptions.ExceptionThrower;
 import oreactor.exceptions.OpenReactorException;
 
-public abstract class VideoDevice {
+public abstract class VideoDevice implements Sizable {
 	static final Logger logger = Logger.getLogger();
 
 	public static VideoDevice createJAppletBsedVideoDevice(Reactor reactor,
@@ -155,7 +155,6 @@ public abstract class VideoDevice {
 				if (originalDisplayMode != null) {
 					gd.setDisplayMode(originalDisplayMode);
 					gd.setFullScreenWindow(null);
-					frame.setUndecorated(false);
 					this.originalDisplayMode = null;
 					this.gd = null;
 				}
@@ -189,15 +188,17 @@ public abstract class VideoDevice {
 
 	private boolean closed;
 
-	private int height;
+	private double height;
 
 	private BufferStrategy strategy;
 
-	private int width;
+	private double width;
 
 	List<Plane> planes;
 
 	Reactor reactor;
+
+	private List<Observer> observers = new LinkedList<Observer>();
 
 	public VideoDevice(Reactor reactor) throws OpenReactorException {
 		this.reactor = reactor;
@@ -224,6 +225,7 @@ public abstract class VideoDevice {
 	public void createPlane(PlaneDesc desc) {
 		Plane p = desc.createPlane(new Viewport(this.width, this.height));
 		logger.debug("Created plane is:<" + p + ">");
+		this.addObserver(p);
 		this.planes.add(p);
 	}
 
@@ -334,4 +336,38 @@ public abstract class VideoDevice {
 	}
 
 	protected abstract void terminate();
+	
+	@Override
+	public void setSize(double width, double height) {
+		this.width = width;
+		this.height = height;
+		for (Observer o : this.observers) {
+			o.sizeChanged(width, height);
+		}
+	}
+	
+	public void addObserver(Observer o) {
+		if (!this.observers.contains(o)) {
+			this.observers.add(o);
+		}
+	}
+	public void removeObserver(Observer o) {
+		if (this.observers.contains(o)) {
+			this.observers.remove(o);
+		}
+	}
+	
+	@Override
+	public double width() {
+		return this.width;
+	}
+	
+	@Override
+	public double height() {
+		return this.height;
+	}
+	public static interface Observer {
+		public void sizeChanged(double width, double height);
+	}
+	
 }

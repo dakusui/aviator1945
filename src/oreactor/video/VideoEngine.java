@@ -44,6 +44,10 @@ public class VideoEngine extends BaseEngine {
 		for (PlaneDesc desc : planeDescs) {
 			this.device.createPlane(desc);
 		}
+		////
+		// To guarantee the affine transform matrices are updated, 
+		// issue setSize method on the device object.
+		this.device.setSize(this.device.width(), this.device.height());
 	}
 
 	@Override

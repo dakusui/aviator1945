@@ -43,8 +43,6 @@ public class Viewport {
 	 */
 	Vector j;
 	
-	private boolean firstTime = true;
-	
 	Logger logger = Logger.getLogger();
 	private List<ViewportObserver> observers = new LinkedList<ViewportObserver>();
 	
@@ -92,41 +90,40 @@ public class Viewport {
 		return this.offset;
 	}
 	
-	public AffineTransform affineTransform(double screenWidth, double screenHeight) throws OpenReactorException {
-		double delta = this.i.x*this.j.y -  this.i.y * this.j.x;
+	public AffineTransform composeMatrix(double width, double height) throws OpenReactorException {
+		double ox = offset.x;
+		double oy = offset.y;
+		double ix = i.x;
+		double iy = i.y;
+		double jx = j.x;
+		double jy = j.y;
+		return composeMatrix(width, height, ox, oy, ix, iy, jx, jy);
+	}
+	private AffineTransform composeMatrix(double width, double height, double ox, double oy, double ix, double iy, double jx, double jy) throws OpenReactorException {
+		// offset = (40, 40)
+		// i = (600,  40)
+		// j = (80,  400) 
+		// [ a b ][ ix  jx] -> [640   0]
+		// [ c d ][ iy  jy]    [  0 480]
+		
+		// [ a b ]    [640    0]1/(ixjy-jxiy)[ jy  -jx]
+		// [ c d ]    [  0  480]             [-iy   ix]
+		//            (1/ixjy-jxiy)[ 640jy  640jx]
+		//                         [-480iy  480ix]
+		double delta = (ix*jy - jx*iy);
 		if (delta == 0) {
 			ExceptionThrower.throwViewportStateException("Viewport's determinant is currently 0", this);
 		}
-		//  m00 m01 T    i.x i.y   w  0
-		//            *         =     
-		//  m10 m11      i.y j.y   0  h
-		//
-		//  m00 m01 T    w     0     j.y/delta  -i.y/delta      1      w*j.y  -w*i.y
-		//             =          *                         = ----- * 
-		//  m10 m11      0     h    -j.x/delta   i.x/delta    delta   -h*j.x   h*i.x
-		//
-		//  m00 m10        1      w*j.y  -w*i.y
-		//             = ----- * 
-		//  m01 m11      delta   -h*j.x   h*i.x
-		
-		double m00 =  screenWidth*j.y/delta;
-		double m01 = -screenHeight*j.x/delta;
-		double m10 = -screenWidth*i.y/delta;
-		double m11 =  screenHeight*i.x/delta;
-
+		double a =   (width * jy) / delta,  b = -(width * jx)/ delta;
+		double c = - (height * iy) / delta, d =  (height * ix)/ delta;
+		double e = - (a * ox + b * oy), f = -(c * ox + d * oy);
 		AffineTransform ret = new AffineTransform(
-				m00,                    m10,
-				m01,                    m11, 
-				-this.offset.x/*m02*/, -this.offset.y/*m12*/
+				a,    c,
+				b,    d,
+				e,    f
 				);
-		if (firstTime) {
-			logger.debug(ret.toString());
-			logger.debug(this.toString());
-			firstTime  = false;
-		}
 		return ret;
-	}
-	
+	}	
 	@Override
 	public String toString() {
 		return "offset=<" + this.offset + ">, i=<" + i + ">, j=<" + j + ">";
@@ -136,5 +133,47 @@ public class Viewport {
 		if (!this.observers.contains(observer)) {
 			this.observers.add(observer);
 		}
+	}
+
+	public void removeObserver(ViewportObserver observer) {
+		if (this.observers.contains(observer)) {
+			this.observers.remove(observer);
+		}
+	}
+	
+	public double left() {
+		return min(offset.x, offset.x + i.x, offset.x + i.x + j.x, offset.x + j.x);
+	}
+
+	public double top() {
+		return min(offset.y, offset.y + i.y, offset.y + i.y + j.y, offset.y + j.y);
+	}
+
+	public double right() {
+		return max(offset.x, offset.x + i.x, offset.x + i.x + j.x, offset.x + j.x);
+	}
+
+	public double bottom() {
+		return max(offset.y, offset.y + i.y, offset.y + i.y + j.y, offset.y + j.y);
+	}
+
+	private static double min(double... x) {
+		double ret = Double.MAX_VALUE;
+		for (double i : x) {
+			if ( i < ret) {
+				ret = i;
+			}
+		}
+		return ret;
+	}
+	
+	private static double max(double... x) {
+		double ret = Double.MIN_VALUE;
+		for (double i : x) {
+			if (i > ret) {
+				ret = i;
+			}
+		}
+		return ret;
 	}
 }

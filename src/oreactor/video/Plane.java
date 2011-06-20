@@ -5,7 +5,7 @@ import java.awt.geom.AffineTransform;
 
 import oreactor.exceptions.OpenReactorException;
 
-public abstract class Plane implements ViewportObserver, Comparable<Plane> {
+public abstract class Plane implements ViewportObserver, VideoDevice.Observer, Comparable<Plane> {
 	static enum Type {
 		Graphics,
 		Pattern,
@@ -19,6 +19,9 @@ public abstract class Plane implements ViewportObserver, Comparable<Plane> {
 	protected Viewport viewport;
 	protected double width;
 	private boolean accelerationEnabled;
+	protected double screenWidth;
+	protected double screenHeight;
+	protected AffineTransform matrix = null;
 	
 	protected Plane(String name, double width, double height, Viewport viewport) {
 		super();
@@ -72,7 +75,7 @@ public abstract class Plane implements ViewportObserver, Comparable<Plane> {
 	
 	public void render(Graphics2D g, double screenWidth, double screenHeight) throws OpenReactorException {
 		AffineTransform tx = g.getTransform();
-		g.setTransform(this.viewport().affineTransform(screenWidth, screenHeight));
+		g.setTransform(this.viewport().composeMatrix(screenWidth, screenHeight));
 		try {
 			this.render_Protected(g);
 		} finally {
@@ -93,7 +96,10 @@ public abstract class Plane implements ViewportObserver, Comparable<Plane> {
 	}
 	@Override
 	public void viewportChanged(Viewport viewport) {
+		this.viewport = viewport;
+		updateMatrix();
 	}
+	
 	public double width() {
 		return width;
 	}
@@ -111,5 +117,22 @@ public abstract class Plane implements ViewportObserver, Comparable<Plane> {
 	public boolean isAcclerationEnabled() {
 		return this.accelerationEnabled;
 	}
+
+	@Override
+	public void sizeChanged(double screenWidth, double screenHeight) {
+		this.screenWidth = screenWidth;
+		this.screenHeight = screenHeight;
+		updateMatrix();
+	}
+
+	private void updateMatrix() {
+		try {
+			this.matrix = viewport.composeMatrix(this.screenWidth, this.screenHeight);
+		} catch (OpenReactorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 }
 
