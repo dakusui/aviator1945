@@ -49,7 +49,7 @@ public class Mu64Reactor extends Reactor implements ResourceMonitor {
 		public static final Color BLACK = Color.black; 
 		public static final Color GREEN = Color.green; 
 		public static final Color LIGHTGREEN = new Color(127, 255,127); 
-		public static final Color BLUE = Color.black; 
+		public static final Color BLUE = Color.blue; 
 		public static final Color LIGHTBLUE = new Color(127, 127, 255);
 		public static final Color DARKRED = new Color(127,0,0);
 		public static final Color CYAN = Color.cyan; 

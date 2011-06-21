@@ -95,8 +95,10 @@ public class GraphicsPlane extends Plane {
 		}
 		void bitblt(GraphicsPlane gplane, Graphics2D g) throws OpenReactorException {
 			GraphicsConfiguration gConfig = g.getDeviceConfiguration();
-			int width = gplane.image.getWidth();
-			int height = gplane.image.getHeight();
+			int left = (int) gplane.viewport.left();
+			int top = (int) gplane.viewport.top();
+			int right = (int) gplane.viewport.right();
+			int bottom = (int) gplane.viewport.bottom();
 			if (gplane.isAcclerationEnabled()) {
 				VolatileImage vTmp = gplane.vImage;
 				if (vTmp == null) {
@@ -105,8 +107,8 @@ public class GraphicsPlane extends Plane {
 				do {
 					g.drawImage(
 							vTmp,
-							0, 0, width, height, 
-							0, 0, width, height, 
+							left, top, right, bottom, 
+							left, top, right, bottom, 
 							gplane.bgColor, null
 							);
 
@@ -115,8 +117,8 @@ public class GraphicsPlane extends Plane {
 			} else {
 				g.drawImage(
 						gplane.image, 
-						0, 0, width, height, 
-						0, 0, width, height, 
+						left, top, right, bottom, 
+						left, top, right, bottom, 
 						gplane.bgColor, null
 				);
 			}
