@@ -13,11 +13,9 @@ public class BSExample extends JFrame {
 
 	BSExample(GraphicsConfiguration gc) {
 		super(gc);
-		// TODO Auto-generated constructor stub
 	}
 
 	public BSExample() {
-		// TODO Auto-generated constructor stub
 	}
 
 	private static final long serialVersionUID = 1L;
